@@ -1,36 +1,20 @@
-import http from 'http';
-
+import fetch, { Response } from 'node-fetch';
 import { IntegrationProviderAuthenticationError } from '@jupiterone/integration-sdk-core';
 
-import { IntegrationConfig } from './types';
+import {
+  InsightVMAccount,
+  InsightVMAsset,
+  InsightVMScan,
+  InsightVMSite,
+  InsightVMUser,
+  InsightVMVulnerability,
+  IntegrationConfig,
+  StatusError,
+  PageIteratee,
+  PaginatedResource,
+} from './types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
-
-// Providers often supply types with their API libraries.
-
-type AcmeUser = {
-  id: string;
-  name: string;
-};
-
-type AcmeGroup = {
-  id: string;
-  name: string;
-  users?: Pick<AcmeUser, 'id'>[];
-};
-
-// Those can be useful to a degree, but often they're just full of optional
-// values. Understanding the response data may be more reliably accomplished by
-// reviewing the API response recordings produced by testing the wrapper client
-// (below). However, when there are no types provided, it is necessary to define
-// opaque types for each resource, to communicate the records that are expected
-// to come from an endpoint and are provided to iterating functions.
-
-/*
-import { Opaque } from 'type-fest';
-export type AcmeUser = Opaque<any, 'AcmeUser'>;
-export type AcmeGroup = Opaque<any, 'AcmeGroup'>;
-*/
 
 /**
  * An APIClient maintains authentication state and provides an interface to
@@ -41,41 +25,87 @@ export type AcmeGroup = Opaque<any, 'AcmeGroup'>;
  * resources.
  */
 export class APIClient {
-  constructor(readonly config: IntegrationConfig) {}
+  private readonly insightHost: string;
+  private readonly insightClientUsername: string;
+  private readonly insightClientPassword: string;
+  private readonly paginateEntitiesPerPage = 10;
+
+  constructor(readonly config: IntegrationConfig) {
+    this.insightHost = config.insightHost;
+    this.insightClientUsername = config.insightClientUsername;
+    this.insightClientPassword = config.insightClientPassword;
+  }
+
+  private withBaseUri(path: string): string {
+    return `https://${this.insightHost}/api/3/${path}`;
+  }
+
+  private async request(
+    uri: string,
+    method: 'GET' | 'HEAD' = 'GET',
+  ): Promise<Response> {
+    return await fetch(uri, {
+      method,
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Basic ${Buffer.from(
+          `${this.insightClientUsername}:${this.insightClientPassword}`,
+        ).toString('base64')}`,
+      },
+    });
+  }
+
+  private async paginatedRequest<T>(
+    uri: string,
+    pageIteratee: PageIteratee<T>,
+  ): Promise<void> {
+    let currentPage = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const response = await this.request(
+        this.withBaseUri(
+          `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
+        ),
+        'GET',
+      );
+      const body: PaginatedResource<T> = await response.json();
+
+      await pageIteratee(body.resources);
+
+      if (!body.page || body.page.number === body.page.totalPages - 1) {
+        break;
+      }
+
+      currentPage++;
+    }
+  }
 
   public async verifyAuthentication(): Promise<void> {
-    // TODO make the most light-weight request possible to validate
-    // authentication works with the provided credentials, throw an err if
-    // authentication fails
-    const request = new Promise((resolve, reject) => {
-      http.get(
-        {
-          hostname: 'localhost',
-          port: 443,
-          path: '/api/v1/some/endpoint?limit=1',
-          agent: false,
-          timeout: 10,
-        },
-        (res) => {
-          if (res.statusCode !== 200) {
-            reject(new Error('Provider authentication failed'));
-          } else {
-            resolve();
-          }
-        },
-      );
-    });
-
     try {
-      await request;
+      const response = await this.request(this.withBaseUri('users'), 'GET');
+
+      if (response.status !== 200) {
+        throw new StatusError({
+          message: 'Provider authentication failed',
+          statusCode: response.status,
+          statusText: response.statusText,
+        });
+      }
     } catch (err) {
       throw new IntegrationProviderAuthenticationError({
         cause: err,
-        endpoint: 'https://localhost/api/v1/some/endpoint?limit=1',
-        status: err.status,
-        statusText: err.statusText,
+        endpoint: `https://${this.insightHost}/api/3/users`,
+        status: err.options ? err.options.statusCode : -1,
+        statusText: err.options ? err.options.statusText : '',
       });
     }
+  }
+
+  public async getAccount(): Promise<InsightVMAccount> {
+    const response = await this.request(
+      this.withBaseUri('administration/info'),
+    );
+    return response.json();
   }
 
   /**
@@ -84,63 +114,115 @@ export class APIClient {
    * @param iteratee receives each resource to produce entities/relationships
    */
   public async iterateUsers(
-    iteratee: ResourceIteratee<AcmeUser>,
+    iteratee: ResourceIteratee<InsightVMUser>,
   ): Promise<void> {
-    // TODO paginate an endpoint, invoke the iteratee with each record in the
-    // page
-    //
-    // The provider API will hopefully support pagination. Functions like this
-    // should maintain pagination state, and for each page, for each record in
-    // the page, invoke the `ResourceIteratee`. This will encourage a pattern
-    // where each resource is processed and dropped from memory.
-
-    const users: AcmeUser[] = [
-      {
-        id: 'acme-user-1',
-        name: 'User One',
-      },
-      {
-        id: 'acme-user-2',
-        name: 'User Two',
-      },
-    ];
-
-    for (const user of users) {
-      await iteratee(user);
-    }
+    await this.paginatedRequest<InsightVMUser>('users', async (users) => {
+      for (const user of users) {
+        await iteratee(user);
+      }
+    });
   }
 
   /**
-   * Iterates each group resource in the provider.
+   * Iterates each user resource in the provider.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
-  public async iterateGroups(
-    iteratee: ResourceIteratee<AcmeGroup>,
+  public async iterateSites(
+    iteratee: ResourceIteratee<InsightVMSite>,
   ): Promise<void> {
-    // TODO paginate an endpoint, invoke the iteratee with each record in the
-    // page
-    //
-    // The provider API will hopefully support pagination. Functions like this
-    // should maintain pagination state, and for each page, for each record in
-    // the page, invoke the `ResourceIteratee`. This will encourage a pattern
-    // where each resource is processed and dropped from memory.
+    await this.paginatedRequest<InsightVMSite>('sites', async (sites) => {
+      for (const site of sites) {
+        await iteratee(site);
+      }
+    });
+  }
 
-    const groups: AcmeGroup[] = [
-      {
-        id: 'acme-group-1',
-        name: 'Group One',
-        users: [
-          {
-            id: 'acme-user-1',
-          },
-        ],
+  /**
+   * Iterates each user resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateScans(
+    iteratee: ResourceIteratee<InsightVMScan>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVMScan>('scans', async (scans) => {
+      for (const scan of scans) {
+        await iteratee(scan);
+      }
+    });
+  }
+
+  /**
+   * Iterates each user resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateAssets(
+    iteratee: ResourceIteratee<InsightVMAsset>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVMAsset>('assets', async (assets) => {
+      for (const asset of assets) {
+        await iteratee(asset);
+      }
+    });
+  }
+
+  /**
+   * Iterates each user resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateSiteAssets(
+    siteId: string,
+    iteratee: ResourceIteratee<InsightVMAsset>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVMAsset>(
+      `sites/${siteId}/assets`,
+      async (assets) => {
+        for (const asset of assets) {
+          await iteratee(asset);
+        }
       },
-    ];
+    );
+  }
 
-    for (const group of groups) {
-      await iteratee(group);
-    }
+  /**
+   * Iterates each user resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateSiteUsers(
+    siteId: string,
+    iteratee: ResourceIteratee<InsightVMUser>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVMUser>(
+      `sites/${siteId}/users`,
+      async (users) => {
+        for (const user of users) {
+          await iteratee(user);
+        }
+      },
+    );
+  }
+
+  /**
+   * Iterates each user resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateVulnerabilities(
+    assetId: string,
+    iteratee: ResourceIteratee<InsightVMVulnerability>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVMVulnerability>(
+      `assets/${assetId}/vulnerabilities`,
+      async (vulnerabilities) => {
+        for (const vulnerability of vulnerabilities) {
+          await iteratee(vulnerability);
+        }
+      },
+    );
   }
 }
 

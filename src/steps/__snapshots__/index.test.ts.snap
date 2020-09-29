@@ -1,147 +1,1453 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should collect data 1`] = `
+exports[`Rapid7 InsightVM should collect data 1`] = `
 Object {
   "collectedEntities": Array [
     Object {
       "_class": Array [
         "Account",
       ],
-      "_key": "acme-unique-account-id",
+      "_key": "insightvm_account:root",
       "_rawData": Array [
         Object {
           "name": "default",
           "rawData": Object {
-            "id": "acme-unique-account-id",
-            "name": "Example Co. Acme Account",
-          },
-        },
-      ],
-      "_type": "acme_account",
-      "createdOn": undefined,
-      "displayName": "Example Co. Acme Account",
-      "id": "acme-unique-account-id",
-      "manager": "Manager Name",
-      "mfaEnabled": true,
-      "name": "Example Co. Acme Account",
-    },
-    Object {
-      "_class": Array [
-        "User",
-      ],
-      "_key": "acme-user-1",
-      "_rawData": Array [
-        Object {
-          "name": "default",
-          "rawData": Object {
-            "id": "acme-user-1",
-            "name": "User One",
-          },
-        },
-      ],
-      "_type": "acme_user",
-      "createdOn": undefined,
-      "displayName": "User One",
-      "email": "test@test.com",
-      "firstName": "John",
-      "id": "acme-user-1",
-      "name": "User One",
-      "username": "testusername",
-    },
-    Object {
-      "_class": Array [
-        "User",
-      ],
-      "_key": "acme-user-2",
-      "_rawData": Array [
-        Object {
-          "name": "default",
-          "rawData": Object {
-            "id": "acme-user-2",
-            "name": "User Two",
-          },
-        },
-      ],
-      "_type": "acme_user",
-      "createdOn": undefined,
-      "displayName": "User Two",
-      "email": "test@test.com",
-      "firstName": "John",
-      "id": "acme-user-2",
-      "name": "User Two",
-      "username": "testusername",
-    },
-    Object {
-      "_class": Array [
-        "UserGroup",
-      ],
-      "_key": "acme-group-1",
-      "_rawData": Array [
-        Object {
-          "name": "default",
-          "rawData": Object {
-            "id": "acme-group-1",
-            "name": "Group One",
-            "users": Array [
+            "cpu": Object {
+              "clockSpeed": 2643,
+              "count": 8,
+            },
+            "disk": Object {
+              "free": Object {
+                "bytes": 7144443904,
+                "formatted": "6.7 GB",
+              },
+              "installation": Object {
+                "backups": Object {
+                  "bytes": 0,
+                  "formatted": "0 bytes",
+                },
+                "database": Object {
+                  "bytes": 2963349842,
+                  "formatted": "2.8 GB",
+                },
+                "directory": "/opt/rapid7/nexpose",
+                "reports": Object {
+                  "bytes": 0,
+                  "formatted": "0 bytes",
+                },
+                "scans": Object {
+                  "bytes": 45477,
+                  "formatted": "44.4 KB",
+                },
+                "total": Object {
+                  "bytes": 5426559396,
+                  "formatted": "5.1 GB",
+                },
+              },
+              "total": Object {
+                "bytes": 82268987392,
+                "formatted": "76.6 GB",
+              },
+            },
+            "distinguishedName": "CN=Rapid7 Security Console, O=CodeWorkr",
+            "fqdn": "extreme-desktop",
+            "host": "extreme-desktop",
+            "ip": "127.0.1.1",
+            "jvm": Object {
+              "name": "OpenJDK 64-Bit Server VM",
+              "startTime": "2020-09-29T11:49:18.455Z",
+              "uptime": "PT2H20M18.797S",
+              "vendor": "Azul Systems, Inc.",
+              "version": "25.252-b14",
+            },
+            "links": Array [
               Object {
-                "id": "acme-user-1",
+                "href": "https://localhost:3780/api/3/administration/info",
+                "rel": "self",
               },
             ],
+            "memory": Object {
+              "free": Object {
+                "bytes": 176381952,
+                "formatted": "168.2 MB",
+              },
+              "total": Object {
+                "bytes": 16684572672,
+                "formatted": "15.5 GB",
+              },
+            },
+            "operatingSystem": "LinuxMint Linux 19.3",
+            "serial": "A34F9A111E1CEC0D693E2B1E0DCB6E6AD737F5F0",
+            "superuser": true,
+            "user": "root",
+            "version": Object {
+              "build": "4",
+              "changeset": "58d6d08f954def408a8ab971ba42786617df3afa",
+              "platform": "Linux64",
+              "semantic": "6.6.45",
+              "update": Object {
+                "content": "358499279",
+                "contentPartial": "2645384711 (2020-09-28)",
+                "id": Object {
+                  "productId": "299067162755562",
+                  "versionId": "490",
+                },
+                "product": "2669655303",
+              },
+            },
           },
         },
       ],
-      "_type": "acme_group",
+      "_type": "insightvm_account",
+      "accessUrl": "localhost:3780",
       "createdOn": undefined,
-      "displayName": "Group One",
-      "email": "testgroup@test.com",
-      "id": "acme-group-1",
-      "logoLink": "https://test.com/logo.png",
-      "name": "Group One",
+      "displayName": "root",
+      "name": "root",
+      "webLink": "https://localhost:3780/api/3/administration/info",
+    },
+    Object {
+      "_class": Array [
+        "User",
+      ],
+      "_key": "insightvm_user:1",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "authentication": Object {
+              "external": false,
+              "id": 1,
+              "links": Array [
+                Object {
+                  "href": "https://localhost:3780/api/3/authentication_sources/1",
+                  "rel": "self",
+                },
+                Object {
+                  "href": "https://localhost:3780/api/3/authentication_sources/1/users",
+                  "rel": "Authentication Source Users",
+                },
+              ],
+              "name": "Builtin Administrators",
+              "type": "admin",
+            },
+            "email": "contact@codeworkr.dev",
+            "enabled": true,
+            "id": 1,
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/users/1",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/authentication_sources/1",
+                "rel": "Authentication Source",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/1/asset_groups",
+                "rel": "Asset Groups",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/1/sites",
+                "rel": "Sites",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/1/privileges",
+                "rel": "Privileges",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/roles/global-admin",
+                "rel": "Role",
+              },
+            ],
+            "locale": Object {
+              "default": "en-US",
+              "reports": "en-US",
+            },
+            "locked": false,
+            "login": "admin",
+            "name": "admin",
+            "role": Object {
+              "allAssetGroups": true,
+              "allSites": true,
+              "id": "global-admin",
+              "name": "Global Administrator",
+              "privileges": Array [
+                "all-permissions",
+                "approve-vulnerability-exceptions",
+                "assign-scan-engine",
+                "assign-scan-template",
+                "assign-ticket-assignee",
+                "close-tickets",
+                "configure-global-settings",
+                "create-reports",
+                "create-tickets",
+                "delete-vulnerability-exceptions",
+                "manage-asset-group-access",
+                "manage-asset-group-assets",
+                "manage-dynamic-asset-groups",
+                "manage-policies",
+                "manage-report-access",
+                "manage-report-templates",
+                "manage-scan-alerts",
+                "manage-scan-engines",
+                "manage-scan-templates",
+                "manage-site-access",
+                "manage-site-credentials",
+                "manage-sites",
+                "manage-static-asset-groups",
+                "manage-tags",
+                "purge-site-asset-data",
+                "schedule-automatic-scans",
+                "specify-scan-targets",
+                "specify-site-metadata",
+                "start-unscheduled-scans",
+                "submit-vulnerability-exceptions",
+                "use-restricted-report-sections",
+                "view-asset-group-asset-data",
+                "view-site-asset-data",
+              ],
+              "superuser": true,
+            },
+          },
+        },
+      ],
+      "_type": "insightvm_user",
+      "createdOn": undefined,
+      "displayName": "admin",
+      "email": "contact@codeworkr.dev",
+      "id": "1",
+      "name": "admin",
+      "username": "admin",
+      "webLink": "https://localhost:3780/api/3/users/1",
+    },
+    Object {
+      "_class": Array [
+        "User",
+      ],
+      "_key": "insightvm_user:2",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "authentication": Object {
+              "external": false,
+              "id": 2,
+              "links": Array [
+                Object {
+                  "href": "https://localhost:3780/api/3/authentication_sources/2",
+                  "rel": "self",
+                },
+                Object {
+                  "href": "https://localhost:3780/api/3/authentication_sources/2/users",
+                  "rel": "Authentication Source Users",
+                },
+              ],
+              "name": "Builtin Users",
+              "type": "normal",
+            },
+            "email": "johndoe@codework.dev",
+            "enabled": true,
+            "id": 2,
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/users/2",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/authentication_sources/2",
+                "rel": "Authentication Source",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/2/asset_groups",
+                "rel": "Asset Groups",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/2/sites",
+                "rel": "Sites",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/2/privileges",
+                "rel": "Privileges",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/roles/user",
+                "rel": "Role",
+              },
+            ],
+            "locale": Object {
+              "default": "en-US",
+              "reports": "en-US",
+            },
+            "locked": false,
+            "login": "TestUser",
+            "name": "John Doe",
+            "role": Object {
+              "allAssetGroups": false,
+              "allSites": false,
+              "id": "user",
+              "name": "User",
+              "privileges": Array [
+                "assign-ticket-assignee",
+                "close-tickets",
+                "create-reports",
+                "create-tickets",
+                "view-asset-group-asset-data",
+                "view-site-asset-data",
+              ],
+              "superuser": false,
+            },
+          },
+        },
+      ],
+      "_type": "insightvm_user",
+      "createdOn": undefined,
+      "displayName": "John Doe",
+      "email": "johndoe@codework.dev",
+      "id": "2",
+      "name": "John Doe",
+      "username": "TestUser",
+      "webLink": "https://localhost:3780/api/3/users/2",
+    },
+    Object {
+      "_class": Array [
+        "User",
+      ],
+      "_key": "insightvm_user:3",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "authentication": Object {
+              "external": false,
+              "id": 1,
+              "links": Array [
+                Object {
+                  "href": "https://localhost:3780/api/3/authentication_sources/1",
+                  "rel": "self",
+                },
+                Object {
+                  "href": "https://localhost:3780/api/3/authentication_sources/1/users",
+                  "rel": "Authentication Source Users",
+                },
+              ],
+              "name": "Builtin Administrators",
+              "type": "admin",
+            },
+            "email": "read@creativice.com",
+            "enabled": true,
+            "id": 3,
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/users/3",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/authentication_sources/1",
+                "rel": "Authentication Source",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/3/asset_groups",
+                "rel": "Asset Groups",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/3/sites",
+                "rel": "Sites",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/users/3/privileges",
+                "rel": "Privileges",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/roles/global-admin",
+                "rel": "Role",
+              },
+            ],
+            "locale": Object {
+              "default": "en-US",
+              "reports": "en-US",
+            },
+            "locked": false,
+            "login": "ReadOnlyUser",
+            "name": "Read User",
+            "role": Object {
+              "allAssetGroups": true,
+              "allSites": true,
+              "id": "global-admin",
+              "name": "Global Administrator",
+              "privileges": Array [
+                "all-permissions",
+                "approve-vulnerability-exceptions",
+                "assign-scan-engine",
+                "assign-scan-template",
+                "assign-ticket-assignee",
+                "close-tickets",
+                "configure-global-settings",
+                "create-reports",
+                "create-tickets",
+                "delete-vulnerability-exceptions",
+                "manage-asset-group-access",
+                "manage-asset-group-assets",
+                "manage-dynamic-asset-groups",
+                "manage-policies",
+                "manage-report-access",
+                "manage-report-templates",
+                "manage-scan-alerts",
+                "manage-scan-engines",
+                "manage-scan-templates",
+                "manage-site-access",
+                "manage-site-credentials",
+                "manage-sites",
+                "manage-static-asset-groups",
+                "manage-tags",
+                "purge-site-asset-data",
+                "schedule-automatic-scans",
+                "specify-scan-targets",
+                "specify-site-metadata",
+                "start-unscheduled-scans",
+                "submit-vulnerability-exceptions",
+                "use-restricted-report-sections",
+                "view-asset-group-asset-data",
+                "view-site-asset-data",
+              ],
+              "superuser": true,
+            },
+          },
+        },
+      ],
+      "_type": "insightvm_user",
+      "createdOn": undefined,
+      "displayName": "Read User",
+      "email": "read@creativice.com",
+      "id": "3",
+      "name": "Read User",
+      "username": "ReadOnlyUser",
+      "webLink": "https://localhost:3780/api/3/users/3",
+    },
+    Object {
+      "_class": Array [
+        "Site",
+      ],
+      "_key": "insightvm_site:1",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "assets": 1,
+            "id": 1,
+            "importance": "normal",
+            "lastScanTime": "2020-09-24T15:06:38.656Z",
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/alerts",
+                "rel": "Alerts",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/scan_engine",
+                "rel": "Scan Engine",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/scan_schedules",
+                "rel": "Schedules",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/organization",
+                "rel": "Organization",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/tags",
+                "rel": "Tags",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/users",
+                "rel": "Users",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/scan_template",
+                "rel": "Template",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/site_credentials",
+                "rel": "Site Credentials",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/shared_credentials",
+                "rel": "Assigned Shared Credentials",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/web_authentication/html_forms",
+                "rel": "Web HTML Forms Authentication",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/web_authentication/http_headers",
+                "rel": "Web HTTP Headers Authentication",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/assets",
+                "rel": "Assets",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/included_targets",
+                "rel": "Included Targets",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/excluded_targets",
+                "rel": "Excluded Targets",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/included_asset_groups",
+                "rel": "Included Asset Groups",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1/excluded_asset_groups",
+                "rel": "Excluded Asset Groups",
+              },
+            ],
+            "name": "Local Site",
+            "riskScore": 578,
+            "scanEngine": 3,
+            "scanTemplate": "full-audit-without-web-spider",
+            "type": "static",
+            "vulnerabilities": Object {
+              "critical": 0,
+              "moderate": 1,
+              "severe": 0,
+              "total": 1,
+            },
+          },
+        },
+      ],
+      "_type": "insightvm_site",
+      "assets": 1,
+      "createdOn": undefined,
+      "displayName": "Local Site",
+      "id": "1",
+      "importance": "normal",
+      "name": "Local Site",
+      "type": "static",
+      "webLink": "https://localhost:3780/api/3/sites/1",
+    },
+    Object {
+      "_class": Array [
+        "Process",
+      ],
+      "_key": "insightvm_scan:1",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "assets": 1,
+            "duration": "PT13M40.691S",
+            "endTime": "2020-09-24T15:06:38.656Z",
+            "engineId": 3,
+            "engineName": "Local scan engine",
+            "id": 1,
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/scans/1",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/scan_engines/3",
+                "id": 3,
+                "rel": "Scan Engine",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/sites/1",
+                "rel": "Site",
+              },
+            ],
+            "scanName": "First Scan",
+            "scanType": "Manual",
+            "siteId": 1,
+            "siteName": "Local Site",
+            "startTime": "2020-09-24T14:52:57.965Z",
+            "status": "finished",
+            "vulnerabilities": Object {
+              "critical": 0,
+              "moderate": 1,
+              "severe": 0,
+              "total": 1,
+            },
+          },
+        },
+      ],
+      "_type": "insightvm_scan",
+      "active": false,
+      "assets": 1,
+      "createdOn": undefined,
+      "displayName": "First Scan",
+      "engineId": 3,
+      "engineName": "Local scan engine",
+      "id": "1",
+      "name": "First Scan",
+      "siteId": 1,
+      "siteName": "Local Site",
+      "state": "finished",
+      "status": "finished",
+      "webLink": "https://localhost:3780/api/3/scans/1",
+    },
+    Object {
+      "_class": Array [
+        "Device",
+      ],
+      "_key": "insightvm_asset:1",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "addresses": Array [
+              Object {
+                "ip": "192.168.0.101",
+                "mac": "AC:22:0B:52:BB:1C",
+              },
+            ],
+            "assessedForPolicies": false,
+            "assessedForVulnerabilities": true,
+            "history": Array [
+              Object {
+                "date": "2020-09-24T15:06:28.045Z",
+                "scanId": 1,
+                "type": "SCAN",
+                "version": 1,
+              },
+              Object {
+                "date": "2020-09-25T17:03:08.038Z",
+                "type": "SCAN",
+                "version": 2,
+              },
+            ],
+            "hostName": "extreme-desktop",
+            "hostNames": Array [
+              Object {
+                "name": "extreme-desktop",
+                "source": "other",
+              },
+            ],
+            "id": 1,
+            "ids": Array [
+              Object {
+                "id": "1D7A5A80-B842-11DC-96E4-AC220B52BB1C",
+                "source": "dmidecode",
+              },
+            ],
+            "ip": "192.168.0.101",
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/software",
+                "rel": "Software",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/files",
+                "rel": "Files",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/users",
+                "rel": "Users",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/user_groups",
+                "rel": "User Groups",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/databases",
+                "rel": "Databases",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/services",
+                "rel": "Services",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/tags",
+                "rel": "Tags",
+              },
+            ],
+            "mac": "AC:22:0B:52:BB:1C",
+            "os": "Linux 19.3",
+            "osFingerprint": Object {
+              "architecture": "x86_64",
+              "description": "Linux 19.3",
+              "family": "Linux",
+              "id": 2,
+              "product": "Linux",
+              "systemName": " Linux",
+              "version": "19.3",
+            },
+            "rawRiskScore": 577.512451171875,
+            "riskScore": 577.512451171875,
+            "services": Array [
+              Object {
+                "links": Array [
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/udp/123",
+                    "rel": "self",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/udp/123/configurations",
+                    "rel": "Configurations",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/udp/123/databases",
+                    "rel": "Databases",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/udp/123/users",
+                    "rel": "Users",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/udp/123/user_groups",
+                    "rel": "User Groups",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/udp/123/web_applications",
+                    "rel": "Web Applications",
+                  },
+                ],
+                "name": "NTP",
+                "port": 123,
+                "protocol": "udp",
+              },
+              Object {
+                "configurations": Array [
+                  Object {
+                    "name": "ssh.banner",
+                    "value": "SSH-2.0-Microsoft.VisualStudio.Ssh_2.0.7",
+                  },
+                  Object {
+                    "name": "ssh.protocol.version",
+                    "value": "2.0",
+                  },
+                ],
+                "links": Array [
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/5990",
+                    "rel": "self",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/5990/configurations",
+                    "rel": "Configurations",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/5990/databases",
+                    "rel": "Databases",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/5990/users",
+                    "rel": "Users",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/5990/user_groups",
+                    "rel": "User Groups",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/5990/web_applications",
+                    "rel": "Web Applications",
+                  },
+                ],
+                "name": "SSH",
+                "port": 5990,
+                "protocol": "tcp",
+              },
+            ],
+            "type": "physical",
+            "userGroups": Array [
+              Object {
+                "id": 4,
+                "name": "adm",
+              },
+              Object {
+                "id": 29,
+                "name": "audio",
+              },
+              Object {
+                "id": 120,
+                "name": "avahi",
+              },
+              Object {
+                "id": 119,
+                "name": "avahi-autoipd",
+              },
+              Object {
+                "id": 34,
+                "name": "backup",
+              },
+              Object {
+                "id": 2,
+                "name": "bin",
+              },
+              Object {
+                "id": 121,
+                "name": "bluetooth",
+              },
+              Object {
+                "id": 24,
+                "name": "cdrom",
+              },
+              Object {
+                "id": 123,
+                "name": "colord",
+              },
+              Object {
+                "id": 107,
+                "name": "crontab",
+              },
+              Object {
+                "id": 1,
+                "name": "daemon",
+              },
+              Object {
+                "id": 20,
+                "name": "dialout",
+              },
+              Object {
+                "id": 30,
+                "name": "dip",
+              },
+              Object {
+                "id": 6,
+                "name": "disk",
+              },
+              Object {
+                "id": 998,
+                "name": "docker",
+              },
+              Object {
+                "id": 1000,
+                "name": "extreme",
+              },
+              Object {
+                "id": 21,
+                "name": "fax",
+              },
+              Object {
+                "id": 25,
+                "name": "floppy",
+              },
+              Object {
+                "id": 60,
+                "name": "games",
+              },
+              Object {
+                "id": 124,
+                "name": "geoclue",
+              },
+              Object {
+                "id": 41,
+                "name": "gnats",
+              },
+              Object {
+                "id": 999,
+                "name": "guest-lhzpq4",
+              },
+              Object {
+                "id": 106,
+                "name": "input",
+              },
+              Object {
+                "id": 39,
+                "name": "irc",
+              },
+              Object {
+                "id": 15,
+                "name": "kmem",
+              },
+              Object {
+                "id": 114,
+                "name": "lightdm",
+              },
+              Object {
+                "id": 38,
+                "name": "list",
+              },
+              Object {
+                "id": 7,
+                "name": "lp",
+              },
+              Object {
+                "id": 113,
+                "name": "lpadmin",
+              },
+              Object {
+                "id": 8,
+                "name": "mail",
+              },
+              Object {
+                "id": 12,
+                "name": "man",
+              },
+              Object {
+                "id": 110,
+                "name": "messagebus",
+              },
+              Object {
+                "id": 117,
+                "name": "mlocate",
+              },
+              Object {
+                "id": 133,
+                "name": "mongodb",
+              },
+              Object {
+                "id": 109,
+                "name": "netdev",
+              },
+              Object {
+                "id": 9,
+                "name": "news",
+              },
+              Object {
+                "id": 127,
+                "name": "nm-openvpn",
+              },
+              Object {
+                "id": 65534,
+                "name": "nogroup",
+              },
+              Object {
+                "id": 115,
+                "name": "nopasswdlogin",
+              },
+              Object {
+                "id": 116,
+                "name": "ntp",
+              },
+              Object {
+                "id": 131,
+                "name": "nvidia-persistenced",
+              },
+              Object {
+                "id": 1001,
+                "name": "nxpgsql",
+              },
+              Object {
+                "id": 37,
+                "name": "operator",
+              },
+              Object {
+                "id": 46,
+                "name": "plugdev",
+              },
+              Object {
+                "id": 13,
+                "name": "proxy",
+              },
+              Object {
+                "id": 125,
+                "name": "pulse",
+              },
+              Object {
+                "id": 126,
+                "name": "pulse-access",
+              },
+              Object {
+                "id": 105,
+                "name": "rdma",
+              },
+              Object {
+                "id": 134,
+                "name": "redis",
+              },
+              Object {
+                "id": 0,
+                "name": "root",
+              },
+              Object {
+                "id": 128,
+                "name": "rtkit",
+              },
+              Object {
+                "id": 130,
+                "name": "sambashare",
+              },
+              Object {
+                "id": 129,
+                "name": "saned",
+              },
+              Object {
+                "id": 45,
+                "name": "sasl",
+              },
+              Object {
+                "id": 122,
+                "name": "scanner",
+              },
+              Object {
+                "id": 42,
+                "name": "shadow",
+              },
+              Object {
+                "id": 40,
+                "name": "src",
+              },
+              Object {
+                "id": 118,
+                "name": "ssh",
+              },
+              Object {
+                "id": 112,
+                "name": "ssl-cert",
+              },
+              Object {
+                "id": 50,
+                "name": "staff",
+              },
+              Object {
+                "id": 27,
+                "name": "sudo",
+              },
+              Object {
+                "id": 3,
+                "name": "sys",
+              },
+              Object {
+                "id": 108,
+                "name": "syslog",
+              },
+              Object {
+                "id": 101,
+                "name": "systemd-journal",
+              },
+              Object {
+                "id": 103,
+                "name": "systemd-network",
+              },
+              Object {
+                "id": 104,
+                "name": "systemd-resolve",
+              },
+              Object {
+                "id": 102,
+                "name": "systemd-timesync",
+              },
+              Object {
+                "id": 26,
+                "name": "tape",
+              },
+              Object {
+                "id": 5,
+                "name": "tty",
+              },
+              Object {
+                "id": 100,
+                "name": "users",
+              },
+              Object {
+                "id": 43,
+                "name": "utmp",
+              },
+              Object {
+                "id": 10,
+                "name": "uucp",
+              },
+              Object {
+                "id": 111,
+                "name": "uuidd",
+              },
+              Object {
+                "id": 132,
+                "name": "vboxusers",
+              },
+              Object {
+                "id": 44,
+                "name": "video",
+              },
+              Object {
+                "id": 22,
+                "name": "voice",
+              },
+              Object {
+                "id": 33,
+                "name": "www-data",
+              },
+            ],
+            "users": Array [
+              Object {
+                "id": 105,
+                "name": "_apt",
+              },
+              Object {
+                "fullName": "Avahi mDNS daemon,,,",
+                "id": 111,
+                "name": "avahi",
+              },
+              Object {
+                "fullName": "Avahi autoip daemon,,,",
+                "id": 110,
+                "name": "avahi-autoipd",
+              },
+              Object {
+                "fullName": "backup",
+                "id": 34,
+                "name": "backup",
+              },
+              Object {
+                "fullName": "bin",
+                "id": 2,
+                "name": "bin",
+              },
+              Object {
+                "fullName": "colord colour management daemon,,,",
+                "id": 113,
+                "name": "colord",
+              },
+              Object {
+                "fullName": "user for cups-pk-helper service,,,",
+                "id": 124,
+                "name": "cups-pk-helper",
+              },
+              Object {
+                "fullName": "daemon",
+                "id": 1,
+                "name": "daemon",
+              },
+              Object {
+                "fullName": "dnsmasq,,,",
+                "id": 112,
+                "name": "dnsmasq",
+              },
+              Object {
+                "fullName": "eXtreme,,,",
+                "id": 1000,
+                "name": "extreme",
+              },
+              Object {
+                "fullName": "games",
+                "id": 5,
+                "name": "games",
+              },
+              Object {
+                "id": 114,
+                "name": "geoclue",
+              },
+              Object {
+                "fullName": "Gnats Bug-Reporting System (admin)",
+                "id": 41,
+                "name": "gnats",
+              },
+              Object {
+                "fullName": "Guest",
+                "id": 999,
+                "name": "guest-lhzpq4",
+              },
+              Object {
+                "fullName": "HPLIP system user,,,",
+                "id": 116,
+                "name": "hplip",
+              },
+              Object {
+                "fullName": "ircd",
+                "id": 39,
+                "name": "irc",
+              },
+              Object {
+                "fullName": "Kernel Oops Tracking Daemon,,,",
+                "id": 117,
+                "name": "kernoops",
+              },
+              Object {
+                "fullName": "Light Display Manager",
+                "id": 108,
+                "name": "lightdm",
+              },
+              Object {
+                "fullName": "Mailing List Manager",
+                "id": 38,
+                "name": "list",
+              },
+              Object {
+                "fullName": "lp",
+                "id": 7,
+                "name": "lp",
+              },
+              Object {
+                "fullName": "mail",
+                "id": 8,
+                "name": "mail",
+              },
+              Object {
+                "fullName": "man",
+                "id": 6,
+                "name": "man",
+              },
+              Object {
+                "id": 106,
+                "name": "messagebus",
+              },
+              Object {
+                "id": 123,
+                "name": "mongodb",
+              },
+              Object {
+                "fullName": "news",
+                "id": 9,
+                "name": "news",
+              },
+              Object {
+                "fullName": "NetworkManager OpenVPN,,,",
+                "id": 119,
+                "name": "nm-openvpn",
+              },
+              Object {
+                "fullName": "nobody",
+                "id": 65534,
+                "name": "nobody",
+              },
+              Object {
+                "id": 109,
+                "name": "ntp",
+              },
+              Object {
+                "fullName": "NVIDIA Persistence Daemon,,,",
+                "id": 103,
+                "name": "nvidia-persistenced",
+              },
+              Object {
+                "fullName": "NeXpose PostgreSQL User",
+                "id": 1001,
+                "name": "nxpgsql",
+              },
+              Object {
+                "fullName": "proxy",
+                "id": 13,
+                "name": "proxy",
+              },
+              Object {
+                "fullName": "PulseAudio daemon,,,",
+                "id": 118,
+                "name": "pulse",
+              },
+              Object {
+                "id": 125,
+                "name": "redis",
+              },
+              Object {
+                "fullName": "root",
+                "id": 0,
+                "name": "root",
+              },
+              Object {
+                "fullName": "RealtimeKit,,,",
+                "id": 120,
+                "name": "rtkit",
+              },
+              Object {
+                "id": 121,
+                "name": "saned",
+              },
+              Object {
+                "fullName": "Speech Dispatcher,,,",
+                "id": 115,
+                "name": "speech-dispatcher",
+              },
+              Object {
+                "fullName": "sync",
+                "id": 4,
+                "name": "sync",
+              },
+              Object {
+                "fullName": "sys",
+                "id": 3,
+                "name": "sys",
+              },
+              Object {
+                "id": 104,
+                "name": "syslog",
+              },
+              Object {
+                "fullName": "systemd Network Management,,,",
+                "id": 101,
+                "name": "systemd-network",
+              },
+              Object {
+                "fullName": "systemd Resolver,,,",
+                "id": 102,
+                "name": "systemd-resolve",
+              },
+              Object {
+                "fullName": "systemd Time Synchronization,,,",
+                "id": 100,
+                "name": "systemd-timesync",
+              },
+              Object {
+                "fullName": "usbmux daemon,,,",
+                "id": 122,
+                "name": "usbmux",
+              },
+              Object {
+                "fullName": "uucp",
+                "id": 10,
+                "name": "uucp",
+              },
+              Object {
+                "id": 107,
+                "name": "uuidd",
+              },
+              Object {
+                "fullName": "www-data",
+                "id": 33,
+                "name": "www-data",
+              },
+            ],
+            "vulnerabilities": Object {
+              "critical": 0,
+              "exploits": 0,
+              "malwareKits": 0,
+              "moderate": 1,
+              "severe": 0,
+              "total": 1,
+            },
+          },
+        },
+      ],
+      "_type": "insightvm_asset",
+      "category": "server",
+      "createdOn": undefined,
+      "displayName": "extreme-desktop",
+      "id": "1",
+      "make": "unknown",
+      "model": "unknown",
+      "name": "extreme-desktop",
+      "serial": "unknown",
+      "webLink": "https://localhost:3780/api/3/assets/1",
+    },
+    Object {
+      "_class": Array [
+        "Vulnerability",
+      ],
+      "_key": "insightvm_vulnerability:unix-user-home-dir-mode",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "id": "unix-user-home-dir-mode",
+            "instances": 1,
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/vulnerabilities/unix-user-home-dir-mode",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/vulnerabilities/unix-user-home-dir-mode",
+                "id": "unix-user-home-dir-mode",
+                "rel": "Vulnerability",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/vulnerabilities/unix-user-home-dir-mode/validations",
+                "id": "unix-user-home-dir-mode",
+                "rel": "Vulnerability Validations",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/vulnerabilities/unix-user-home-dir-mode/solution",
+                "id": "unix-user-home-dir-mode",
+                "rel": "Vulnerability Solutions",
+              },
+            ],
+            "results": Array [
+              Object {
+                "proof": "<p><p>The permissions for home directory of user extreme was found to be 755 which is more permissive than 750.</p></p>",
+                "since": "2020-09-24T15:06:28.045Z",
+                "status": "vulnerable-version",
+              },
+            ],
+            "since": "2020-09-24T15:06:28.045Z",
+            "status": "vulnerable",
+          },
+        },
+      ],
+      "_type": "insightvm_vulnerability",
+      "active": false,
+      "blocking": false,
+      "category": "other",
+      "createdOn": undefined,
+      "displayName": "unix-user-home-dir-mode",
+      "id": "unix-user-home-dir-mode",
+      "name": "unix-user-home-dir-mode",
+      "open": false,
+      "production": false,
+      "public": true,
+      "severity": "critical",
+      "status": "vulnerable",
     },
   ],
   "collectedRelationships": Array [
     Object {
       "_class": "HAS",
-      "_fromEntityKey": "acme-unique-account-id",
-      "_key": "acme-unique-account-id|has|acme-user-1",
-      "_toEntityKey": "acme-user-1",
-      "_type": "acme_account_has_user",
+      "_fromEntityKey": "insightvm_account:root",
+      "_key": "insightvm_account:root|has|insightvm_user:1",
+      "_toEntityKey": "insightvm_user:1",
+      "_type": "insightvm_account_has_user",
       "displayName": "HAS",
     },
     Object {
       "_class": "HAS",
-      "_fromEntityKey": "acme-unique-account-id",
-      "_key": "acme-unique-account-id|has|acme-user-2",
-      "_toEntityKey": "acme-user-2",
-      "_type": "acme_account_has_user",
+      "_fromEntityKey": "insightvm_account:root",
+      "_key": "insightvm_account:root|has|insightvm_user:2",
+      "_toEntityKey": "insightvm_user:2",
+      "_type": "insightvm_account_has_user",
       "displayName": "HAS",
     },
     Object {
       "_class": "HAS",
-      "_fromEntityKey": "acme-unique-account-id",
-      "_key": "acme-unique-account-id|has|acme-group-1",
-      "_toEntityKey": "acme-group-1",
-      "_type": "acme_account_has_group",
+      "_fromEntityKey": "insightvm_account:root",
+      "_key": "insightvm_account:root|has|insightvm_user:3",
+      "_toEntityKey": "insightvm_user:3",
+      "_type": "insightvm_account_has_user",
       "displayName": "HAS",
     },
     Object {
       "_class": "HAS",
-      "_fromEntityKey": "acme-group-1",
-      "_key": "acme-group-1|has|acme-user-1",
-      "_toEntityKey": "acme-user-1",
-      "_type": "acme_group_has_user",
+      "_fromEntityKey": "insightvm_account:root",
+      "_key": "insightvm_account:root|has|insightvm_site:1",
+      "_toEntityKey": "insightvm_site:1",
+      "_type": "insightvm_account_has_site",
       "displayName": "HAS",
+    },
+    Object {
+      "_class": "HAS",
+      "_fromEntityKey": "insightvm_site:1",
+      "_key": "insightvm_site:1|has|insightvm_scan:1",
+      "_toEntityKey": "insightvm_scan:1",
+      "_type": "insightvm_site_has_scan",
+      "displayName": "HAS",
+    },
+    Object {
+      "_class": "HAS",
+      "_fromEntityKey": "insightvm_site:1",
+      "_key": "insightvm_site:1|has|insightvm_asset:1",
+      "_toEntityKey": "insightvm_asset:1",
+      "_type": "insightvm_site_has_asset",
+      "displayName": "HAS",
+    },
+    Object {
+      "_class": "EXPLOITS",
+      "_fromEntityKey": "insightvm_vulnerability:unix-user-home-dir-mode",
+      "_key": "insightvm_vulnerability:unix-user-home-dir-mode|exploits|insightvm_asset:1",
+      "_toEntityKey": "insightvm_asset:1",
+      "_type": "insightvm_vulnerability_exploits_asset",
+      "displayName": "EXPLOITS",
     },
   ],
   "encounteredTypes": Array [
-    "acme_account",
-    "acme_user",
-    "acme_account_has_user",
-    "acme_group",
-    "acme_account_has_group",
-    "acme_group_has_user",
+    "insightvm_account",
+    "insightvm_user",
+    "insightvm_account_has_user",
+    "insightvm_site",
+    "insightvm_account_has_site",
+    "insightvm_scan",
+    "insightvm_site_has_scan",
+    "insightvm_asset",
+    "insightvm_site_has_asset",
+    "insightvm_vulnerability",
+    "insightvm_vulnerability_exploits_asset",
   ],
-  "numCollectedEntities": 4,
-  "numCollectedRelationships": 4,
+  "numCollectedEntities": 8,
+  "numCollectedRelationships": 7,
 }
 `;

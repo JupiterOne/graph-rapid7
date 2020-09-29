@@ -12,23 +12,26 @@
     "access": "public"
   },
   "scripts": {
-    "start": "j1-integration collect",
+    "start": "NODE_TLS_REJECT_UNAUTHORIZED=0 j1-integration collect",
     "graph": "j1-integration visualize",
     "lint": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
     "type-check": "tsc",
-    "test": "jest",
+    "test": "NODE_TLS_REJECT_UNAUTHORIZED=0 jest",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepush": "yarn lint && yarn type-check && jest --changedSince master",
     "prepack": "yarn build"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^3.0.0"
+    "@jupiterone/integration-sdk-core": "^3.1.0"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^3.0.0",
-    "@jupiterone/integration-sdk-dev-tools": "^3.0.0",
-    "@jupiterone/integration-sdk-testing": "^3.0.0"
+    "@jupiterone/integration-sdk-core": "^3.1.0",
+    "@jupiterone/integration-sdk-dev-tools": "^3.1.0",
+    "@jupiterone/integration-sdk-testing": "^3.1.0"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0"
   }
 }

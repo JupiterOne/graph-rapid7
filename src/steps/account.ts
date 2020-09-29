@@ -4,34 +4,40 @@ import {
   IntegrationStepExecutionContext,
 } from '@jupiterone/integration-sdk-core';
 
+import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
+import { ACCOUNT_ENTITY_DATA_KEY, entities } from '../constants';
 
-export const ACCOUNT_ENTITY_KEY = 'entity:account';
+export function getAccountKey(user: string): string {
+  return `insightvm_account:${user}`;
+}
 
 export async function fetchAccountDetails({
+  instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
+  const apiClient = createAPIClient(instance.config);
+
+  const account = await apiClient.getAccount();
+  const [webLink] = account.links;
+
   const accountEntity = createIntegrationEntity({
     entityData: {
-      source: {
-        id: 'acme-unique-account-id',
-        name: 'Example Co. Acme Account',
-      },
+      source: account,
       assign: {
-        _key: 'acme-unique-account-id',
-        _type: 'acme_account',
-        _class: 'Account',
-        mfaEnabled: true,
-        // This is a custom property that is not a part of the data model class
-        // hierarchy. See: https://github.com/JupiterOne/data-model/blob/master/src/schemas/Account.json
-        manager: 'Manager Name',
+        _key: getAccountKey(account.user),
+        _type: entities.ACCOUNT._type,
+        _class: entities.ACCOUNT._class,
+        name: account.user,
+        webLink: webLink.href,
+        accessUrl: instance.config.insightHost,
       },
     },
   });
 
   await Promise.all([
     jobState.addEntity(accountEntity),
-    jobState.setData(ACCOUNT_ENTITY_KEY, accountEntity),
+    jobState.setData(ACCOUNT_ENTITY_DATA_KEY, accountEntity),
   ]);
 }
 
@@ -39,13 +45,7 @@ export const accountSteps: IntegrationStep<IntegrationConfig>[] = [
   {
     id: 'fetch-account',
     name: 'Fetch Account Details',
-    entities: [
-      {
-        resourceName: 'Account',
-        _type: 'acme_account',
-        _class: 'Account',
-      },
-    ],
+    entities: [entities.ACCOUNT],
     relationships: [],
     dependsOn: [],
     executionHandler: fetchAccountDetails,

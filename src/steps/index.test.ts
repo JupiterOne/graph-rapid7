@@ -1,96 +1,272 @@
-import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
+import {
+  createMockStepExecutionContext,
+  Recording,
+  setupRecording,
+} from '@jupiterone/integration-sdk-testing';
 
 import { IntegrationConfig } from '../types';
-import { fetchGroups, fetchUsers } from './access';
+import { fetchUsers } from './access';
 import { fetchAccountDetails } from './account';
+import { fetchSites } from './sites';
+import { fetchScans } from './scans';
+import { fetchAssets } from './assets';
+import { fetchSiteAssets } from './site-assets';
+import { fetchVulnerabilities } from './vulnerabilities';
 
-const DEFAULT_CLIENT_ID = 'dummy-acme-client-id';
-const DEFAULT_CLIENT_SECRET = 'dummy-acme-client-secret';
+const DEFAULT_INSIGHT_HOST = 'localhost:3780';
+const DEFAULT_INSIGHT_CLIENT_USERNAME = 'admin';
+const DEFAULT_INSIGHT_CLIENT_PASSWORD = 'admin_password';
 
 const integrationConfig: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || DEFAULT_CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET || DEFAULT_CLIENT_SECRET,
+  insightHost: process.env.INSIGHT_HOST || DEFAULT_INSIGHT_HOST,
+  insightClientUsername:
+    process.env.INSIGHT_CLIENT_USERNAME || DEFAULT_INSIGHT_CLIENT_USERNAME,
+  insightClientPassword:
+    process.env.INSIGHT_CLIENT_PASSWORD || DEFAULT_INSIGHT_CLIENT_PASSWORD,
 };
 
-test('should collect data', async () => {
-  const context = createMockStepExecutionContext<IntegrationConfig>({
-    instanceConfig: integrationConfig,
+jest.setTimeout(10 * 1000);
+
+describe('Rapid7 InsightVM', () => {
+  let recording: Recording;
+
+  beforeEach(() => {
+    recording = setupRecording({
+      directory: __dirname,
+      name: 'jfrog_recordings',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
   });
 
-  // Simulates dependency graph execution.
-  // See https://github.com/JupiterOne/sdk/issues/262.
-  await fetchAccountDetails(context);
-  await fetchUsers(context);
-  await fetchGroups(context);
-
-  // Review snapshot, failure is a regression
-  expect({
-    numCollectedEntities: context.jobState.collectedEntities.length,
-    numCollectedRelationships: context.jobState.collectedRelationships.length,
-    collectedEntities: context.jobState.collectedEntities,
-    collectedRelationships: context.jobState.collectedRelationships,
-    encounteredTypes: context.jobState.encounteredTypes,
-  }).toMatchSnapshot();
-
-  expect(
-    context.jobState.collectedEntities.filter((e) =>
-      e._class.includes('Account'),
-    ),
-  ).toMatchGraphObjectSchema({
-    _class: ['Account'],
-    schema: {
-      additionalProperties: false,
-      properties: {
-        _type: { const: 'acme_account' },
-        manager: { type: 'string' },
-        _rawData: {
-          type: 'array',
-          items: { type: 'object' },
-        },
-      },
-      required: ['manager'],
-    },
+  afterEach(async () => {
+    await recording.stop();
   });
 
-  expect(
-    context.jobState.collectedEntities.filter((e) => e._class.includes('User')),
-  ).toMatchGraphObjectSchema({
-    _class: ['User'],
-    schema: {
-      additionalProperties: false,
-      properties: {
-        _type: { const: 'acme_user' },
-        firstName: { type: 'string' },
-        _rawData: {
-          type: 'array',
-          items: { type: 'object' },
-        },
-      },
-      required: ['firstName'],
-    },
-  });
+  test('should collect data', async () => {
+    const context = createMockStepExecutionContext<IntegrationConfig>({
+      instanceConfig: integrationConfig,
+    });
 
-  expect(
-    context.jobState.collectedEntities.filter((e) =>
-      e._class.includes('UserGroup'),
-    ),
-  ).toMatchGraphObjectSchema({
-    _class: ['UserGroup'],
-    schema: {
-      additionalProperties: false,
-      properties: {
-        _type: { const: 'acme_group' },
-        logoLink: {
-          type: 'string',
-          // Validate that the `logoLink` property has a URL format
-          format: 'url',
-        },
-        _rawData: {
-          type: 'array',
-          items: { type: 'object' },
+    // Simulates dependency graph execution.
+    // See https://github.com/JupiterOne/sdk/issues/262.
+    await fetchAccountDetails(context);
+    await fetchUsers(context);
+    await fetchSites(context);
+    await fetchScans(context);
+    await fetchAssets(context);
+    await fetchSiteAssets(context);
+    await fetchVulnerabilities(context);
+
+    // Review snapshot, failure is a regression
+    expect({
+      numCollectedEntities: context.jobState.collectedEntities.length,
+      numCollectedRelationships: context.jobState.collectedRelationships.length,
+      collectedEntities: context.jobState.collectedEntities,
+      collectedRelationships: context.jobState.collectedRelationships,
+      encounteredTypes: context.jobState.encounteredTypes,
+    }).toMatchSnapshot();
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes('Account'),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['Account'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_account' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          webLink: {
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+          accessUrl: {
+            type: 'string',
+          },
         },
       },
-      required: ['logoLink'],
-    },
+    });
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes('User'),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['User'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_user' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          username: {
+            type: 'string',
+          },
+          email: {
+            type: 'string',
+          },
+          webLink: {
+            type: 'string',
+          },
+        },
+      },
+    });
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes('Site'),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['Site'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_site' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          assets: {
+            type: 'number',
+          },
+          importance: {
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+          type: {
+            type: 'string',
+          },
+          webLink: {
+            type: 'string',
+          },
+        },
+      },
+    });
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes('Process'),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['Process'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_scan' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          assets: {
+            type: 'number',
+          },
+          siteName: {
+            type: 'string',
+          },
+          engineName: {
+            type: 'string',
+          },
+          name: {
+            type: 'string',
+          },
+          state: {
+            type: 'string',
+          },
+          webLink: {
+            type: 'string',
+          },
+        },
+      },
+    });
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes('Device'),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['Device'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_asset' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          name: {
+            type: 'string',
+          },
+          category: {
+            type: 'string',
+          },
+          make: {
+            type: 'string',
+          },
+          model: {
+            type: 'string',
+          },
+          serial: {
+            type: 'string',
+          },
+          webLink: {
+            type: 'string',
+          },
+        },
+      },
+    });
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes('Vulnerability'),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['Vulnerability'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_vulnerability' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          name: {
+            type: 'string',
+          },
+          category: {
+            type: 'string',
+          },
+          severity: {
+            type: 'string',
+          },
+          blocking: {
+            type: 'boolean',
+          },
+          open: {
+            type: 'boolean',
+          },
+          production: {
+            type: 'boolean',
+          },
+          public: {
+            type: 'boolean',
+          },
+          webLink: {
+            type: 'string',
+          },
+        },
+      },
+    });
   });
 });
