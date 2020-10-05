@@ -43,9 +43,11 @@ The following relationships are created/mapped:
 | `insightvm_account`       | **HAS**               | `insightvm_asset`     |
 | `insightvm_account`       | **HAS**               | `insightvm_site`      |
 | `insightvm_account`       | **HAS**               | `insightvm_user`      |
-| `insightvm_site`          | **ALLOWS**            | `insightvm_user`      |
+| `insightvm_scan`          | **MONITORS**          | `insightvm_asset`     |
 | `insightvm_site`          | **HAS**               | `insightvm_asset`     |
 | `insightvm_site`          | **HAS**               | `insightvm_scan`      |
+| `insightvm_site`          | **HAS**               | `insightvm_user`      |
+| `insightvm_user`          | **USES**              | `insightvm_asset`     |
 | `insightvm_vulnerability` | **ALLOWS**            | `insightvm_asset`     |
 
 <!--

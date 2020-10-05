@@ -12,10 +12,11 @@ import { fetchScans } from './scans';
 import { fetchAssets } from './assets';
 import { fetchSiteAssets } from './site-assets';
 import { fetchVulnerabilities } from './vulnerabilities';
+import { fetchAssetUsers } from './asset-users';
 
 const DEFAULT_INSIGHT_HOST = 'localhost:3780';
 const DEFAULT_INSIGHT_CLIENT_USERNAME = 'admin';
-const DEFAULT_INSIGHT_CLIENT_PASSWORD = 'admin_password';
+const DEFAULT_INSIGHT_CLIENT_PASSWORD = 'admin-password';
 
 const integrationConfig: IntegrationConfig = {
   insightHost: process.env.INSIGHT_HOST || DEFAULT_INSIGHT_HOST,
@@ -33,7 +34,7 @@ describe('Rapid7 InsightVM', () => {
   beforeEach(() => {
     recording = setupRecording({
       directory: __dirname,
-      name: 'jfrog_recordings',
+      name: 'insightvm_recordings',
       options: {
         recordFailedRequests: true,
       },
@@ -56,6 +57,7 @@ describe('Rapid7 InsightVM', () => {
     await fetchSites(context);
     await fetchScans(context);
     await fetchAssets(context);
+    await fetchAssetUsers(context);
     await fetchSiteAssets(context);
     await fetchVulnerabilities(context);
 

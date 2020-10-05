@@ -9,7 +9,6 @@ import {
   InsightVMUser,
   InsightVMVulnerability,
   IntegrationConfig,
-  StatusError,
   PageIteratee,
   PaginatedResource,
 } from './types';
@@ -60,43 +59,33 @@ export class APIClient {
     pageIteratee: PageIteratee<T>,
   ): Promise<void> {
     let currentPage = 0;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    let body: PaginatedResource<T>;
+
+    do {
       const response = await this.request(
         this.withBaseUri(
           `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
         ),
         'GET',
       );
-      const body: PaginatedResource<T> = await response.json();
+      body = await response.json();
 
       await pageIteratee(body.resources);
 
-      if (!body.page || body.page.number === body.page.totalPages - 1) {
-        break;
-      }
-
       currentPage++;
-    }
+    } while (body.page && body.page.number !== body.page.totalPages - 1);
   }
 
   public async verifyAuthentication(): Promise<void> {
-    try {
-      const response = await this.request(this.withBaseUri('users'), 'GET');
+    const usersApiRoute = this.withBaseUri('users');
+    const response = await this.request(usersApiRoute, 'GET');
 
-      if (response.status !== 200) {
-        throw new StatusError({
-          message: 'Provider authentication failed',
-          statusCode: response.status,
-          statusText: response.statusText,
-        });
-      }
-    } catch (err) {
+    if (!response.ok) {
       throw new IntegrationProviderAuthenticationError({
-        cause: err,
-        endpoint: `https://${this.insightHost}/api/3/users`,
-        status: err.options ? err.options.statusCode : -1,
-        statusText: err.options ? err.options.statusText : '',
+        cause: new Error('Provider authentication failed'),
+        endpoint: usersApiRoute,
+        status: response.status,
+        statusText: response.statusText,
       });
     }
   }
@@ -124,7 +113,7 @@ export class APIClient {
   }
 
   /**
-   * Iterates each user resource in the provider.
+   * Iterates each site resource in the provider.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -139,7 +128,26 @@ export class APIClient {
   }
 
   /**
-   * Iterates each user resource in the provider.
+   * Iterates each scan resource for a given site.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateSiteScans(
+    siteId: string,
+    iteratee: ResourceIteratee<InsightVMScan>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVMScan>(
+      `sites/${siteId}/scans`,
+      async (scans) => {
+        for (const scan of scans) {
+          await iteratee(scan);
+        }
+      },
+    );
+  }
+
+  /**
+   * Iterates each scan resource in the provider.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -154,7 +162,7 @@ export class APIClient {
   }
 
   /**
-   * Iterates each user resource in the provider.
+   * Iterates each asset resource in the provider.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -169,7 +177,7 @@ export class APIClient {
   }
 
   /**
-   * Iterates each user resource in the provider.
+   * Iterates each asset resource for a given site.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -188,7 +196,26 @@ export class APIClient {
   }
 
   /**
-   * Iterates each user resource in the provider.
+   * Iterates each user resource for a given asset.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateAssetUsers(
+    assetId: string,
+    iteratee: ResourceIteratee<InsightVMUser>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVMUser>(
+      `assets/${assetId}/users`,
+      async (users) => {
+        for (const user of users) {
+          await iteratee(user);
+        }
+      },
+    );
+  }
+
+  /**
+   * Iterates each user resource for a given site.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
@@ -207,7 +234,7 @@ export class APIClient {
   }
 
   /**
-   * Iterates each user resource in the provider.
+   * Iterates each vulnerability resource in the provider.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */

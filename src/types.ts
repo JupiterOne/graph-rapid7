@@ -6,7 +6,7 @@ import { IntegrationInstanceConfig } from '@jupiterone/integration-sdk-core';
  */
 export interface IntegrationConfig extends IntegrationInstanceConfig {
   /**
-   * The administrator account username for authentication.
+   * The hostname of the InsightVM instance.
    */
   insightHost: string;
 
@@ -21,19 +21,9 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   insightClientPassword: string;
 }
 
-export class StatusError extends Error {
-  constructor(
-    readonly options: {
-      statusCode: number;
-      statusText: string;
-      message?: string;
-    },
-  ) {
-    super(options.message);
-    this.name = 'StatusError';
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
+export type SiteAssetsMap = {
+  [key: string]: string[];
+};
 
 export type Link = {
   href: string;

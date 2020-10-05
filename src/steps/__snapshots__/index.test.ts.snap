@@ -13,13 +13,13 @@ Object {
           "name": "default",
           "rawData": Object {
             "cpu": Object {
-              "clockSpeed": 2643,
+              "clockSpeed": 4306,
               "count": 8,
             },
             "disk": Object {
               "free": Object {
-                "bytes": 7144443904,
-                "formatted": "6.7 GB",
+                "bytes": 6005837824,
+                "formatted": "5.6 GB",
               },
               "installation": Object {
                 "backups": Object {
@@ -27,8 +27,8 @@ Object {
                   "formatted": "0 bytes",
                 },
                 "database": Object {
-                  "bytes": 2963349842,
-                  "formatted": "2.8 GB",
+                  "bytes": 2927702155,
+                  "formatted": "2.7 GB",
                 },
                 "directory": "/opt/rapid7/nexpose",
                 "reports": Object {
@@ -40,7 +40,7 @@ Object {
                   "formatted": "44.4 KB",
                 },
                 "total": Object {
-                  "bytes": 5426559396,
+                  "bytes": 5525415762,
                   "formatted": "5.1 GB",
                 },
               },
@@ -55,8 +55,8 @@ Object {
             "ip": "127.0.1.1",
             "jvm": Object {
               "name": "OpenJDK 64-Bit Server VM",
-              "startTime": "2020-09-29T11:49:18.455Z",
-              "uptime": "PT2H20M18.797S",
+              "startTime": "2020-10-05T11:26:08.492Z",
+              "uptime": "PT3H53M24.378S",
               "vendor": "Azul Systems, Inc.",
               "version": "25.252-b14",
             },
@@ -68,8 +68,8 @@ Object {
             ],
             "memory": Object {
               "free": Object {
-                "bytes": 176381952,
-                "formatted": "168.2 MB",
+                "bytes": 214417408,
+                "formatted": "204.5 MB",
               },
               "total": Object {
                 "bytes": 16684572672,
@@ -81,18 +81,18 @@ Object {
             "superuser": true,
             "user": "root",
             "version": Object {
-              "build": "4",
-              "changeset": "58d6d08f954def408a8ab971ba42786617df3afa",
+              "build": "213",
+              "changeset": "fa14553838f1251ad008d86c906520c8bbfff55c",
               "platform": "Linux64",
-              "semantic": "6.6.45",
+              "semantic": "6.6.46",
               "update": Object {
-                "content": "358499279",
-                "contentPartial": "2645384711 (2020-09-28)",
+                "content": "1500556400",
+                "contentPartial": "3503989404 (2020-10-02)",
                 "id": Object {
                   "productId": "299067162755562",
                   "versionId": "490",
                 },
-                "product": "2669655303",
+                "product": "505267850",
               },
             },
           },
@@ -1418,6 +1418,30 @@ Object {
       "displayName": "HAS",
     },
     Object {
+      "_class": "USES",
+      "_fromEntityKey": "insightvm_user:2",
+      "_key": "insightvm_user:2|uses|insightvm_asset:1",
+      "_toEntityKey": "insightvm_asset:1",
+      "_type": "insightvm_user_uses_asset",
+      "displayName": "USES",
+    },
+    Object {
+      "_class": "USES",
+      "_fromEntityKey": "insightvm_user:1",
+      "_key": "insightvm_user:1|uses|insightvm_asset:1",
+      "_toEntityKey": "insightvm_asset:1",
+      "_type": "insightvm_user_uses_asset",
+      "displayName": "USES",
+    },
+    Object {
+      "_class": "USES",
+      "_fromEntityKey": "insightvm_user:3",
+      "_key": "insightvm_user:3|uses|insightvm_asset:1",
+      "_toEntityKey": "insightvm_asset:1",
+      "_type": "insightvm_user_uses_asset",
+      "displayName": "USES",
+    },
+    Object {
       "_class": "HAS",
       "_fromEntityKey": "insightvm_site:1",
       "_key": "insightvm_site:1|has|insightvm_asset:1",
@@ -1443,11 +1467,12 @@ Object {
     "insightvm_scan",
     "insightvm_site_has_scan",
     "insightvm_asset",
+    "insightvm_user_uses_asset",
     "insightvm_site_has_asset",
     "insightvm_vulnerability",
     "insightvm_vulnerability_exploits_asset",
   ],
   "numCollectedEntities": 8,
-  "numCollectedRelationships": 7,
+  "numCollectedRelationships": 10,
 }
 `;

@@ -51,9 +51,11 @@ type RelationshipConstantKeys =
   | 'ACCOUNT_HAS_USER'
   | 'ACCOUNT_HAS_SITE'
   | 'ACCOUNT_HAS_ASSET'
+  | 'USER_USES_ASSET'
   | 'SITE_HAS_SCAN'
   | 'SITE_HAS_ASSET'
-  | 'SITE_ALLOWS_USER'
+  | 'SITE_HAS_USER'
+  | 'SCAN_MONITORS_ASSET'
   | 'VULNERABILITY_EXPLOITS_ASSET';
 
 export const relationships: Record<
@@ -78,6 +80,12 @@ export const relationships: Record<
     sourceType: entities.ACCOUNT._type,
     targetType: entities.ASSET._type,
   },
+  USER_USES_ASSET: {
+    _type: 'insightvm_user_uses_asset',
+    _class: RelationshipClass.USES,
+    sourceType: entities.USER._type,
+    targetType: entities.ASSET._type,
+  },
   SITE_HAS_SCAN: {
     _type: 'insightvm_site_has_scan',
     _class: RelationshipClass.HAS,
@@ -90,11 +98,17 @@ export const relationships: Record<
     sourceType: entities.SITE._type,
     targetType: entities.ASSET._type,
   },
-  SITE_ALLOWS_USER: {
-    _type: 'insightvm_site_allows_user',
-    _class: RelationshipClass.ALLOWS,
+  SITE_HAS_USER: {
+    _type: 'insightvm_site_has_user',
+    _class: RelationshipClass.HAS,
     sourceType: entities.SITE._type,
     targetType: entities.USER._type,
+  },
+  SCAN_MONITORS_ASSET: {
+    _type: 'insightvm_scan_monitors_asset',
+    _class: RelationshipClass.MONITORS,
+    sourceType: entities.SCAN._type,
+    targetType: entities.ASSET._type,
   },
   VULNERABILITY_EXPLOITS_ASSET: {
     _type: 'insightvm_vulnerability_exploits_asset',

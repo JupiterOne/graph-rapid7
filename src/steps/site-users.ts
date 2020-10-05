@@ -27,7 +27,7 @@ export async function fetchSiteUsers({
           await Promise.all([
             jobState.addRelationship(
               createDirectRelationship({
-                _class: RelationshipClass.ALLOWS,
+                _class: RelationshipClass.HAS,
                 from: siteEntity,
                 to: userEntity,
               }),
@@ -44,7 +44,7 @@ export const siteUsersSteps: IntegrationStep<IntegrationConfig>[] = [
     id: 'fetch-site-users',
     name: 'Fetch Site Users',
     entities: [],
-    relationships: [relationships.SITE_ALLOWS_USER],
+    relationships: [relationships.SITE_HAS_USER],
     dependsOn: ['fetch-sites'],
     executionHandler: fetchSiteUsers,
   },

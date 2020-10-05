@@ -39,7 +39,7 @@ export async function fetchAssets({
       },
     });
 
-    await Promise.all([jobState.addEntity(assetEntity)]);
+    await jobState.addEntity(assetEntity);
   });
 }
 
