@@ -13,6 +13,7 @@ import { fetchAssets } from './assets';
 import { fetchSiteAssets } from './site-assets';
 import { fetchVulnerabilities } from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
+import { fetchScanAssets } from './scan-assets';
 
 const DEFAULT_INSIGHT_HOST = 'localhost:3780';
 const DEFAULT_INSIGHT_CLIENT_USERNAME = 'admin';
@@ -59,6 +60,7 @@ describe('Rapid7 InsightVM', () => {
     await fetchAssets(context);
     await fetchAssetUsers(context);
     await fetchSiteAssets(context);
+    await fetchScanAssets(context);
     await fetchVulnerabilities(context);
 
     // Review snapshot, failure is a regression

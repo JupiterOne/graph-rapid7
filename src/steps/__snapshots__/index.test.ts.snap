@@ -13,13 +13,13 @@ Object {
           "name": "default",
           "rawData": Object {
             "cpu": Object {
-              "clockSpeed": 4306,
+              "clockSpeed": 4226,
               "count": 8,
             },
             "disk": Object {
               "free": Object {
-                "bytes": 6005837824,
-                "formatted": "5.6 GB",
+                "bytes": 5900726272,
+                "formatted": "5.5 GB",
               },
               "installation": Object {
                 "backups": Object {
@@ -27,7 +27,7 @@ Object {
                   "formatted": "0 bytes",
                 },
                 "database": Object {
-                  "bytes": 2927702155,
+                  "bytes": 2927711450,
                   "formatted": "2.7 GB",
                 },
                 "directory": "/opt/rapid7/nexpose",
@@ -40,7 +40,7 @@ Object {
                   "formatted": "44.4 KB",
                 },
                 "total": Object {
-                  "bytes": 5525415762,
+                  "bytes": 5528381438,
                   "formatted": "5.1 GB",
                 },
               },
@@ -56,7 +56,7 @@ Object {
             "jvm": Object {
               "name": "OpenJDK 64-Bit Server VM",
               "startTime": "2020-10-05T11:26:08.492Z",
-              "uptime": "PT3H53M24.378S",
+              "uptime": "PT11H50M36.584S",
               "vendor": "Azul Systems, Inc.",
               "version": "25.252-b14",
             },
@@ -68,8 +68,8 @@ Object {
             ],
             "memory": Object {
               "free": Object {
-                "bytes": 214417408,
-                "formatted": "204.5 MB",
+                "bytes": 167944192,
+                "formatted": "160.2 MB",
               },
               "total": Object {
                 "bytes": 16684572672,
@@ -1450,6 +1450,14 @@ Object {
       "displayName": "HAS",
     },
     Object {
+      "_class": "MONITORS",
+      "_fromEntityKey": "insightvm_scan:1",
+      "_key": "insightvm_scan:1|monitors|insightvm_asset:1",
+      "_toEntityKey": "insightvm_asset:1",
+      "_type": "insightvm_scan_monitors_asset",
+      "displayName": "MONITORS",
+    },
+    Object {
       "_class": "EXPLOITS",
       "_fromEntityKey": "insightvm_vulnerability:unix-user-home-dir-mode",
       "_key": "insightvm_vulnerability:unix-user-home-dir-mode|exploits|insightvm_asset:1",
@@ -1469,10 +1477,11 @@ Object {
     "insightvm_asset",
     "insightvm_user_uses_asset",
     "insightvm_site_has_asset",
+    "insightvm_scan_monitors_asset",
     "insightvm_vulnerability",
     "insightvm_vulnerability_exploits_asset",
   ],
   "numCollectedEntities": 8,
-  "numCollectedRelationships": 10,
+  "numCollectedRelationships": 11,
 }
 `;
