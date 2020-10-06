@@ -11,9 +11,13 @@ export default async function validateInvocation(
 ) {
   const { config } = context.instance;
 
-  if (!config.clientId || !config.clientSecret) {
+  if (
+    !config.insightHost ||
+    !config.insightClientUsername ||
+    !config.insightClientPassword
+  ) {
     throw new IntegrationValidationError(
-      'Config requires all of {clientId, clientSecret}',
+      'Config requires all of {insightHost, insightClientUsername, insightClientPassword}',
     );
   }
 

@@ -11,11 +11,11 @@ import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
 import { ACCOUNT_ENTITY_DATA_KEY, entities, relationships } from '../constants';
 
-export function getUserKey(id: number): string {
-  return `insightvm_user:${id}`;
+export function getSiteKey(id: number): string {
+  return `insightvm_site:${id}`;
 }
 
-export async function fetchUsers({
+export async function fetchSites({
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
@@ -25,44 +25,46 @@ export async function fetchUsers({
     ACCOUNT_ENTITY_DATA_KEY,
   )) as Entity;
 
-  await apiClient.iterateUsers(async (user) => {
-    const webLink = user.links.find((link) => link.rel === 'self')?.href;
+  await apiClient.iterateSites(async (site) => {
+    const webLink = site.links.find((link) => link.rel === 'self')?.href;
 
-    const userEntity = createIntegrationEntity({
+    const siteEntity = createIntegrationEntity({
       entityData: {
-        source: user,
+        source: site,
         assign: {
-          _key: getUserKey(user.id),
-          _type: entities.USER._type,
-          _class: entities.USER._class,
-          id: `${user.id}`,
-          username: user.login,
-          email: user.email,
+          _key: getSiteKey(site.id),
+          _type: entities.SITE._type,
+          _class: entities.SITE._class,
+          id: `${site.id}`,
+          assets: site.assets,
+          importance: site.importance,
+          name: site.name,
+          type: site.type,
           webLink,
         },
       },
     });
 
     await Promise.all([
-      jobState.addEntity(userEntity),
+      jobState.addEntity(siteEntity),
       jobState.addRelationship(
         createDirectRelationship({
           _class: RelationshipClass.HAS,
           from: accountEntity,
-          to: userEntity,
+          to: siteEntity,
         }),
       ),
     ]);
   });
 }
 
-export const accessSteps: IntegrationStep<IntegrationConfig>[] = [
+export const sitesSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-users',
-    name: 'Fetch Users',
-    entities: [entities.USER],
-    relationships: [relationships.ACCOUNT_HAS_USER],
+    id: 'fetch-sites',
+    name: 'Fetch Sites',
+    entities: [entities.SITE],
+    relationships: [relationships.ACCOUNT_HAS_SITE],
     dependsOn: ['fetch-account'],
-    executionHandler: fetchUsers,
+    executionHandler: fetchSites,
   },
 ];
