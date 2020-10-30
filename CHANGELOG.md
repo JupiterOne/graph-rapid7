@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.0 - 2020-10-29
+
+### Changed
+
+- Upgrade SDK v4
+
 ## 0.1.0 - 2020-10-06
 
 - Initial Deployment: `insightvm_account`, `insightvm_user`, `insightvm_site`,
