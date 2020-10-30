@@ -41,6 +41,7 @@ export async function fetchScans({
             engineId: scan.engineId,
             engineName: scan.engineName,
             name: scan.scanName,
+            active: scan.status === 'finished' ? false : undefined,
             state: scan.status,
             webLink,
           },
