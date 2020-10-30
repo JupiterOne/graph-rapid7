@@ -58,7 +58,7 @@ export async function fetchVulnerabilities({
     { _type: entities.ASSET._type },
     async (assetEntity) => {
       await apiClient.iterateVulnerabilities(
-        assetEntity.id!,
+        assetEntity.id as string,
         async (vulnerability) => {
           const vulnerabilityEntity = await createOrFindEntity(
             jobState,

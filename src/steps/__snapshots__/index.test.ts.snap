@@ -1362,7 +1362,7 @@ Object {
         },
       ],
       "_type": "insightvm_vulnerability",
-      "active": false,
+      "active": undefined,
       "blocking": false,
       "category": "other",
       "createdOn": undefined,

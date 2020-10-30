@@ -23,21 +23,24 @@ export async function fetchSiteAssets({
   await jobState.iterateEntities(
     { _type: entities.SITE._type },
     async (siteEntity) => {
-      await apiClient.iterateSiteAssets(siteEntity.id!, async (asset) => {
-        connectedAssets.add(`${asset.id}`);
+      await apiClient.iterateSiteAssets(
+        siteEntity.id as string,
+        async (asset) => {
+          connectedAssets.add(`${asset.id}`);
 
-        const assetEntity = await jobState.findEntity(getAssetKey(asset.id));
+          const assetEntity = await jobState.findEntity(getAssetKey(asset.id));
 
-        if (assetEntity) {
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: siteEntity,
-              to: assetEntity,
-            }),
-          );
-        }
-      });
+          if (assetEntity) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                from: siteEntity,
+                to: assetEntity,
+              }),
+            );
+          }
+        },
+      );
     },
   );
 
@@ -48,7 +51,7 @@ export async function fetchSiteAssets({
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
-      if (!connectedAssets.has(assetEntity.id!)) {
+      if (!connectedAssets.has(assetEntity.id as string)) {
         await jobState.addRelationship(
           createDirectRelationship({
             _class: RelationshipClass.HAS,
