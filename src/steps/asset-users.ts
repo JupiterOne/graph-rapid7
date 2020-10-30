@@ -20,19 +20,22 @@ export async function fetchAssetUsers({
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
-      await apiClient.iterateAssetUsers(assetEntity.id!, async (user) => {
-        const userEntity = await jobState.findEntity(getUserKey(user.id));
+      await apiClient.iterateAssetUsers(
+        assetEntity.id as string,
+        async (user) => {
+          const userEntity = await jobState.findEntity(getUserKey(user.id));
 
-        if (userEntity) {
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.USES,
-              from: userEntity,
-              to: assetEntity,
-            }),
-          );
-        }
-      });
+          if (userEntity) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.USES,
+                from: userEntity,
+                to: assetEntity,
+              }),
+            );
+          }
+        },
+      );
     },
   );
 }

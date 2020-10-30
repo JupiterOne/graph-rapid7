@@ -20,21 +20,24 @@ export async function fetchSiteUsers({
   await jobState.iterateEntities(
     { _type: entities.SITE._type },
     async (siteEntity) => {
-      await apiClient.iterateSiteUsers(siteEntity.id!, async (user) => {
-        const userEntity = await jobState.findEntity(getUserKey(user.id));
+      await apiClient.iterateSiteUsers(
+        siteEntity.id as string,
+        async (user) => {
+          const userEntity = await jobState.findEntity(getUserKey(user.id));
 
-        if (userEntity) {
-          await Promise.all([
-            jobState.addRelationship(
-              createDirectRelationship({
-                _class: RelationshipClass.HAS,
-                from: siteEntity,
-                to: userEntity,
-              }),
-            ),
-          ]);
-        }
-      });
+          if (userEntity) {
+            await Promise.all([
+              jobState.addRelationship(
+                createDirectRelationship({
+                  _class: RelationshipClass.HAS,
+                  from: siteEntity,
+                  to: userEntity,
+                }),
+              ),
+            ]);
+          }
+        },
+      );
     },
   );
 }

@@ -51,26 +51,29 @@ export async function fetchScanAssets({
     const siteEntity = await jobState.findEntity(siteKey);
 
     if (siteEntity && siteEntity.id) {
-      await apiClient.iterateSiteScans(siteEntity.id, async (scan) => {
-        const scanEntity = await jobState.findEntity(getScanKey(scan.id));
+      await apiClient.iterateSiteScans(
+        siteEntity.id as string,
+        async (scan) => {
+          const scanEntity = await jobState.findEntity(getScanKey(scan.id));
 
-        if (scanEntity) {
-          for (const assetKey of assetKeys) {
-            const assetEntity = await jobState.findEntity(assetKey);
-            if (assetEntity) {
-              jobs.push(
-                jobState.addRelationship(
-                  createDirectRelationship({
-                    _class: RelationshipClass.MONITORS,
-                    from: scanEntity,
-                    to: assetEntity,
-                  }),
-                ),
-              );
+          if (scanEntity) {
+            for (const assetKey of assetKeys) {
+              const assetEntity = await jobState.findEntity(assetKey);
+              if (assetEntity) {
+                jobs.push(
+                  jobState.addRelationship(
+                    createDirectRelationship({
+                      _class: RelationshipClass.MONITORS,
+                      from: scanEntity,
+                      to: assetEntity,
+                    }),
+                  ),
+                );
+              }
             }
           }
-        }
-      });
+        },
+      );
     }
   }
 
