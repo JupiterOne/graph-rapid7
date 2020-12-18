@@ -1,8 +1,6 @@
-import {
-  createMockStepExecutionContext,
-  Recording,
-  setupRecording,
-} from '@jupiterone/integration-sdk-testing';
+import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
+
+import { Recording, setupRapid7Recording } from '../../test/helpers/recording';
 
 import { IntegrationConfig } from '../types';
 import { fetchUsers } from './access';
@@ -33,7 +31,7 @@ describe('Rapid7 InsightVM', () => {
   let recording: Recording;
 
   beforeEach(() => {
-    recording = setupRecording({
+    recording = setupRapid7Recording({
       directory: __dirname,
       name: 'insightvm_recordings',
       options: {
