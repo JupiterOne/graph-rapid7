@@ -98,9 +98,8 @@ export type InsightVMAsset = {
   siteId: number;
 };
 
-export type InsightVMVulnerability = {
+export type InsightVmAssetVulnerability = {
   id: string;
-  assetId: number;
   instances: number;
   links: Link[];
   results: {

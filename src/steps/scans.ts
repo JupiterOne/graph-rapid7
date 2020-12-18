@@ -52,7 +52,7 @@ export async function fetchScans({
         jobState.addEntity(scanEntity),
         jobState.addRelationship(
           createDirectRelationship({
-            _class: RelationshipClass.HAS,
+            _class: RelationshipClass.PERFORMED,
             from: siteEntity,
             to: scanEntity,
           }),
@@ -67,7 +67,7 @@ export const scansSteps: IntegrationStep<IntegrationConfig>[] = [
     id: 'fetch-scans',
     name: 'Fetch Scans',
     entities: [entities.SCAN],
-    relationships: [relationships.SITE_HAS_SCAN],
+    relationships: [relationships.SITE_PERFORMED_SCAN],
     dependsOn: ['fetch-sites'],
     executionHandler: fetchScans,
   },

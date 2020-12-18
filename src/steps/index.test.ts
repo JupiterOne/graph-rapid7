@@ -1,8 +1,6 @@
-import {
-  createMockStepExecutionContext,
-  Recording,
-  setupRecording,
-} from '@jupiterone/integration-sdk-testing';
+import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
+
+import { Recording, setupRapid7Recording } from '../../test/helpers/recording';
 
 import { IntegrationConfig } from '../types';
 import { fetchUsers } from './access';
@@ -11,7 +9,7 @@ import { fetchSites } from './sites';
 import { fetchScans } from './scans';
 import { fetchAssets } from './assets';
 import { fetchSiteAssets } from './site-assets';
-import { fetchVulnerabilities } from './vulnerabilities';
+import { fetchAssetVulnerabilities } from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
 
@@ -33,7 +31,7 @@ describe('Rapid7 InsightVM', () => {
   let recording: Recording;
 
   beforeEach(() => {
-    recording = setupRecording({
+    recording = setupRapid7Recording({
       directory: __dirname,
       name: 'insightvm_recordings',
       options: {
@@ -61,7 +59,7 @@ describe('Rapid7 InsightVM', () => {
     await fetchAssetUsers(context);
     await fetchSiteAssets(context);
     await fetchScanAssets(context);
-    await fetchVulnerabilities(context);
+    await fetchAssetVulnerabilities(context);
 
     // Review snapshot, failure is a regression
     expect({
@@ -225,6 +223,27 @@ describe('Rapid7 InsightVM', () => {
             type: 'string',
           },
           webLink: {
+            type: 'string',
+          },
+        },
+      },
+    });
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes('Finding'),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['Finding'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_finding' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          name: {
             type: 'string',
           },
         },
