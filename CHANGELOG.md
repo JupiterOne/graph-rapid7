@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.3.0 - 2020-12-18
+
+### Changed
+
+- Upgraded integration relationship classes to more closely align with the
+  JupiterOne data model.
+- Added `insightvm_finding` entity for asset vulnerabilities.
+- Upgrade SDK v5.2
+
 ## 0.2.0 - 2020-10-29
 
 ### Changed
