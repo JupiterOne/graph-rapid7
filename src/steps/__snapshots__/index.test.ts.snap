@@ -1368,6 +1368,7 @@ Object {
       "displayName": "unix-user-home-dir-mode",
       "id": "unix-user-home-dir-mode",
       "name": "unix-user-home-dir-mode",
+      "numericSeverity": 5,
       "open": true,
       "severity": "unknown",
       "status": "vulnerable",
