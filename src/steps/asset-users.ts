@@ -28,7 +28,7 @@ export async function fetchAssetUsers({
           if (userEntity) {
             await jobState.addRelationship(
               createDirectRelationship({
-                _class: RelationshipClass.USES,
+                _class: RelationshipClass.OWNS,
                 from: userEntity,
                 to: assetEntity,
               }),
@@ -45,7 +45,7 @@ export const assetUsersStep: IntegrationStep<IntegrationConfig>[] = [
     id: 'fetch-asset-users',
     name: 'Fetch Asset Users',
     entities: [],
-    relationships: [relationships.USER_USES_ASSET],
+    relationships: [relationships.USER_OWNS_ASSET],
     dependsOn: ['fetch-assets', 'fetch-users'],
     executionHandler: fetchAssetUsers,
   },

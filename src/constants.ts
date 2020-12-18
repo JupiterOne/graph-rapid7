@@ -59,9 +59,9 @@ export const relationships = {
     sourceType: entities.ACCOUNT._type,
     targetType: entities.ASSET._type,
   },
-  USER_USES_ASSET: {
-    _type: 'insightvm_user_uses_asset',
-    _class: RelationshipClass.USES,
+  USER_OWNS_ASSET: {
+    _type: 'insightvm_user_owns_asset',
+    _class: RelationshipClass.OWNS,
     sourceType: entities.USER._type,
     targetType: entities.ASSET._type,
   },

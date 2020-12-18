@@ -50,7 +50,7 @@ The following relationships are created/mapped:
 | `insightvm_site`      | **HAS**               | `insightvm_asset`         |
 | `insightvm_site`      | **HAS**               | `insightvm_user`          |
 | `insightvm_site`      | **PERFORMED**         | `insightvm_scan`          |
-| `insightvm_user`      | **USES**              | `insightvm_asset`         |
+| `insightvm_user`      | **OWNS**              | `insightvm_asset`         |
 
 <!--
 ********************************************************************************
