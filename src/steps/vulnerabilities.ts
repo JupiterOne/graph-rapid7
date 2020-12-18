@@ -35,6 +35,7 @@ function createAssetVulnerabilityEntity(
         category: 'host',
         open: assetVulnerability.status === 'vulnerable' ? true : undefined,
         severity: 'unknown',
+        numericSeverity: 5,
       },
     },
   });
