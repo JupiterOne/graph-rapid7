@@ -532,7 +532,7 @@ Object {
     },
     Object {
       "_class": Array [
-        "Process",
+        "Assessment",
       ],
       "_key": "insightvm_scan:1",
       "_rawData": Array [
@@ -1319,6 +1319,61 @@ Object {
     },
     Object {
       "_class": Array [
+        "Finding",
+      ],
+      "_key": "insightvm_asset_vulnerability:1:unix-user-home-dir-mode",
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "id": "unix-user-home-dir-mode",
+            "instances": 1,
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/vulnerabilities/unix-user-home-dir-mode",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/vulnerabilities/unix-user-home-dir-mode",
+                "id": "unix-user-home-dir-mode",
+                "rel": "Vulnerability",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/vulnerabilities/unix-user-home-dir-mode/validations",
+                "id": "unix-user-home-dir-mode",
+                "rel": "Vulnerability Validations",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/vulnerabilities/unix-user-home-dir-mode/solution",
+                "id": "unix-user-home-dir-mode",
+                "rel": "Vulnerability Solutions",
+              },
+            ],
+            "results": Array [
+              Object {
+                "proof": "<p><p>The permissions for home directory of user extreme was found to be 755 which is more permissive than 750.</p></p>",
+                "since": "2020-09-24T15:06:28.045Z",
+                "status": "vulnerable-version",
+              },
+            ],
+            "since": "2020-09-24T15:06:28.045Z",
+            "status": "vulnerable",
+          },
+        },
+      ],
+      "_type": "insightvm_finding",
+      "active": undefined,
+      "category": "host",
+      "createdOn": undefined,
+      "displayName": "unix-user-home-dir-mode",
+      "id": "unix-user-home-dir-mode",
+      "name": "unix-user-home-dir-mode",
+      "open": true,
+      "severity": "unknown",
+      "status": "vulnerable",
+    },
+    Object {
+      "_class": Array [
         "Vulnerability",
       ],
       "_key": "insightvm_vulnerability:unix-user-home-dir-mode",
@@ -1410,12 +1465,12 @@ Object {
       "displayName": "HAS",
     },
     Object {
-      "_class": "HAS",
+      "_class": "PERFORMED",
       "_fromEntityKey": "insightvm_site:1",
-      "_key": "insightvm_site:1|has|insightvm_scan:1",
+      "_key": "insightvm_site:1|performed|insightvm_scan:1",
       "_toEntityKey": "insightvm_scan:1",
-      "_type": "insightvm_site_has_scan",
-      "displayName": "HAS",
+      "_type": "insightvm_site_performed_scan",
+      "displayName": "PERFORMED",
     },
     Object {
       "_class": "USES",
@@ -1458,12 +1513,20 @@ Object {
       "displayName": "MONITORS",
     },
     Object {
-      "_class": "EXPLOITS",
-      "_fromEntityKey": "insightvm_vulnerability:unix-user-home-dir-mode",
-      "_key": "insightvm_vulnerability:unix-user-home-dir-mode|exploits|insightvm_asset:1",
-      "_toEntityKey": "insightvm_asset:1",
-      "_type": "insightvm_vulnerability_exploits_asset",
-      "displayName": "EXPLOITS",
+      "_class": "HAS",
+      "_fromEntityKey": "insightvm_asset:1",
+      "_key": "insightvm_asset:1|has|insightvm_asset_vulnerability:1:unix-user-home-dir-mode",
+      "_toEntityKey": "insightvm_asset_vulnerability:1:unix-user-home-dir-mode",
+      "_type": "insightvm_asset_has_finding",
+      "displayName": "HAS",
+    },
+    Object {
+      "_class": "IS",
+      "_fromEntityKey": "insightvm_asset_vulnerability:1:unix-user-home-dir-mode",
+      "_key": "insightvm_asset_vulnerability:1:unix-user-home-dir-mode|is|insightvm_vulnerability:unix-user-home-dir-mode",
+      "_toEntityKey": "insightvm_vulnerability:unix-user-home-dir-mode",
+      "_type": "insightvm_finding_is_vulnerability",
+      "displayName": "IS",
     },
   ],
   "encounteredTypes": Array [
@@ -1473,15 +1536,17 @@ Object {
     "insightvm_site",
     "insightvm_account_has_site",
     "insightvm_scan",
-    "insightvm_site_has_scan",
+    "insightvm_site_performed_scan",
     "insightvm_asset",
     "insightvm_user_uses_asset",
     "insightvm_site_has_asset",
     "insightvm_scan_monitors_asset",
+    "insightvm_finding",
+    "insightvm_asset_has_finding",
     "insightvm_vulnerability",
-    "insightvm_vulnerability_exploits_asset",
+    "insightvm_finding_is_vulnerability",
   ],
-  "numCollectedEntities": 8,
-  "numCollectedRelationships": 11,
+  "numCollectedEntities": 9,
+  "numCollectedRelationships": 12,
 }
 `;

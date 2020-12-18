@@ -7,7 +7,7 @@ import {
   InsightVMScan,
   InsightVMSite,
   InsightVMUser,
-  InsightVMVulnerability,
+  InsightVmAssetVulnerability,
   IntegrationConfig,
   PageIteratee,
   PaginatedResource,
@@ -240,9 +240,9 @@ export class APIClient {
    */
   public async iterateVulnerabilities(
     assetId: string,
-    iteratee: ResourceIteratee<InsightVMVulnerability>,
+    iteratee: ResourceIteratee<InsightVmAssetVulnerability>,
   ): Promise<void> {
-    await this.paginatedRequest<InsightVMVulnerability>(
+    await this.paginatedRequest<InsightVmAssetVulnerability>(
       `assets/${assetId}/vulnerabilities`,
       async (vulnerabilities) => {
         for (const vulnerability of vulnerabilities) {
