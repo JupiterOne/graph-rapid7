@@ -12,6 +12,8 @@ and this project adheres to
 
 - Added error messaging about self-signed SSL Certificates in Rapid7 Console.
 - Added `disableSslValidation` configuration error to bypass SSL Cert errors.
+- Added `summary`, `category`, `internal`, `startedOn`, `completedOn` properties
+  to `insightvm_scan` entities as required by the JupiterOne Data Model.
 
 ## 0.1.0 - 2020-12-18
 

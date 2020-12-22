@@ -4,6 +4,7 @@ import {
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
+  getTime,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
@@ -43,6 +44,11 @@ export async function fetchScans({
             name: scan.scanName,
             active: scan.status === 'finished' ? false : undefined,
             state: scan.status,
+            summary: scan.scanName,
+            category: 'Vulnerability Scan',
+            internal: true,
+            startedOn: getTime(scan.startTime),
+            completedOn: getTime(scan.endTime),
             webLink,
           },
         },

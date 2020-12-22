@@ -12,6 +12,7 @@ import { fetchSiteAssets } from './site-assets';
 import { fetchAssetVulnerabilities } from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
+import { entities } from '../constants';
 
 const DEFAULT_INSIGHT_HOST = 'localhost:3780';
 const DEFAULT_INSIGHT_CLIENT_USERNAME = 'admin';
@@ -72,7 +73,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Account'),
+        e._class.includes(entities.ACCOUNT._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Account'],
@@ -99,7 +100,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('User'),
+        e._class.includes(entities.USER._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['User'],
@@ -126,7 +127,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Site'),
+        e._class.includes(entities.SITE._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Site'],
@@ -159,10 +160,10 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Process'),
+        e._class.includes(entities.SCAN._class),
       ),
     ).toMatchGraphObjectSchema({
-      _class: ['Process'],
+      _class: ['Assessment'],
       schema: {
         additionalProperties: true,
         properties: {
@@ -195,7 +196,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Device'),
+        e._class.includes(entities.ASSET._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Device'],
@@ -231,7 +232,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Finding'),
+        e._class.includes(entities.FINDING._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Finding'],
@@ -252,7 +253,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Vulnerability'),
+        e._class.includes(entities.VULNERABILITY._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Vulnerability'],
