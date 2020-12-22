@@ -19,6 +19,11 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * The administrator account password for authentication.
    */
   insightClientPassword: string;
+
+  /**
+   * Disable SSL Certificate verification for hosts that cannot install certificates.
+   */
+  disableSslVerification?: boolean;
 }
 
 export type SiteAssetsMap = {

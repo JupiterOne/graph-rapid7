@@ -8,7 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
-## 0.3.0 - 2020-12-18
+### Added
+
+- Added error messaging about self-signed SSL Certificates in Rapid7 Console.
+- Added `disableSslValidation` configuration error to bypass SSL Cert errors.
+
+## 0.1.0 - 2020-12-18
 
 ### Changed
 
@@ -17,13 +22,7 @@ and this project adheres to
 - Added `insightvm_finding` entity for asset vulnerabilities.
 - Upgrade SDK v5.2
 
-## 0.2.0 - 2020-10-29
-
-### Changed
-
-- Upgrade SDK v4
-
-## 0.1.0 - 2020-10-06
+## 0.0.0 - 2020-10-06
 
 - Initial Deployment: `insightvm_account`, `insightvm_user`, `insightvm_site`,
   `insightvm_scan`, `insightvm_asset`, `insightvm_vulnerability`

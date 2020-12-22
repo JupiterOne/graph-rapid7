@@ -21,6 +21,15 @@ export default async function validateInvocation(
     );
   }
 
+  if (config.disableSslVerification) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    context.logger.publishEvent({
+      name: 'disable_ssl_certs',
+      description:
+        'Disabling SSL Certs. NOT RECOMMENDED: Please install TLS certificates from https://letsencrypt.org/',
+    });
+  }
+
   const apiClient = createAPIClient(config);
   await apiClient.verifyAuthentication();
 }

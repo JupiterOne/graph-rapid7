@@ -12,13 +12,14 @@
     "access": "public"
   },
   "scripts": {
-    "start": "NODE_TLS_REJECT_UNAUTHORIZED=0 j1-integration collect",
+    "start": "j1-integration collect",
+    "start:no-require-certs": "NODE_TLS_REJECT_UNAUTHORIZED=0 j1-integration collect",
     "graph": "j1-integration visualize",
     "lint": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
     "type-check": "tsc",
-    "test:local": "NODE_TLS_REJECT_UNAUTHORIZED=0 && yarn test",
     "test": "jest",
+    "test:no-require-certs": "NODE_TLS_REJECT_UNAUTHORIZED=0 && yarn test",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepush": "yarn lint && yarn type-check && jest --changedSince master",

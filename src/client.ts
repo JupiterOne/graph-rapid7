@@ -1,5 +1,8 @@
 import fetch, { Response } from 'node-fetch';
-import { IntegrationProviderAuthenticationError } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationProviderAuthenticationError,
+  IntegrationValidationError,
+} from '@jupiterone/integration-sdk-core';
 
 import {
   InsightVMAccount,
@@ -78,7 +81,21 @@ export class APIClient {
 
   public async verifyAuthentication(): Promise<void> {
     const usersApiRoute = this.withBaseUri('users');
-    const response = await this.request(usersApiRoute, 'GET');
+    let response;
+    try {
+      response = await this.request(usersApiRoute, 'GET');
+    } catch (err) {
+      let errMessage = `Error occurred validating invocation at ${usersApiRoute} (code=${err.code}, message=${err.message})`;
+      if (err.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
+        errMessage =
+          `The InsightVM Security Console is using a self-signed certificate. \
+Please follow the Rapid7 guidelines to install a valid TLS certificate: \
+https://docs.rapid7.com/insightvm/managing-the-security-console/#managing-the-https-certificate. \
+We recommend installing a certificate from https://letsencrypt.org/ or a certificate \
+authority you trust. ` + errMessage;
+      }
+      throw new IntegrationValidationError(errMessage);
+    }
 
     if (!response.ok) {
       throw new IntegrationProviderAuthenticationError({
