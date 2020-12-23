@@ -8,7 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
-## 0.3.0 - 2020-12-18
+### Added
+
+- Added error messaging about self-signed TLS certificates in Rapid7 Console.
+- Added `disableTlsVerification` configuration error to bypass TLS certificate
+  errors.
+- Added `summary`, `category`, `internal`, `startedOn`, `completedOn` properties
+  to `insightvm_scan` entities as required by the JupiterOne Data Model.
+
+## 0.1.0 - 2020-12-18
 
 ### Changed
 
@@ -17,13 +25,7 @@ and this project adheres to
 - Added `insightvm_finding` entity for asset vulnerabilities.
 - Upgrade SDK v5.2
 
-## 0.2.0 - 2020-10-29
-
-### Changed
-
-- Upgrade SDK v4
-
-## 0.1.0 - 2020-10-06
+## 0.0.0 - 2020-10-06
 
 - Initial Deployment: `insightvm_account`, `insightvm_user`, `insightvm_site`,
   `insightvm_scan`, `insightvm_asset`, `insightvm_vulnerability`
