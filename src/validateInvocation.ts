@@ -21,12 +21,12 @@ export default async function validateInvocation(
     );
   }
 
-  if (config.disableSslVerification) {
+  if (config.disableTlsVerification) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     context.logger.publishEvent({
-      name: 'disable_ssl_certs',
+      name: 'disable_tls_verify',
       description:
-        'Disabling SSL Certs. NOT RECOMMENDED: Please install TLS certificates from https://letsencrypt.org/',
+        'Disabling TLS certificate verification. NOT RECOMMENDED: Please install valid TLS certificates into Rapid7 server.',
     });
   }
 

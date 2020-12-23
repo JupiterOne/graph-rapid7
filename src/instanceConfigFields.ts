@@ -11,7 +11,7 @@ const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
-  disableSslVerification: {
+  disableTlsVerification: {
     type: 'boolean',
   },
 };

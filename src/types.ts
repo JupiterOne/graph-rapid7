@@ -21,9 +21,9 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   insightClientPassword: string;
 
   /**
-   * Disable SSL Certificate verification for hosts that cannot install certificates.
+   * Disable TLS certificate verification for hosts that cannot install certificates.
    */
-  disableSslVerification?: boolean;
+  disableTlsVerification?: boolean;
 }
 
 export type SiteAssetsMap = {
