@@ -16,6 +16,11 @@ Linux both supported),
 [installation process](https://docs.rapid7.com/insightvm/install) and then
 [accessing the security console](https://docs.rapid7.com/insightvm/log-in-and-activate).
 
+### Alternative: Docker Setup
+
+As an alternative to installing InsightVM on your local machine, you can use the
+Docker setup described in [console/README.md](../console/README.md)
+
 ## Provider account setup
 
 To install a Rapid7 InsightVM account, please use the links from above. During
@@ -24,8 +29,8 @@ you'll later use to access the Security Console.
 
 To set up a Rapid7 InsightVM account, please follow these steps:
 
-1. Visit the [Rapid7 Try](https://jfrog.com/artifactory/start-free/) page - it
-   is a 2 page/step form where you're first asked details about you and your
+1. Visit the [Rapid7 Try](https://www.rapid7.com/trial/insightvm/) page - it is
+   a 2 page/step form where you're first asked details about you and your
    organization and on the form you're able to select InsightVM as the product
    you want to sign up for.
 2. Make sure to select InsightVM on the second form page, it might be
@@ -68,32 +73,21 @@ to do all of its requests.
 
 ![User role](images/user-role.png)
 
-1. Create a .env file at the root of this project, and set the
-   INSIGHT_CLIENT_USERNAME variable to the admin username that you've set up
-   during the development.
-
-```bash
-INSIGHT_CLIENT_USERNAME="account username here"
-```
-
-2. Set the .env's INSIGHT_CLIENT_PASSWORD variable to the admin password that
-   you've set up during the development.
-
-```bash
-INSIGHT_CLIENT_USERNAME="account username here"
-INSIGHT_CLIENT_PASSWORD="account password here"
-```
-
-3. Finally, you also need to set .env's INSIGHT_HOST variable to the URL that
-   points the Security Console (by default, the localhost:3780).
+Create a .env file at the root of this project, and set the variables to admin
+credentials & host you've set up during the development. Also set
+`DISABLE_TLS_VERIFICATION`, assuming your development environment uses the
+default self-signed certificates provided by the Rapid7 Nexpose Security
+Console.
 
 ```bash
 INSIGHT_HOST=localhost:3780
-INSIGHT_CLIENT_USERNAME="account username here"
-INSIGHT_CLIENT_PASSWORD="account password here"
+INSIGHT_CLIENT_USERNAME="admin-username"
+INSIGHT_CLIENT_PASSWORD="admin-password"
+
+DISABLE_TLS_VERIFICATION=true
 ```
 
 After following the above steps, you should now be able to start contributing to
 this integration. The integration will pull in the `INSIGHT_CLIENT_USERNAME`,
-`INSIGHT_CLIENT_PASSWORD` and `INSIGHT_HOST` variables from the `.env` file and
-use them when making requests.
+`INSIGHT_CLIENT_PASSWORD`, `INSIGHT_HOST`, and `DISABLE_TLS_VERIFICATION`
+variables from the `.env` file and use them when making requests.

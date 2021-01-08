@@ -12,6 +12,8 @@
     "access": "public"
   },
   "scripts": {
+    "start:console": "./console/scripts/start-console.sh",
+    "stop:console": "./console/scripts/stop-console.sh",
     "start": "j1-integration collect",
     "start:no-tls-verify": "NODE_TLS_REJECT_UNAUTHORIZED=0 j1-integration collect",
     "graph": "j1-integration visualize",
