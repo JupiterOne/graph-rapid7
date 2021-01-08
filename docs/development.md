@@ -73,32 +73,21 @@ to do all of its requests.
 
 ![User role](images/user-role.png)
 
-1. Create a .env file at the root of this project, and set the
-   INSIGHT_CLIENT_USERNAME variable to the admin username that you've set up
-   during the development.
-
-```bash
-INSIGHT_CLIENT_USERNAME="account username here"
-```
-
-2. Set the .env's INSIGHT_CLIENT_PASSWORD variable to the admin password that
-   you've set up during the development.
-
-```bash
-INSIGHT_CLIENT_USERNAME="account username here"
-INSIGHT_CLIENT_PASSWORD="account password here"
-```
-
-3. Finally, you also need to set .env's INSIGHT_HOST variable to the URL that
-   points the Security Console (by default, the localhost:3780).
+Create a .env file at the root of this project, and set the variables to admin
+credentials & host you've set up during the development. Also set
+`DISABLE_TLS_VERIFICATION`, assuming your development environment uses the
+default self-signed certificates provided by the Rapid7 Nexpose Security
+Console.
 
 ```bash
 INSIGHT_HOST=localhost:3780
-INSIGHT_CLIENT_USERNAME="account username here"
-INSIGHT_CLIENT_PASSWORD="account password here"
+INSIGHT_CLIENT_USERNAME="admin-username"
+INSIGHT_CLIENT_PASSWORD="admin-password"
+
+DISABLE_TLS_VERIFICATION=true
 ```
 
 After following the above steps, you should now be able to start contributing to
 this integration. The integration will pull in the `INSIGHT_CLIENT_USERNAME`,
-`INSIGHT_CLIENT_PASSWORD` and `INSIGHT_HOST` variables from the `.env` file and
-use them when making requests.
+`INSIGHT_CLIENT_PASSWORD`, `INSIGHT_HOST`, and `DISABLE_TLS_VERIFICATION`
+variables from the `.env` file and use them when making requests.

@@ -38,16 +38,7 @@ license file to this project's `console/work` directory, which will cause the
 license file to be auto-installed any time the container is restarted.
 
 ```sh
-# Figure out the container ID of the running `rapid7-vm-console` image
-> docker ps
-<container-id>
-
-# Get the filename of the Rapid7 License file
-> docker exec <container-id> sh -c "ls /opt/rapid7/nexpose/nsc/licenses"
-<r7lic0000000000000000000.lic>
-
-# Copy the license file from the container to the console/work directory
-> docker cp <container-id>:/opt/rapid7/nexpose/nsc/licenses/<r7lic0000000000000000000.lic> console/work
+> docker cp rapid7-vm-console-container:/opt/rapid7/nexpose/nsc/licenses/$(docker exec rapid7-vm-console-container sh -c "cd /opt/rapid7/nexpose/nsc/licenses/ && ls *.lic") console/work
 ```
 
 Now, with the license file copied into the container's `work` directory, the
