@@ -29,8 +29,8 @@ you'll later use to access the Security Console.
 
 To set up a Rapid7 InsightVM account, please follow these steps:
 
-1. Visit the [Rapid7 Try](https://jfrog.com/artifactory/start-free/) page - it
-   is a 2 page/step form where you're first asked details about you and your
+1. Visit the [Rapid7 Try](https://www.rapid7.com/trial/insightvm/) page - it is
+   a 2 page/step form where you're first asked details about you and your
    organization and on the form you're able to select InsightVM as the product
    you want to sign up for.
 2. Make sure to select InsightVM on the second form page, it might be
