@@ -22,7 +22,8 @@ with the default username/password `nxadmin` and `nxpassword`.
 
 **NOTE:** The local console uses a self-signed TLS Certificate, and some users
 may need to work around browser security checkpoints in order to access the
-console.
+console. e.g. Chrome users should type `thisisunsafe` in their browser to
+continue
 
 ## Licensing the console
 

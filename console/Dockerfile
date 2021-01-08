@@ -8,7 +8,6 @@ ENV R7_VM_BIN Rapid7Setup-Linux64.bin
 # Get Prerequisites
 RUN apt-get update && \
     apt-get install --yes curl
-    # rm -r /var/lib/apt/lists/*
 
 # Download InsightVM/Nexpose
 RUN curl -Lo /tmp/$R7_VM_BIN http://download2.rapid7.com/download/InsightVM/$R7_VM_BIN \
@@ -32,20 +31,17 @@ ENV CONSOLE_PORT 3780
 
 # Install postgresql necessary for Security Console
 RUN apt-get update && \
-    apt-get install --yes postgresql postgresql-contrib && \
+    apt-get install --yes postgresql && \
     rm -r /var/lib/apt/lists/*
 
 # Install curl necessary for activation and seeding
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -r /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install --yes curl && \
+    rm -r /var/lib/apt/lists/*
   
 # Copy product installation and work files
 COPY --from=build /opt/rapid7 /opt/rapid7
 COPY ./work .
 # Expose Console Port for web/api interface
 EXPOSE 3780
-
-# # User:root so that we can copy the protected r7*.lic file
-# USER root
 CMD ["./run.sh"]

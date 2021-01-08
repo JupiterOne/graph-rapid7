@@ -16,7 +16,7 @@ USERAUTH=`echo -n $API_USER:$API_PASSWORD | openssl base64`
 LICENSE_STATUS=`curl -s --header "Authorization: Basic $USERAUTH" -XGET -k "https://localhost:$CONSOLE_PORT/api/3/administration/license" | grep -m1 -oP '"status"\s*:\s*"\K[^"]+'`
 echo "Current license status: $LICENSE_STATUS"
 
-if [[ -v ACTIVATION_LICENSE_FILE ]]; then
+if [[ -n $ACTIVATION_LICENSE_FILE ]]; then
     if [[ -z $LICENSE_STATUS ]] || [ $LICENSE_STATUS == "Unlicensed" ]; then
       echo '##############################'
       echo '##### Activating console #####'
