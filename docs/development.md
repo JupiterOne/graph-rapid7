@@ -16,6 +16,11 @@ Linux both supported),
 [installation process](https://docs.rapid7.com/insightvm/install) and then
 [accessing the security console](https://docs.rapid7.com/insightvm/log-in-and-activate).
 
+### Alternative: Docker Setup
+
+As an alternative to installing InsightVM on your local machine, you can use the
+Docker setup described in [console/README.md](../console/README.md)
+
 ## Provider account setup
 
 To install a Rapid7 InsightVM account, please use the links from above. During
