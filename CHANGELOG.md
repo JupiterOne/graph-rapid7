@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.1 - 2021-02-05
+
 ### Changed
 
 - Disabled `fetch-asset-vulnerabilities` step temporarily.
@@ -17,7 +19,7 @@ and this project adheres to
 - Fixed some missing step dependencies in `assets`, `scan-assets`,
   `site-assets`, and `site-users` steps.
 
-## 0.2.0 - 2020-02-05
+## 0.2.0 - 2020-12-23
 
 ### Added
 
