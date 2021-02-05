@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.2 - 2021-02-05
+
+### Changed
+
+- Re-enabled `fetch-asset-vulnerabilities` to run in isolation and with debug
+  statements.
+
 ## 0.2.1 - 2021-02-05
 
 ### Changed
