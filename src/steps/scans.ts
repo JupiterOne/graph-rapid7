@@ -9,7 +9,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { entities, relationships } from '../constants';
+import { entities, relationships, steps } from '../constants';
 import { getSiteKey } from './sites';
 
 export function getScanKey(id: number): string {
@@ -70,11 +70,11 @@ export async function fetchScans({
 
 export const scansSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-scans',
+    id: steps.FETCH_SCANS,
     name: 'Fetch Scans',
     entities: [entities.SCAN],
     relationships: [relationships.SITE_PERFORMED_SCAN],
-    dependsOn: ['fetch-sites'],
+    dependsOn: [steps.FETCH_SITES],
     executionHandler: fetchScans,
   },
 ];

@@ -6,7 +6,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { entities } from '../constants';
+import { entities, steps } from '../constants';
 
 export function getAssetKey(id: number): string {
   return `insightvm_asset:${id}`;
@@ -45,7 +45,7 @@ export async function fetchAssets({
 
 export const assetsSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-assets',
+    id: steps.FETCH_ASSETS,
     name: 'Fetch Assets',
     entities: [entities.ASSET],
     relationships: [],

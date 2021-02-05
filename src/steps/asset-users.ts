@@ -7,7 +7,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { relationships, entities } from '../constants';
+import { relationships, entities, steps } from '../constants';
 
 import { getUserKey } from './access';
 
@@ -42,11 +42,11 @@ export async function fetchAssetUsers({
 
 export const assetUsersStep: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-asset-users',
+    id: steps.FETCH_ASSET_USERS,
     name: 'Fetch Asset Users',
     entities: [],
     relationships: [relationships.USER_OWNS_ASSET],
-    dependsOn: ['fetch-assets', 'fetch-users'],
+    dependsOn: [steps.FETCH_ASSETS, steps.FETCH_USERS],
     executionHandler: fetchAssetUsers,
   },
 ];
