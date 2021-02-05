@@ -123,6 +123,8 @@ export async function fetchAssetVulnerabilities({
   );
 }
 
+const { FETCH_ASSET_VULNERABILITIES, ...otherSteps } = steps;
+
 export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
   {
     id: steps.FETCH_ASSET_VULNERABILITIES,
@@ -132,7 +134,14 @@ export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
       relationships.ASSET_HAS_FINDING,
       relationships.FINDING_IS_VULNERABILITY,
     ],
-    dependsOn: [steps.FETCH_ASSETS],
+    /**
+     * In order to force this step to execute in isolation, we push it to the
+     * bottom of the dependency graph by setting _every other step_ as a
+     * dependency.
+     *
+     * TODO: Remove `...Object.values(otherSteps)` as dependency.
+     */
+    dependsOn: [steps.FETCH_ASSETS, ...Object.values(otherSteps)],
     executionHandler: fetchAssetVulnerabilities,
   },
 ];
