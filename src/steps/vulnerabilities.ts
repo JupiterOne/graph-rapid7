@@ -81,6 +81,7 @@ async function findOrCreateVulnerability(
 }
 
 export async function fetchAssetVulnerabilities({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
@@ -89,6 +90,12 @@ export async function fetchAssetVulnerabilities({
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
+      logger.debug(
+        {
+          assetId: assetEntity.id,
+        },
+        'Getting vulnerabilities for asset.',
+      );
       await apiClient.iterateVulnerabilities(
         assetEntity.id! as string,
         async (assetVulnerability) => {
