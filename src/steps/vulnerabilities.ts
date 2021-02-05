@@ -10,7 +10,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { InsightVmAssetVulnerability, IntegrationConfig } from '../types';
-import { entities, relationships } from '../constants';
+import { entities, relationships, steps } from '../constants';
 
 function getAssetVulnerabilityKey(
   assetId: string,
@@ -125,14 +125,14 @@ export async function fetchAssetVulnerabilities({
 
 export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-asset-vulnerabilities',
+    id: steps.FETCH_ASSET_VULNERABILITIES,
     name: 'Fetch Asset Vulnerabilities',
     entities: [entities.FINDING, entities.VULNERABILITY],
     relationships: [
       relationships.ASSET_HAS_FINDING,
       relationships.FINDING_IS_VULNERABILITY,
     ],
-    dependsOn: ['fetch-assets'],
+    dependsOn: [steps.FETCH_ASSETS],
     executionHandler: fetchAssetVulnerabilities,
   },
 ];
