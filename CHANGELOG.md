@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Disabled `fetch-asset-vulnerabilities` step temporarily.
+
+### Fixed
+
+- Fixed some missing step dependencies in `assets`, `scan-assets`,
+  `site-assets`, and `site-users` steps.
+
+## 0.2.0 - 2020-02-05
+
 ### Added
 
 - Added error messaging about self-signed TLS certificates in Rapid7 Console.
