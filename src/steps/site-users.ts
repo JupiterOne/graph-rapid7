@@ -48,7 +48,7 @@ export const siteUsersSteps: IntegrationStep<IntegrationConfig>[] = [
     name: 'Fetch Site Users',
     entities: [],
     relationships: [relationships.SITE_HAS_USER],
-    dependsOn: ['fetch-sites'],
+    dependsOn: ['fetch-sites', 'fetch-users'],
     executionHandler: fetchSiteUsers,
   },
 ];

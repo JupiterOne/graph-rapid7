@@ -73,7 +73,7 @@ export const siteAssetsSteps: IntegrationStep<IntegrationConfig>[] = [
       relationships.SITE_HAS_ASSET,
       relationships.ACCOUNT_HAS_ASSET,
     ],
-    dependsOn: ['fetch-sites', 'fetch-assets'],
+    dependsOn: ['fetch-account', 'fetch-sites', 'fetch-assets'],
     executionHandler: fetchSiteAssets,
   },
 ];

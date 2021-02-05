@@ -86,7 +86,12 @@ export const scanAssetsStep: IntegrationStep<IntegrationConfig>[] = [
     name: 'Fetch Scan Assets',
     entities: [],
     relationships: [relationships.SCAN_MONITORS_ASSET],
-    dependsOn: ['fetch-site-assets'],
+    dependsOn: [
+      'fetch-site-assets',
+      'fetch-scans',
+      'fetch-sites',
+      'fetch-assets',
+    ],
     executionHandler: fetchScanAssets,
   },
 ];

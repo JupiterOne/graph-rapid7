@@ -49,7 +49,6 @@ export const assetsSteps: IntegrationStep<IntegrationConfig>[] = [
     name: 'Fetch Assets',
     entities: [entities.ASSET],
     relationships: [],
-    dependsOn: ['fetch-sites'],
     executionHandler: fetchAssets,
   },
 ];
