@@ -68,7 +68,7 @@ export const siteAssetsSteps: IntegrationStep<IntegrationConfig>[] = [
   {
     id: steps.FETCH_SITE_ASSETS,
     name: 'Fetch Site Assets',
-    entities: [entities.ASSET],
+    entities: [],
     relationships: [
       relationships.SITE_HAS_ASSET,
       relationships.ACCOUNT_HAS_ASSET,
