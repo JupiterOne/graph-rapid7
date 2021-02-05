@@ -5,7 +5,7 @@ import { scansSteps } from './scans';
 import { assetsSteps } from './assets';
 import { siteAssetsSteps } from './site-assets';
 import { siteUsersSteps } from './site-users';
-// import { vulnerabilitiesSteps } from './vulnerabilities';
+import { vulnerabilitiesSteps } from './vulnerabilities';
 import { assetUsersStep } from './asset-users';
 import { scanAssetsStep } from './scan-assets';
 
@@ -17,7 +17,7 @@ const integrationSteps = [
   ...assetsSteps,
   ...siteAssetsSteps,
   ...siteUsersSteps,
-  // ...vulnerabilitiesSteps,
+  ...vulnerabilitiesSteps,
   ...assetUsersStep,
   ...scanAssetsStep,
 ];

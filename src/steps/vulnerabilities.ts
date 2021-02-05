@@ -81,6 +81,7 @@ async function findOrCreateVulnerability(
 }
 
 export async function fetchAssetVulnerabilities({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
@@ -89,6 +90,12 @@ export async function fetchAssetVulnerabilities({
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
+      logger.debug(
+        {
+          assetId: assetEntity.id,
+        },
+        'Getting vulnerabilities for asset.',
+      );
       await apiClient.iterateVulnerabilities(
         assetEntity.id! as string,
         async (assetVulnerability) => {
@@ -123,6 +130,8 @@ export async function fetchAssetVulnerabilities({
   );
 }
 
+const { FETCH_ASSET_VULNERABILITIES, ...otherSteps } = steps;
+
 export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
   {
     id: steps.FETCH_ASSET_VULNERABILITIES,
@@ -132,7 +141,14 @@ export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
       relationships.ASSET_HAS_FINDING,
       relationships.FINDING_IS_VULNERABILITY,
     ],
-    dependsOn: [steps.FETCH_ASSETS],
+    /**
+     * In order to force this step to execute in isolation, we push it to the
+     * bottom of the dependency graph by setting _every other step_ as a
+     * dependency.
+     *
+     * TODO: Remove `...Object.values(otherSteps)` as dependency.
+     */
+    dependsOn: [steps.FETCH_ASSETS, ...Object.values(otherSteps)],
     executionHandler: fetchAssetVulnerabilities,
   },
 ];
