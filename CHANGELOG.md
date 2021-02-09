@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped SDK deps to 5.6.2.
+
 ## 0.2.3 - 2021-02-09
 
 ### Added
