@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.3 - 2021-02-09
+
+### Added
+
+- Throw if `!response.ok` in ApiClient.request().
+
 ## 0.2.2 - 2021-02-05
 
 ### Changed

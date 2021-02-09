@@ -1,7 +1,7 @@
 import fetch, { Response } from 'node-fetch';
 import {
-  IntegrationProviderAuthenticationError,
   IntegrationValidationError,
+  IntegrationProviderAPIError,
 } from '@jupiterone/integration-sdk-core';
 
 import {
@@ -46,7 +46,7 @@ export class APIClient {
     uri: string,
     method: 'GET' | 'HEAD' = 'GET',
   ): Promise<Response> {
-    return await fetch(uri, {
+    const response = await fetch(uri, {
       method,
       headers: {
         Accept: 'application/json',
@@ -55,6 +55,14 @@ export class APIClient {
         ).toString('base64')}`,
       },
     });
+    if (!response.ok) {
+      throw new IntegrationProviderAPIError({
+        endpoint: uri,
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
+    return response;
   }
 
   private async paginatedRequest<T>(
@@ -81,9 +89,8 @@ export class APIClient {
 
   public async verifyAuthentication(): Promise<void> {
     const usersApiRoute = this.withBaseUri('users');
-    let response;
     try {
-      response = await this.request(usersApiRoute, 'GET');
+      await this.request(usersApiRoute, 'GET');
     } catch (err) {
       let errMessage = `Error occurred validating invocation at ${usersApiRoute} (code=${err.code}, message=${err.message})`;
       if (err.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
@@ -95,15 +102,6 @@ We recommend installing a certificate from https://letsencrypt.org/ or a certifi
 authority you trust. ` + errMessage;
       }
       throw new IntegrationValidationError(errMessage);
-    }
-
-    if (!response.ok) {
-      throw new IntegrationProviderAuthenticationError({
-        cause: new Error('Provider authentication failed'),
-        endpoint: usersApiRoute,
-        status: response.status,
-        statusText: response.statusText,
-      });
     }
   }
 

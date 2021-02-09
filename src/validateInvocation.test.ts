@@ -1,8 +1,4 @@
 import {
-  IntegrationProviderAuthenticationError,
-  IntegrationValidationError,
-} from '@jupiterone/integration-sdk-core';
-import {
   createMockExecutionContext,
   setupRecording,
 } from '@jupiterone/integration-sdk-testing';
@@ -16,11 +12,9 @@ it('requires valid config', async () => {
     instanceConfig: {} as IntegrationConfig,
   });
 
-  try {
-    await validateInvocation(executionContext);
-  } catch (e) {
-    expect(e instanceof IntegrationValidationError).toBe(true);
-  }
+  await expect(validateInvocation(executionContext)).rejects.toThrow(
+    'Config requires all of {insightHost, insightClientUsername, insightClientPassword}',
+  );
 });
 
 it('auth error', async () => {
@@ -41,11 +35,10 @@ it('auth error', async () => {
     },
   });
 
-  try {
-    await validateInvocation(executionContext);
-  } catch (e) {
-    expect(e instanceof IntegrationProviderAuthenticationError).toBe(true);
-  }
+  await expect(validateInvocation(executionContext)).rejects.toThrow(
+    'Error occurred validating invocation at https://INVALID/api/3/users (code=PROVIDER_API_ERROR, \
+message=Provider API failed at https://INVALID/api/3/users: 401 Unauthorized)',
+  );
 });
 
 it('should direct users to Rapid7 cert documentation if validation fails with DEPTH_ZERO_SELF_SIGNED_CERT', async () => {
