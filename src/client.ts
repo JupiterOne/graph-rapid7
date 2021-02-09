@@ -2,6 +2,7 @@ import fetch, { Response } from 'node-fetch';
 import {
   IntegrationProviderAuthenticationError,
   IntegrationValidationError,
+  IntegrationProviderAPIError,
 } from '@jupiterone/integration-sdk-core';
 
 import {
@@ -46,7 +47,7 @@ export class APIClient {
     uri: string,
     method: 'GET' | 'HEAD' = 'GET',
   ): Promise<Response> {
-    return await fetch(uri, {
+    const response = await fetch(uri, {
       method,
       headers: {
         Accept: 'application/json',
@@ -55,6 +56,14 @@ export class APIClient {
         ).toString('base64')}`,
       },
     });
+    if (!response.ok) {
+      throw new IntegrationProviderAPIError({
+        endpoint: uri,
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
+    return response;
   }
 
   private async paginatedRequest<T>(
