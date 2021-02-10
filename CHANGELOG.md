@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.5 - 2021-02-10
+
 ### Added
 
 - Added `logger.debug` statement on API Client calls.
