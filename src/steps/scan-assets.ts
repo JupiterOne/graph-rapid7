@@ -38,10 +38,11 @@ async function buildSiteAssetsMap(jobState: JobState): Promise<SiteAssetsMap> {
 }
 
 export async function fetchScanAssets({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const siteAssetsMap = await buildSiteAssetsMap(jobState);
 

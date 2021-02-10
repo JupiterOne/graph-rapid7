@@ -21,10 +21,11 @@ export function getSiteKey(id: number): string {
 }
 
 export async function fetchSites({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const accountEntity = (await jobState.getData(
     ACCOUNT_ENTITY_DATA_KEY,

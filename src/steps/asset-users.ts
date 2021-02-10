@@ -12,10 +12,11 @@ import { relationships, entities, steps } from '../constants';
 import { getUserKey } from './access';
 
 export async function fetchAssetUsers({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },

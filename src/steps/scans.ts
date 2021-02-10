@@ -17,10 +17,11 @@ export function getScanKey(id: number): string {
 }
 
 export async function fetchScans({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateScans(async (scan) => {
     const webLink = scan.links.find((link) => link.rel === 'self')?.href;
