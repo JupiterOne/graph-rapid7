@@ -76,12 +76,16 @@ export class APIClient {
     let body: PaginatedResource<T>;
 
     do {
-      const response = await this.request(
-        this.withBaseUri(
-          `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
-        ),
-        'GET',
+      const endpoint = this.withBaseUri(
+        `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
       );
+      this.logger.debug(
+        {
+          endpoint,
+        },
+        'Calling API endpoint.',
+      );
+      const response = await this.request(endpoint, 'GET');
       body = await response.json();
 
       await pageIteratee(body.resources);
