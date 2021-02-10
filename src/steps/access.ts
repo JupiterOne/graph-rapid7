@@ -21,10 +21,11 @@ export function getUserKey(id: number): string {
 }
 
 export async function fetchUsers({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const accountEntity = (await jobState.getData(
     ACCOUNT_ENTITY_DATA_KEY,

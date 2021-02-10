@@ -13,10 +13,11 @@ import { getAssetKey } from './assets';
 import { ACCOUNT_ENTITY_DATA_KEY } from '../constants';
 
 export async function fetchSiteAssets({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const connectedAssets = new Set<string>();
 

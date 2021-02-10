@@ -1,10 +1,10 @@
 import {
   createDirectRelationship,
   createIntegrationEntity,
-  Entity,
+  // Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  JobState,
+  // JobState,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
@@ -45,47 +45,47 @@ export function getVulnerabilityKey(id: string): string {
   return `insightvm_vulnerability:${id}`;
 }
 
-async function findOrCreateVulnerability(
-  jobState: JobState,
-  assetVulnerability: InsightVmAssetVulnerability,
-): Promise<Entity> {
-  const existingVulnerability = await jobState.findEntity(
-    getVulnerabilityKey(assetVulnerability.id),
-  );
+// async function findOrCreateVulnerability(
+//   jobState: JobState,
+//   assetVulnerability: InsightVmAssetVulnerability,
+// ): Promise<Entity> {
+//   const existingVulnerability = await jobState.findEntity(
+//     getVulnerabilityKey(assetVulnerability.id),
+//   );
 
-  if (existingVulnerability) {
-    return existingVulnerability;
-  }
+//   if (existingVulnerability) {
+//     return existingVulnerability;
+//   }
 
-  // TODO should fetch vulnerability from `/vulnerabilities/{id} endpoint to create entity.
-  return jobState.addEntity(
-    createIntegrationEntity({
-      entityData: {
-        source: assetVulnerability,
-        assign: {
-          _key: getVulnerabilityKey(assetVulnerability.id),
-          _type: entities.VULNERABILITY._type,
-          _class: entities.VULNERABILITY._class,
-          id: `${assetVulnerability.id}`,
-          name: assetVulnerability.id,
-          category: 'other',
-          severity: 'critical',
-          blocking: false,
-          open: false,
-          production: false,
-          public: true,
-        },
-      },
-    }),
-  );
-}
+//   // TODO should fetch vulnerability from `/vulnerabilities/{id} endpoint to create entity.
+//   return jobState.addEntity(
+//     createIntegrationEntity({
+//       entityData: {
+//         source: assetVulnerability,
+//         assign: {
+//           _key: getVulnerabilityKey(assetVulnerability.id),
+//           _type: entities.VULNERABILITY._type,
+//           _class: entities.VULNERABILITY._class,
+//           id: `${assetVulnerability.id}`,
+//           name: assetVulnerability.id,
+//           category: 'other',
+//           severity: 'critical',
+//           blocking: false,
+//           open: false,
+//           production: false,
+//           public: true,
+//         },
+//       },
+//     }),
+//   );
+// }
 
 export async function fetchAssetVulnerabilities({
   logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
@@ -113,17 +113,18 @@ export async function fetchAssetVulnerabilities({
             }),
           );
 
-          const vulnerabilityEntity = await findOrCreateVulnerability(
-            jobState,
-            assetVulnerability,
-          );
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.IS,
-              from: findingEntity,
-              to: vulnerabilityEntity,
-            }),
-          );
+          /* TODO: Re-implement. Temporarily disabled for testing. */
+          // const vulnerabilityEntity = await findOrCreateVulnerability(
+          //   jobState,
+          //   assetVulnerability,
+          // );
+          // await jobState.addRelationship(
+          //   createDirectRelationship({
+          //     _class: RelationshipClass.IS,
+          //     from: findingEntity,
+          //     to: vulnerabilityEntity,
+          //   }),
+          // );
         },
       );
     },

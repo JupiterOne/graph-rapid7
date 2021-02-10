@@ -2,6 +2,7 @@ import fetch, { Response } from 'node-fetch';
 import {
   IntegrationValidationError,
   IntegrationProviderAPIError,
+  IntegrationLogger,
 } from '@jupiterone/integration-sdk-core';
 
 import {
@@ -31,11 +32,13 @@ export class APIClient {
   private readonly insightClientUsername: string;
   private readonly insightClientPassword: string;
   private readonly paginateEntitiesPerPage = 10;
+  private readonly logger: IntegrationLogger;
 
-  constructor(readonly config: IntegrationConfig) {
+  constructor(readonly config: IntegrationConfig, logger: IntegrationLogger) {
     this.insightHost = config.insightHost;
     this.insightClientUsername = config.insightClientUsername;
     this.insightClientPassword = config.insightClientPassword;
+    this.logger = logger;
   }
 
   private withBaseUri(path: string): string {
@@ -73,12 +76,16 @@ export class APIClient {
     let body: PaginatedResource<T>;
 
     do {
-      const response = await this.request(
-        this.withBaseUri(
-          `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
-        ),
-        'GET',
+      const endpoint = this.withBaseUri(
+        `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
       );
+      this.logger.debug(
+        {
+          endpoint,
+        },
+        'Calling API endpoint.',
+      );
+      const response = await this.request(endpoint, 'GET');
       body = await response.json();
 
       await pageIteratee(body.resources);
@@ -268,6 +275,9 @@ authority you trust. ` + errMessage;
   }
 }
 
-export function createAPIClient(config: IntegrationConfig): APIClient {
-  return new APIClient(config);
+export function createAPIClient(
+  config: IntegrationConfig,
+  logger: IntegrationLogger,
+): APIClient {
+  return new APIClient(config, logger);
 }

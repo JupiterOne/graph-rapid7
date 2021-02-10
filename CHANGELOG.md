@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.5 - 2021-02-10
+
+### Added
+
+- Added `logger.debug` statement on API Client calls.
+
+### Removed
+
+- Temporarily removed `insightvm_vulnerability` and
+  `insightvm_finding_is_vulnerability`
+
 ## 0.2.4 - 2021-02-09
 
 ### Changed

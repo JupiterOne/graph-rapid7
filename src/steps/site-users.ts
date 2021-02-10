@@ -12,10 +12,11 @@ import { relationships, entities, steps } from '../constants';
 import { getUserKey } from './access';
 
 export async function fetchSiteUsers({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: entities.SITE._type },

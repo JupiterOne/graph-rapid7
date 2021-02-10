@@ -13,10 +13,11 @@ export function getAssetKey(id: number): string {
 }
 
 export async function fetchAssets({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateAssets(async (asset) => {
     const webLink = asset.links.find((link) => link.rel === 'self')?.href;

@@ -13,10 +13,11 @@ export function getAccountKey(user: string): string {
 }
 
 export async function fetchAccountDetails({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const account = await apiClient.getAccount();
   const [webLink] = account.links;
