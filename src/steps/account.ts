@@ -6,17 +6,18 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { ACCOUNT_ENTITY_DATA_KEY, entities } from '../constants';
+import { ACCOUNT_ENTITY_DATA_KEY, entities, steps } from '../constants';
 
 export function getAccountKey(user: string): string {
   return `insightvm_account:${user}`;
 }
 
 export async function fetchAccountDetails({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const account = await apiClient.getAccount();
   const [webLink] = account.links;
@@ -43,7 +44,7 @@ export async function fetchAccountDetails({
 
 export const accountSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-account',
+    id: steps.FETCH_ACCOUNT,
     name: 'Fetch Account Details',
     entities: [entities.ACCOUNT],
     relationships: [],

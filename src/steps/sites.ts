@@ -9,17 +9,23 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { ACCOUNT_ENTITY_DATA_KEY, entities, relationships } from '../constants';
+import {
+  ACCOUNT_ENTITY_DATA_KEY,
+  entities,
+  relationships,
+  steps,
+} from '../constants';
 
 export function getSiteKey(id: number): string {
   return `insightvm_site:${id}`;
 }
 
 export async function fetchSites({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const accountEntity = (await jobState.getData(
     ACCOUNT_ENTITY_DATA_KEY,
@@ -60,11 +66,11 @@ export async function fetchSites({
 
 export const sitesSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-sites',
+    id: steps.FETCH_SITES,
     name: 'Fetch Sites',
     entities: [entities.SITE],
     relationships: [relationships.ACCOUNT_HAS_SITE],
-    dependsOn: ['fetch-account'],
+    dependsOn: [steps.FETCH_ACCOUNT],
     executionHandler: fetchSites,
   },
 ];

@@ -9,17 +9,23 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { ACCOUNT_ENTITY_DATA_KEY, entities, relationships } from '../constants';
+import {
+  ACCOUNT_ENTITY_DATA_KEY,
+  entities,
+  relationships,
+  steps,
+} from '../constants';
 
 export function getUserKey(id: number): string {
   return `insightvm_user:${id}`;
 }
 
 export async function fetchUsers({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const accountEntity = (await jobState.getData(
     ACCOUNT_ENTITY_DATA_KEY,
@@ -58,11 +64,11 @@ export async function fetchUsers({
 
 export const accessSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-users',
+    id: steps.FETCH_USERS,
     name: 'Fetch Users',
     entities: [entities.USER],
     relationships: [relationships.ACCOUNT_HAS_USER],
-    dependsOn: ['fetch-account'],
+    dependsOn: [steps.FETCH_ACCOUNT],
     executionHandler: fetchUsers,
   },
 ];

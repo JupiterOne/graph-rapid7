@@ -4,11 +4,12 @@ import {
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { entities, relationships } from '../constants';
+import { entities, relationships, steps } from '../constants';
 import { getSiteKey } from './sites';
 
 export function getScanKey(id: number): string {
@@ -16,10 +17,11 @@ export function getScanKey(id: number): string {
 }
 
 export async function fetchScans({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await apiClient.iterateScans(async (scan) => {
     const webLink = scan.links.find((link) => link.rel === 'self')?.href;
@@ -43,6 +45,11 @@ export async function fetchScans({
             name: scan.scanName,
             active: scan.status === 'finished' ? false : undefined,
             state: scan.status,
+            summary: scan.scanName,
+            category: 'Vulnerability Scan',
+            internal: true,
+            startedOn: parseTimePropertyValue(scan.startTime),
+            completedOn: parseTimePropertyValue(scan.endTime),
             webLink,
           },
         },
@@ -52,7 +59,7 @@ export async function fetchScans({
         jobState.addEntity(scanEntity),
         jobState.addRelationship(
           createDirectRelationship({
-            _class: RelationshipClass.HAS,
+            _class: RelationshipClass.PERFORMED,
             from: siteEntity,
             to: scanEntity,
           }),
@@ -64,11 +71,11 @@ export async function fetchScans({
 
 export const scansSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-scans',
+    id: steps.FETCH_SCANS,
     name: 'Fetch Scans',
     entities: [entities.SCAN],
-    relationships: [relationships.SITE_HAS_SCAN],
-    dependsOn: ['fetch-sites'],
+    relationships: [relationships.SITE_PERFORMED_SCAN],
+    dependsOn: [steps.FETCH_SITES],
     executionHandler: fetchScans,
   },
 ];

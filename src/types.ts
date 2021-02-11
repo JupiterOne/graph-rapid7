@@ -19,6 +19,11 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * The administrator account password for authentication.
    */
   insightClientPassword: string;
+
+  /**
+   * Disable TLS certificate verification for hosts that cannot install certificates.
+   */
+  disableTlsVerification?: boolean;
 }
 
 export type SiteAssetsMap = {
@@ -98,9 +103,8 @@ export type InsightVMAsset = {
   siteId: number;
 };
 
-export type InsightVMVulnerability = {
+export type InsightVmAssetVulnerability = {
   id: string;
-  assetId: number;
   instances: number;
   links: Link[];
   results: {

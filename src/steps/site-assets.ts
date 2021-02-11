@@ -8,15 +8,16 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { entities, relationships } from '../constants';
+import { entities, relationships, steps } from '../constants';
 import { getAssetKey } from './assets';
 import { ACCOUNT_ENTITY_DATA_KEY } from '../constants';
 
 export async function fetchSiteAssets({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const connectedAssets = new Set<string>();
 
@@ -66,14 +67,14 @@ export async function fetchSiteAssets({
 
 export const siteAssetsSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-site-assets',
+    id: steps.FETCH_SITE_ASSETS,
     name: 'Fetch Site Assets',
-    entities: [entities.ASSET],
+    entities: [],
     relationships: [
       relationships.SITE_HAS_ASSET,
       relationships.ACCOUNT_HAS_ASSET,
     ],
-    dependsOn: ['fetch-sites', 'fetch-assets'],
+    dependsOn: [steps.FETCH_ACCOUNT, steps.FETCH_SITES, steps.FETCH_ASSETS],
     executionHandler: fetchSiteAssets,
   },
 ];

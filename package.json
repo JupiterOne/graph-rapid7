@@ -1,6 +1,6 @@
 {
-  "name": "@jupiterone/integration-template",
-  "version": "0.2.0",
+  "name": "@jupiterone/graph-rapid7",
+  "version": "0.2.5",
   "description": "A JupiterOne Integration",
   "license": "MPL-2.0",
   "main": "dist/index.js",
@@ -12,25 +12,29 @@
     "access": "public"
   },
   "scripts": {
-    "start": "NODE_TLS_REJECT_UNAUTHORIZED=0 j1-integration collect",
+    "start:console": "./console/scripts/start-console.sh",
+    "stop:console": "./console/scripts/stop-console.sh",
+    "start": "j1-integration collect",
+    "start:no-tls-verify": "NODE_TLS_REJECT_UNAUTHORIZED=0 j1-integration collect",
     "graph": "j1-integration visualize",
     "lint": "eslint . --cache --fix --ext .ts,.tsx",
     "format": "prettier --write '**/*.{ts,js,json,css,md,yml}'",
     "type-check": "tsc",
-    "test:local": "NODE_TLS_REJECT_UNAUTHORIZED=0 && yarn test",
     "test": "jest",
+    "test:no-tls-verify": "NODE_TLS_REJECT_UNAUTHORIZED=0 && yarn test",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
     "prepush": "yarn lint && yarn type-check && jest --changedSince master",
     "prepack": "yarn build"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^4.0.0"
+    "@jupiterone/integration-sdk-core": "^5.6.2"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^4.0.0",
-    "@jupiterone/integration-sdk-dev-tools": "^4.0.0",
-    "@jupiterone/integration-sdk-testing": "^4.0.0"
+    "@jupiterone/integration-sdk-core": "^5.6.2",
+    "@jupiterone/integration-sdk-dev-tools": "^5.6.2",
+    "@jupiterone/integration-sdk-testing": "^5.6.2",
+    "@types/node-fetch": "^2.5.8"
   },
   "dependencies": {
     "node-fetch": "^2.6.0"

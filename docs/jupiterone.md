@@ -29,7 +29,8 @@ The following entities are created:
 | ------------- | ------------------------- | --------------- |
 | Account       | `insightvm_account`       | `Account`       |
 | Asset         | `insightvm_asset`         | `Device`        |
-| Scan          | `insightvm_scan`          | `Process`       |
+| Finding       | `insightvm_finding`       | `Finding`       |
+| Scan          | `insightvm_scan`          | `Assessment`    |
 | Site          | `insightvm_site`          | `Site`          |
 | User          | `insightvm_user`          | `User`          |
 | Vulnerability | `insightvm_vulnerability` | `Vulnerability` |
@@ -38,17 +39,18 @@ The following entities are created:
 
 The following relationships are created/mapped:
 
-| Source Entity `_type`     | Relationship `_class` | Target Entity `_type` |
-| ------------------------- | --------------------- | --------------------- |
-| `insightvm_account`       | **HAS**               | `insightvm_asset`     |
-| `insightvm_account`       | **HAS**               | `insightvm_site`      |
-| `insightvm_account`       | **HAS**               | `insightvm_user`      |
-| `insightvm_scan`          | **MONITORS**          | `insightvm_asset`     |
-| `insightvm_site`          | **HAS**               | `insightvm_asset`     |
-| `insightvm_site`          | **HAS**               | `insightvm_scan`      |
-| `insightvm_site`          | **HAS**               | `insightvm_user`      |
-| `insightvm_user`          | **USES**              | `insightvm_asset`     |
-| `insightvm_vulnerability` | **ALLOWS**            | `insightvm_asset`     |
+| Source Entity `_type` | Relationship `_class` | Target Entity `_type`     |
+| --------------------- | --------------------- | ------------------------- |
+| `insightvm_account`   | **HAS**               | `insightvm_asset`         |
+| `insightvm_account`   | **HAS**               | `insightvm_site`          |
+| `insightvm_account`   | **HAS**               | `insightvm_user`          |
+| `insightvm_asset`     | **HAS**               | `insightvm_finding`       |
+| `insightvm_finding`   | **IS**                | `insightvm_vulnerability` |
+| `insightvm_scan`      | **MONITORS**          | `insightvm_asset`         |
+| `insightvm_site`      | **HAS**               | `insightvm_asset`         |
+| `insightvm_site`      | **HAS**               | `insightvm_user`          |
+| `insightvm_site`      | **PERFORMED**         | `insightvm_scan`          |
+| `insightvm_user`      | **OWNS**              | `insightvm_asset`         |
 
 <!--
 ********************************************************************************

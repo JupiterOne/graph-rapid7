@@ -1,5 +1,9 @@
 import fetch, { Response } from 'node-fetch';
-import { IntegrationProviderAuthenticationError } from '@jupiterone/integration-sdk-core';
+import {
+  IntegrationValidationError,
+  IntegrationProviderAPIError,
+  IntegrationLogger,
+} from '@jupiterone/integration-sdk-core';
 
 import {
   InsightVMAccount,
@@ -7,7 +11,7 @@ import {
   InsightVMScan,
   InsightVMSite,
   InsightVMUser,
-  InsightVMVulnerability,
+  InsightVmAssetVulnerability,
   IntegrationConfig,
   PageIteratee,
   PaginatedResource,
@@ -28,11 +32,13 @@ export class APIClient {
   private readonly insightClientUsername: string;
   private readonly insightClientPassword: string;
   private readonly paginateEntitiesPerPage = 10;
+  private readonly logger: IntegrationLogger;
 
-  constructor(readonly config: IntegrationConfig) {
+  constructor(readonly config: IntegrationConfig, logger: IntegrationLogger) {
     this.insightHost = config.insightHost;
     this.insightClientUsername = config.insightClientUsername;
     this.insightClientPassword = config.insightClientPassword;
+    this.logger = logger;
   }
 
   private withBaseUri(path: string): string {
@@ -43,7 +49,7 @@ export class APIClient {
     uri: string,
     method: 'GET' | 'HEAD' = 'GET',
   ): Promise<Response> {
-    return await fetch(uri, {
+    const response = await fetch(uri, {
       method,
       headers: {
         Accept: 'application/json',
@@ -52,6 +58,14 @@ export class APIClient {
         ).toString('base64')}`,
       },
     });
+    if (!response.ok) {
+      throw new IntegrationProviderAPIError({
+        endpoint: uri,
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
+    return response;
   }
 
   private async paginatedRequest<T>(
@@ -62,12 +76,16 @@ export class APIClient {
     let body: PaginatedResource<T>;
 
     do {
-      const response = await this.request(
-        this.withBaseUri(
-          `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
-        ),
-        'GET',
+      const endpoint = this.withBaseUri(
+        `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
       );
+      this.logger.debug(
+        {
+          endpoint,
+        },
+        'Calling API endpoint.',
+      );
+      const response = await this.request(endpoint, 'GET');
       body = await response.json();
 
       await pageIteratee(body.resources);
@@ -78,15 +96,19 @@ export class APIClient {
 
   public async verifyAuthentication(): Promise<void> {
     const usersApiRoute = this.withBaseUri('users');
-    const response = await this.request(usersApiRoute, 'GET');
-
-    if (!response.ok) {
-      throw new IntegrationProviderAuthenticationError({
-        cause: new Error('Provider authentication failed'),
-        endpoint: usersApiRoute,
-        status: response.status,
-        statusText: response.statusText,
-      });
+    try {
+      await this.request(usersApiRoute, 'GET');
+    } catch (err) {
+      let errMessage = `Error occurred validating invocation at ${usersApiRoute} (code=${err.code}, message=${err.message})`;
+      if (err.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
+        errMessage =
+          `The InsightVM Security Console is using a self-signed certificate. \
+Please follow the Rapid7 guidelines to install a valid TLS certificate: \
+https://docs.rapid7.com/insightvm/managing-the-security-console/#managing-the-https-certificate. \
+We recommend installing a certificate from https://letsencrypt.org/ or a certificate \
+authority you trust. ` + errMessage;
+      }
+      throw new IntegrationValidationError(errMessage);
     }
   }
 
@@ -240,9 +262,9 @@ export class APIClient {
    */
   public async iterateVulnerabilities(
     assetId: string,
-    iteratee: ResourceIteratee<InsightVMVulnerability>,
+    iteratee: ResourceIteratee<InsightVmAssetVulnerability>,
   ): Promise<void> {
-    await this.paginatedRequest<InsightVMVulnerability>(
+    await this.paginatedRequest<InsightVmAssetVulnerability>(
       `assets/${assetId}/vulnerabilities`,
       async (vulnerabilities) => {
         for (const vulnerability of vulnerabilities) {
@@ -253,6 +275,9 @@ export class APIClient {
   }
 }
 
-export function createAPIClient(config: IntegrationConfig): APIClient {
-  return new APIClient(config);
+export function createAPIClient(
+  config: IntegrationConfig,
+  logger: IntegrationLogger,
+): APIClient {
+  return new APIClient(config, logger);
 }

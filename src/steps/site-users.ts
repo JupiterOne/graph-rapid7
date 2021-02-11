@@ -7,15 +7,16 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { relationships, entities } from '../constants';
+import { relationships, entities, steps } from '../constants';
 
 import { getUserKey } from './access';
 
 export async function fetchSiteUsers({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: entities.SITE._type },
@@ -44,11 +45,11 @@ export async function fetchSiteUsers({
 
 export const siteUsersSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-site-users',
+    id: steps.FETCH_SITE_USERS,
     name: 'Fetch Site Users',
     entities: [],
     relationships: [relationships.SITE_HAS_USER],
-    dependsOn: ['fetch-sites'],
+    dependsOn: [steps.FETCH_SITES, steps.FETCH_USERS],
     executionHandler: fetchSiteUsers,
   },
 ];

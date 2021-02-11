@@ -8,7 +8,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig, SiteAssetsMap } from '../types';
-import { relationships } from '../constants';
+import { relationships, steps } from '../constants';
 import { getScanKey } from './scans';
 
 async function buildSiteAssetsMap(jobState: JobState): Promise<SiteAssetsMap> {
@@ -38,10 +38,11 @@ async function buildSiteAssetsMap(jobState: JobState): Promise<SiteAssetsMap> {
 }
 
 export async function fetchScanAssets({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   const siteAssetsMap = await buildSiteAssetsMap(jobState);
 
@@ -82,11 +83,16 @@ export async function fetchScanAssets({
 
 export const scanAssetsStep: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-scan-assets',
+    id: steps.FETCH_SCAN_ASSETS,
     name: 'Fetch Scan Assets',
     entities: [],
     relationships: [relationships.SCAN_MONITORS_ASSET],
-    dependsOn: ['fetch-site-assets'],
+    dependsOn: [
+      steps.FETCH_SITE_ASSETS,
+      steps.FETCH_SCANS,
+      steps.FETCH_SITES,
+      steps.FETCH_ASSETS,
+    ],
     executionHandler: fetchScanAssets,
   },
 ];

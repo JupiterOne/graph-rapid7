@@ -1,8 +1,6 @@
-import {
-  createMockStepExecutionContext,
-  Recording,
-  setupRecording,
-} from '@jupiterone/integration-sdk-testing';
+import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
+
+import { Recording, setupRapid7Recording } from '../../test/helpers/recording';
 
 import { IntegrationConfig } from '../types';
 import { fetchUsers } from './access';
@@ -11,9 +9,10 @@ import { fetchSites } from './sites';
 import { fetchScans } from './scans';
 import { fetchAssets } from './assets';
 import { fetchSiteAssets } from './site-assets';
-import { fetchVulnerabilities } from './vulnerabilities';
+import { fetchAssetVulnerabilities } from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
+import { entities } from '../constants';
 
 const DEFAULT_INSIGHT_HOST = 'localhost:3780';
 const DEFAULT_INSIGHT_CLIENT_USERNAME = 'admin';
@@ -33,7 +32,7 @@ describe('Rapid7 InsightVM', () => {
   let recording: Recording;
 
   beforeEach(() => {
-    recording = setupRecording({
+    recording = setupRapid7Recording({
       directory: __dirname,
       name: 'insightvm_recordings',
       options: {
@@ -61,7 +60,7 @@ describe('Rapid7 InsightVM', () => {
     await fetchAssetUsers(context);
     await fetchSiteAssets(context);
     await fetchScanAssets(context);
-    await fetchVulnerabilities(context);
+    await fetchAssetVulnerabilities(context);
 
     // Review snapshot, failure is a regression
     expect({
@@ -74,7 +73,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Account'),
+        e._class.includes(entities.ACCOUNT._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Account'],
@@ -101,7 +100,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('User'),
+        e._class.includes(entities.USER._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['User'],
@@ -128,7 +127,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Site'),
+        e._class.includes(entities.SITE._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Site'],
@@ -161,10 +160,10 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Process'),
+        e._class.includes(entities.SCAN._class),
       ),
     ).toMatchGraphObjectSchema({
-      _class: ['Process'],
+      _class: ['Assessment'],
       schema: {
         additionalProperties: true,
         properties: {
@@ -197,7 +196,7 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Device'),
+        e._class.includes(entities.ASSET._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Device'],
@@ -233,7 +232,28 @@ describe('Rapid7 InsightVM', () => {
 
     expect(
       context.jobState.collectedEntities.filter((e) =>
-        e._class.includes('Vulnerability'),
+        e._class.includes(entities.FINDING._class),
+      ),
+    ).toMatchGraphObjectSchema({
+      _class: ['Finding'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_finding' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+          name: {
+            type: 'string',
+          },
+        },
+      },
+    });
+
+    expect(
+      context.jobState.collectedEntities.filter((e) =>
+        e._class.includes(entities.VULNERABILITY._class),
       ),
     ).toMatchGraphObjectSchema({
       _class: ['Vulnerability'],

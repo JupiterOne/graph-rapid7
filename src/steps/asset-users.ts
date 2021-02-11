@@ -7,15 +7,16 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../types';
-import { relationships, entities } from '../constants';
+import { relationships, entities, steps } from '../constants';
 
 import { getUserKey } from './access';
 
 export async function fetchAssetUsers({
+  logger,
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const apiClient = createAPIClient(instance.config);
+  const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
@@ -28,7 +29,7 @@ export async function fetchAssetUsers({
           if (userEntity) {
             await jobState.addRelationship(
               createDirectRelationship({
-                _class: RelationshipClass.USES,
+                _class: RelationshipClass.OWNS,
                 from: userEntity,
                 to: assetEntity,
               }),
@@ -42,11 +43,11 @@ export async function fetchAssetUsers({
 
 export const assetUsersStep: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: 'fetch-asset-users',
+    id: steps.FETCH_ASSET_USERS,
     name: 'Fetch Asset Users',
     entities: [],
-    relationships: [relationships.USER_USES_ASSET],
-    dependsOn: ['fetch-assets', 'fetch-users'],
+    relationships: [relationships.USER_OWNS_ASSET],
+    dependsOn: [steps.FETCH_ASSETS, steps.FETCH_USERS],
     executionHandler: fetchAssetUsers,
   },
 ];
