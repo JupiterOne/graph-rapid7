@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.6 - 2021-02-12
+
 ### Fixed
 
 - Fixed client pagination logic, which previously never terminated pagination
