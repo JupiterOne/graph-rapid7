@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.2.6 - 2021-02-12
+
+### Fixed
+
+- Fixed client pagination logic, which previously never terminated pagination
+  when `request.body.page.totalPages === 0`.
+
 ## 0.2.5 - 2021-02-10
 
 ### Added
