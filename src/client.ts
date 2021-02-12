@@ -91,7 +91,7 @@ export class APIClient {
       await pageIteratee(body.resources);
 
       currentPage++;
-    } while (body.page && body.page.number !== body.page.totalPages - 1);
+    } while (body.page?.totalPages && currentPage < body.page.totalPages);
   }
 
   public async verifyAuthentication(): Promise<void> {
