@@ -56,28 +56,31 @@ async function findOrCreateVulnerability(
   if (existingVulnerability) {
     return existingVulnerability;
   }
+  return jobState.addEntity(createVulnerabilityEntity(assetVulnerability));
+}
 
-  // TODO should fetch vulnerability from `/vulnerabilities/{id} endpoint to create entity.
-  return jobState.addEntity(
-    createIntegrationEntity({
-      entityData: {
-        source: assetVulnerability,
-        assign: {
-          _key: getVulnerabilityKey(assetVulnerability.id),
-          _type: entities.VULNERABILITY._type,
-          _class: entities.VULNERABILITY._class,
-          id: `${assetVulnerability.id}`,
-          name: assetVulnerability.id,
-          category: 'other',
-          severity: 'critical',
-          blocking: false,
-          open: false,
-          production: false,
-          public: true,
-        },
+// TODO should fetch vulnerability from `/vulnerabilities/{id} endpoint to create entity.
+function createVulnerabilityEntity(
+  assetVulnerability: InsightVmAssetVulnerability,
+) {
+  return createIntegrationEntity({
+    entityData: {
+      source: assetVulnerability,
+      assign: {
+        _key: getVulnerabilityKey(assetVulnerability.id),
+        _type: entities.VULNERABILITY._type,
+        _class: entities.VULNERABILITY._class,
+        id: `${assetVulnerability.id}`,
+        name: assetVulnerability.id,
+        category: 'other',
+        severity: 'critical',
+        blocking: false,
+        open: false,
+        production: false,
+        public: true,
       },
-    }),
-  );
+    },
+  });
 }
 
 export async function fetchAssetVulnerabilities({
@@ -152,3 +155,8 @@ export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
     executionHandler: fetchAssetVulnerabilities,
   },
 ];
+
+export const testFunctions = {
+  findOrCreateVulnerability,
+  createVulnerabilityEntity,
+};
