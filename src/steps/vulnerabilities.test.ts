@@ -35,7 +35,7 @@ describe('findOrCreateVulnerability', () => {
     };
 
     await expect(
-      findOrCreateVulnerability(context.jobState, newAssetVulnerability),
+      findOrCreateVulnerability(context, newAssetVulnerability),
     ).resolves.toBe(existingVulnerabilityEntity);
     expect(context.jobState.collectedEntities.length).toBe(0);
   });
@@ -55,7 +55,7 @@ describe('findOrCreateVulnerability', () => {
     };
 
     await expect(
-      findOrCreateVulnerability(context.jobState, newAssetVulnerability),
+      findOrCreateVulnerability(context, newAssetVulnerability),
     ).resolves.toEqual(createVulnerabilityEntity(newAssetVulnerability));
     expect(context.jobState.collectedEntities.length).toBe(1);
     expect(context.jobState.collectedEntities[0].id).toBe('vuln-id');
@@ -76,12 +76,12 @@ describe('findOrCreateVulnerability', () => {
     };
 
     await expect(
-      findOrCreateVulnerability(context.jobState, newAssetVulnerability),
+      findOrCreateVulnerability(context, newAssetVulnerability),
     ).resolves.toEqual(createVulnerabilityEntity(newAssetVulnerability));
     expect(context.jobState.collectedEntities.length).toBe(1);
 
     await expect(
-      findOrCreateVulnerability(context.jobState, newAssetVulnerability),
+      findOrCreateVulnerability(context, newAssetVulnerability),
     ).resolves.toEqual(createVulnerabilityEntity(newAssetVulnerability));
     expect(context.jobState.collectedEntities.length).toBe(1);
 

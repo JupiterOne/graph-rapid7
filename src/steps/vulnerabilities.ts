@@ -4,7 +4,6 @@ import {
   Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  JobState,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
@@ -46,7 +45,7 @@ export function getVulnerabilityKey(id: string): string {
 }
 
 async function findOrCreateVulnerability(
-  jobState: JobState,
+  { logger, jobState }: IntegrationStepExecutionContext<IntegrationConfig>,
   assetVulnerability: InsightVmAssetVulnerability,
 ): Promise<Entity> {
   const existingVulnerability = await jobState.findEntity(
@@ -54,8 +53,20 @@ async function findOrCreateVulnerability(
   );
 
   if (existingVulnerability) {
+    logger.debug(
+      {
+        id: assetVulnerability.id,
+      },
+      'Found existing vulnerability entity in jobState.',
+    );
     return existingVulnerability;
   }
+  logger.debug(
+    {
+      id: assetVulnerability.id,
+    },
+    'Creating new vulnerability entity in jobState.',
+  );
   return jobState.addEntity(createVulnerabilityEntity(assetVulnerability));
 }
 
@@ -83,11 +94,10 @@ function createVulnerabilityEntity(
   });
 }
 
-export async function fetchAssetVulnerabilities({
-  logger,
-  instance,
-  jobState,
-}: IntegrationStepExecutionContext<IntegrationConfig>) {
+export async function fetchAssetVulnerabilities(
+  context: IntegrationStepExecutionContext<IntegrationConfig>,
+) {
+  const { logger, instance, jobState } = context;
   const apiClient = createAPIClient(instance.config, logger);
 
   await jobState.iterateEntities(
@@ -117,7 +127,7 @@ export async function fetchAssetVulnerabilities({
           );
 
           const vulnerabilityEntity = await findOrCreateVulnerability(
-            jobState,
+            context,
             assetVulnerability,
           );
           await jobState.addRelationship(

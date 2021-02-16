@@ -11,6 +11,7 @@ and this project adheres to
 ### Added
 
 - Re-added `insightvm_vulnerability` and `insightvm_finding_is_vulnerability`.
+- Added debug-level logs for `findOrCreateVulnerability()`.
 
 ## 0.2.6 - 2021-02-12
 
