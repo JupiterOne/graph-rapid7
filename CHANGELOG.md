@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Stop forcing `step-asset-vulnerabilities` to run last in dependency graph.
+
 ## 0.3.0 - 2021-02-16
 
 ### Added
