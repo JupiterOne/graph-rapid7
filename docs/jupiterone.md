@@ -1,5 +1,28 @@
 # Integration with JupiterOne
 
+## Rapid7 + JupiterOne Integration Benefits
+
+- Visualize Rapid7 users, devices, scanners, findings, and vulnerabilities
+  across sites in the JupiterOne graph.
+- Map Rapid7 users to employees in your JupiterOne account.
+- Monitor Rapid7 findings and vulnerabilities within the alerts app.
+- Monitor changes to Rapid7 users, devices, scanners and sites using JupiterOne
+  alerts.
+
+## How it Works
+
+- JupiterOne periodically fetches Rapid7 users, devices, scanners, findings, 
+and vulnerabilities to update the graph.
+- Write JupiterOne queries to review and monitor updates to the graph.
+- Configure alerts to reduce the noise of findings and vulnerabilities.
+- Configure alerts to take action when the JupiterOne graph changes.
+
+## Requirements
+
+- JupiterOne requires the publicly-accessible socket of the InsightsVM security console. 
+JupiterOne also requires the username and password of an admin.
+- You must have permission in JupiterOne to install new integrations.
+
 ## Setup
 
 JupiterOne provides a managed integration for Rapid7 InsightVM. The integration
