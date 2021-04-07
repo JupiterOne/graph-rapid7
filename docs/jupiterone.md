@@ -23,19 +23,46 @@ and vulnerabilities to update the graph.
 JupiterOne also requires the username and password of an admin.
 - You must have permission in JupiterOne to install new integrations.
 
-## Setup
+## Support
 
-JupiterOne provides a managed integration for Rapid7 InsightVM. The integration
-connects directly to Rapid7 InsightVM API to obtain configuration metadata and
-analyze resource relationships.
+If you need help with this integration, please contact
+[JupiterOne Support](https://support.jupiterone.io).
 
-## Authentication
+## Integration Walkthrough
+
+### In Rapid7
 
 Jupiterone requires the following information to complete authentication:
 1. The InsightVM Security Console Socket Address
    - The publicly-accessible socket (host:port) of your InsightVM Security Console. e.g. <hostname>:3780.
 2. An InsightVM Username and Password
    - Use an existing user or create a user that has at least the [Security Manager and Site Owner Role](https://docs.rapid7.com/insightvm/managing-users-and-authentication/#security-manager-and-site-owner)
+
+### In JupiterOne
+
+1. From the configuration **Gear Icon**, select **Integrations**.
+2. Scroll to the **Rapid7** integration tile and click it.
+3. Click the **Add Configuration** button and configure the following settings:
+- Enter the **Account Name** by which you'd like to identify this Rapid7
+   account in JupiterOne. Ingested entities will have this value stored in
+   `tag.AccountName` when **Tag with Account Name** is checked.
+- Enter a **Description** that will further assist your team when identifying
+   the integration instance.
+- Select a **Polling Interval** that you feel is sufficient for your monitoring
+   needs. You may leave this as `DISABLED` and manually execute the integration.
+- Enter the **InsightsVM Security Console Socket Address** which is publicly 
+accessible. 
+- Enter the **InsightsVM Username** of an admin user in the security console.
+- Enter the **InsightsVM Password** of an admin user in the security console.
+4. Click **Create Configuration** once all values are provided.
+
+## How to Uninstall
+
+1. From the configuration **Gear Icon**, select **Integrations**.
+2. Scroll to the **Rapid7** integration tile and click it.
+3. Identify and click the **integration to delete**.
+4. Click the **trash can** icon.
+5. Click the **Remove** button to delete the integration.
 
 <!-- {J1_DOCUMENTATION_MARKER_START} -->
 <!--
