@@ -8,8 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.3.1 - 2021-05-28
+
 ### Changed
 
+- Update `@jupiterone/integration-sdk-*` packages for latest logging of upload
+  errors.
 - Stop forcing `step-asset-vulnerabilities` to run last in dependency graph.
 
 ## 0.3.0 - 2021-02-16
