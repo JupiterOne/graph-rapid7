@@ -24,7 +24,7 @@ export async function fetchAssets({
 
     const assetEntity = createIntegrationEntity({
       entityData: {
-        source: asset,
+        source: {},
         assign: {
           _key: getAssetKey(asset.id),
           _type: entities.ASSET._type,
