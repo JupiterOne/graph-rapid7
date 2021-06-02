@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.3.2 - 2021-06-01
+
 ### Fixed
 
 - Fix `UPLOAD_ERROR`. Removed raw data from assets to avoid step failures due to
