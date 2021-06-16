@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+Test changes in a graph-* that reference an Issue in JupiterOne/integrations.
+
 ## 0.3.2 - 2021-06-01
 
 ### Fixed
