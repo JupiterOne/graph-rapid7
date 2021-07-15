@@ -1,8 +1,12 @@
 import { testFunctions } from './vulnerabilities';
 import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig, InsightVmAssetVulnerability } from '../types';
+import {
+  IntegrationConfig,
+  InsightVmAssetVulnerability,
+  Vulnerability,
+} from '../types';
 
-const { findOrCreateVulnerability, createVulnerabilityEntity } = testFunctions;
+const { fetchVulnerability, createVulnerabilityEntity } = testFunctions;
 
 const instanceConfig = {
   insightHost: process.env.INSIGHT_HOST || 'localhost:3780',
@@ -14,11 +18,16 @@ describe('findOrCreateVulnerability', () => {
   test('should find vulnerability that has already been created', async () => {
     const existingVulnerabilityEntity = createVulnerabilityEntity({
       id: 'vuln-id',
-      instances: 1,
-      links: [],
-      results: [],
-      since: 'since',
-      status: 'status',
+      added: '2017-10-10',
+      denialOfService: false,
+      description: 'vuln description',
+      exploits: 5,
+      modified: '2017-10-10',
+      published: '2017-10-10',
+      riskScore: 125,
+      severity: 'Severe',
+      severityScore: 1,
+      title: 'Vuln Title',
     });
     const context = createMockStepExecutionContext<IntegrationConfig>({
       instanceConfig,
@@ -35,7 +44,7 @@ describe('findOrCreateVulnerability', () => {
     };
 
     await expect(
-      findOrCreateVulnerability(context, newAssetVulnerability),
+      fetchVulnerability(context, newAssetVulnerability.id),
     ).resolves.toBe(existingVulnerabilityEntity);
     expect(context.jobState.collectedEntities.length).toBe(0);
   });
@@ -45,18 +54,23 @@ describe('findOrCreateVulnerability', () => {
       instanceConfig,
     });
 
-    const newAssetVulnerability: InsightVmAssetVulnerability = {
+    const newVulnerability: Vulnerability = {
       id: 'vuln-id',
-      instances: 1,
-      links: [],
-      results: [],
-      since: 'since',
-      status: 'status',
+      added: '2017-10-10',
+      denialOfService: false,
+      description: 'vuln description',
+      exploits: 5,
+      modified: '2017-10-10',
+      published: '2017-10-10',
+      riskScore: 125,
+      severity: 'Severe',
+      severityScore: 1,
+      title: 'Vuln Title',
     };
 
     await expect(
-      findOrCreateVulnerability(context, newAssetVulnerability),
-    ).resolves.toEqual(createVulnerabilityEntity(newAssetVulnerability));
+      fetchVulnerability(context, newVulnerability.id),
+    ).resolves.toEqual(createVulnerabilityEntity(newVulnerability));
     expect(context.jobState.collectedEntities.length).toBe(1);
     expect(context.jobState.collectedEntities[0].id).toBe('vuln-id');
   });
@@ -66,22 +80,27 @@ describe('findOrCreateVulnerability', () => {
       instanceConfig,
     });
 
-    const newAssetVulnerability: InsightVmAssetVulnerability = {
-      id: (undefined as unknown) as string,
-      instances: 1,
-      links: [],
-      results: [],
-      since: 'since',
-      status: 'status',
+    const newAssetVulnerability: Vulnerability = {
+      id: 'vuln-id',
+      added: '2017-10-10',
+      denialOfService: false,
+      description: 'vuln description',
+      exploits: 5,
+      modified: '2017-10-10',
+      published: '2017-10-10',
+      riskScore: 125,
+      severity: 'Severe',
+      severityScore: 1,
+      title: 'Vuln Title',
     };
 
     await expect(
-      findOrCreateVulnerability(context, newAssetVulnerability),
+      fetchVulnerability(context, newAssetVulnerability.id),
     ).resolves.toEqual(createVulnerabilityEntity(newAssetVulnerability));
     expect(context.jobState.collectedEntities.length).toBe(1);
 
     await expect(
-      findOrCreateVulnerability(context, newAssetVulnerability),
+      fetchVulnerability(context, newAssetVulnerability.id),
     ).resolves.toEqual(createVulnerabilityEntity(newAssetVulnerability));
     expect(context.jobState.collectedEntities.length).toBe(1);
 
