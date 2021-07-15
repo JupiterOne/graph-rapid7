@@ -283,7 +283,7 @@ authority you trust. ` + errMessage;
     vulnerabilityId: string,
   ): Promise<Vulnerability> {
     const response = await this.request(
-      this.withBaseUri(`/vulnerabilities/${vulnerabilityId}`),
+      this.withBaseUri(`vulnerabilities/${vulnerabilityId}`),
     );
     return response.json();
   }

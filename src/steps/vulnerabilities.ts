@@ -49,7 +49,7 @@ export function getVulnerabilityKey(id: string): string {
   return `insightvm_vulnerability:${id}`;
 }
 
-async function fetchVulnerability(
+export async function fetchVulnerability(
   context: IntegrationStepExecutionContext<IntegrationConfig>,
   vulnerabilityId: string,
 ): Promise<Entity> {
@@ -91,10 +91,10 @@ function createVulnerabilityEntity(vulnerability: Vulnerability) {
         _class: entities.VULNERABILITY._class,
         id: vulnerability.id,
         name: vulnerability.id,
-        category: vulnerability.categories.toString(),
         severity: vulnerability.severity,
         numericSeverity: vulnerability.severityScore,
-        description: vulnerability.description.text,
+        category: vulnerability.categories?.toString() || '',
+        description: vulnerability.description?.text,
         exploits: vulnerability.exploits,
         // Response doesn't contain these attributes
         // but are needed for data model:

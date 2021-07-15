@@ -132,15 +132,14 @@ export type VulnerabilityDescription = {
 };
 export type Vulnerability = {
   denialOfService: boolean;
-  description: VulnerabilityDescription;
+  description?: VulnerabilityDescription;
   exploits?: number;
   id: string;
-  modified: string;
   riskScore: number;
   severity: string;
   severityScore: number;
   title: string;
-  categories: string[];
+  categories?: string[];
 };
 
 export type PageIteratee<T> = (page: T[]) => Promise<void>;

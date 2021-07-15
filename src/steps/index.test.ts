@@ -9,7 +9,7 @@ import { fetchSites } from './sites';
 import { fetchScans } from './scans';
 import { fetchAssets } from './assets';
 import { fetchSiteAssets } from './site-assets';
-import { fetchAssetVulnerabilities } from './vulnerabilities';
+import { fetchAssetVulnerabilityFinding } from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
 import { entities } from '../constants';
@@ -36,7 +36,7 @@ describe('Rapid7 InsightVM', () => {
       directory: __dirname,
       name: 'insightvm_recordings',
       options: {
-        recordFailedRequests: true,
+        recordFailedRequests: false,
       },
     });
   });
@@ -60,7 +60,7 @@ describe('Rapid7 InsightVM', () => {
     await fetchAssetUsers(context);
     await fetchSiteAssets(context);
     await fetchScanAssets(context);
-    await fetchAssetVulnerabilities(context);
+    await fetchAssetVulnerabilityFinding(context);
 
     // Review snapshot, failure is a regression
     expect({
