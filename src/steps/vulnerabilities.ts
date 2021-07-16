@@ -107,7 +107,7 @@ function createVulnerabilityEntity(vulnerability: Vulnerability) {
   });
 }
 
-export async function fetchAssetVulnerabilityFinding(
+export async function fetchAssetVulnerabilityFindings(
   context: IntegrationStepExecutionContext<IntegrationConfig>,
 ) {
   const { logger, instance, jobState } = context;
@@ -167,7 +167,7 @@ export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
       relationships.FINDING_IS_VULNERABILITY,
     ],
     dependsOn: [steps.FETCH_ASSETS],
-    executionHandler: fetchAssetVulnerabilityFinding,
+    executionHandler: fetchAssetVulnerabilityFindings,
   },
 ];
 

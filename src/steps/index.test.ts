@@ -8,7 +8,7 @@ import { fetchSites } from './sites';
 import { fetchScans } from './scans';
 import { fetchAssets } from './assets';
 import { fetchSiteAssets } from './site-assets';
-import { fetchAssetVulnerabilityFinding } from './vulnerabilities';
+import { fetchAssetVulnerabilityFindings } from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
 import { entities } from '../constants';
@@ -54,7 +54,7 @@ describe('Rapid7 InsightVM', () => {
     await fetchAssetUsers(context);
     await fetchSiteAssets(context);
     await fetchScanAssets(context);
-    await fetchAssetVulnerabilityFinding(context);
+    await fetchAssetVulnerabilityFindings(context);
 
     // Review snapshot, failure is a regression
     expect({
