@@ -9,7 +9,7 @@ const instanceConfig = {
   insightClientPassword: process.env.INSIGHT_CLIENT_PASSWORD || 'password',
 };
 
-describe('fetchVulnerability', () => {
+describe('#fetchVulnerability', () => {
   let recording: Recording;
 
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('fetchVulnerability', () => {
     await recording.stop();
   });
 
-  test('fetchVulnerability', async () => {
+  test('should collect data', async () => {
     const vulnId = 'apache-httpd-cve-2020-9490';
     const context = createMockStepExecutionContext<IntegrationConfig>({
       instanceConfig,
