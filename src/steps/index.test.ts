@@ -2,7 +2,6 @@ import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-test
 
 import { Recording, setupRapid7Recording } from '../../test/helpers/recording';
 
-import { IntegrationConfig } from '../types';
 import { fetchUsers } from './access';
 import { fetchAccountDetails } from './account';
 import { fetchSites } from './sites';
@@ -13,18 +12,7 @@ import { fetchAssetVulnerabilityFinding } from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
 import { entities } from '../constants';
-
-const DEFAULT_INSIGHT_HOST = 'localhost:3780';
-const DEFAULT_INSIGHT_CLIENT_USERNAME = 'admin';
-const DEFAULT_INSIGHT_CLIENT_PASSWORD = 'admin-password';
-
-const integrationConfig: IntegrationConfig = {
-  insightHost: process.env.INSIGHT_HOST || DEFAULT_INSIGHT_HOST,
-  insightClientUsername:
-    process.env.INSIGHT_CLIENT_USERNAME || DEFAULT_INSIGHT_CLIENT_USERNAME,
-  insightClientPassword:
-    process.env.INSIGHT_CLIENT_PASSWORD || DEFAULT_INSIGHT_CLIENT_PASSWORD,
-};
+import { integrationConfig } from '../../test/config';
 
 jest.setTimeout(10 * 1000);
 
@@ -36,6 +24,11 @@ describe('Rapid7 InsightVM', () => {
       directory: __dirname,
       name: 'insightvm_recordings',
       options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
         recordFailedRequests: false,
       },
     });
@@ -46,7 +39,7 @@ describe('Rapid7 InsightVM', () => {
   });
 
   test('should collect data', async () => {
-    const context = createMockStepExecutionContext<IntegrationConfig>({
+    const context = createMockStepExecutionContext({
       instanceConfig: integrationConfig,
     });
 

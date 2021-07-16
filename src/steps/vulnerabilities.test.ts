@@ -1,13 +1,7 @@
 import { fetchVulnerability } from './vulnerabilities';
 import { Recording, setupRapid7Recording } from '../../test/helpers/recording';
 import { createMockStepExecutionContext } from '@jupiterone/integration-sdk-testing';
-import { IntegrationConfig } from '../types';
-
-const instanceConfig = {
-  insightHost: process.env.INSIGHT_HOST || 'localhost:3780',
-  insightClientUsername: process.env.INSIGHT_CLIENT_USERNAME || 'username',
-  insightClientPassword: process.env.INSIGHT_CLIENT_PASSWORD || 'password',
-};
+import { integrationConfig } from '../../test/config';
 
 describe('#fetchVulnerability', () => {
   let recording: Recording;
@@ -17,6 +11,11 @@ describe('#fetchVulnerability', () => {
       directory: __dirname,
       name: 'fetchVulnerabilities',
       options: {
+        matchRequestsBy: {
+          url: {
+            hostname: false,
+          },
+        },
         recordFailedRequests: false,
       },
     });
@@ -28,8 +27,8 @@ describe('#fetchVulnerability', () => {
 
   test('should collect data', async () => {
     const vulnId = 'apache-httpd-cve-2020-9490';
-    const context = createMockStepExecutionContext<IntegrationConfig>({
-      instanceConfig,
+    const context = createMockStepExecutionContext({
+      instanceConfig: integrationConfig,
     });
 
     await fetchVulnerability(context, vulnId);
