@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.3.4 - 2021-07-16
+
 ### Changed
 
 - Updated step execution handler name from `fetchAssetVulnerabilityFinding` to
