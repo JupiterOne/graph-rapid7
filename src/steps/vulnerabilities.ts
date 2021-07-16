@@ -74,11 +74,10 @@ export async function fetchVulnerability(
     'Fetching and creating new vulnerability entity in jobState.',
   );
   const apiClient = createAPIClient(instance.config, logger);
-  return jobState.addEntity(
-    createVulnerabilityEntity(
-      await apiClient.getVulnerability(vulnerabilityId),
-    ),
-  );
+  const vuln = await apiClient.getVulnerability(vulnerabilityId);
+  console.log('WOMBAT: ');
+  console.log(vuln);
+  return jobState.addEntity(createVulnerabilityEntity(vuln));
 }
 
 function createVulnerabilityEntity(vulnerability: Vulnerability) {
