@@ -127,4 +127,19 @@ export type PaginatedResource<T> = {
   links?: Link[];
 };
 
+export type VulnerabilityDescription = {
+  text: string;
+};
+export type Vulnerability = {
+  denialOfService: boolean;
+  description?: VulnerabilityDescription;
+  exploits?: number;
+  id: string;
+  riskScore: number;
+  severity: string;
+  severityScore: number;
+  title: string;
+  categories?: string[];
+};
+
 export type PageIteratee<T> = (page: T[]) => Promise<void>;

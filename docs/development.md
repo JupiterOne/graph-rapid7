@@ -91,3 +91,51 @@ After following the above steps, you should now be able to start contributing to
 this integration. The integration will pull in the `INSIGHT_CLIENT_USERNAME`,
 `INSIGHT_CLIENT_PASSWORD`, `INSIGHT_HOST`, and `DISABLE_TLS_VERIFICATION`
 variables from the `.env` file and use them when making requests.
+
+## Test Data Setup
+
+If you are using the docker setup described above and wish to get some data in
+the console to test this integration you can do the following:
+
+### Run scan against host machine:
+
+Use `host.docker.internal` as the site you wish to scan. This will be resolved
+by docker as your laptops internal IP. This will be ingested as an asset. If you
+need vulnerability data, do the next option instead.
+
+### Run a DVWA Docker Container
+
+**DVWA** (Damn Vulnerable Web App) is a web application that has many known
+vulnerabilities. This will ensure that the Rapid7 will return vulnerability
+results after scanning.
+
+1. Create docker network:
+
+```
+   docker network create vulnerable-net
+```
+
+2. Once Rapid7 container is running:
+
+```
+   docker network connect vulnerable-net rapid7-vm-console-container
+```
+
+3. Run DVWA and connect to network:
+
+```
+   docker run --rm -it -p 80:80 --network vulnerable-net vulnerables/web-dvwa
+```
+
+Go to the DVWA app at localhost. Follow the directions and make sure that
+security is set to low. More info
+[here](https://hub.docker.com/r/vulnerables/web-dvwa)
+
+4. Get DVWA IP:
+
+```
+   docker network inspect vulnerable-web
+```
+
+This output will show the connected containers. Grab the IP of the DVWA
+container and use this to be scanned in the Rapid7 console.

@@ -15,6 +15,7 @@ import {
   IntegrationConfig,
   PageIteratee,
   PaginatedResource,
+  Vulnerability,
 } from './types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
@@ -256,22 +257,36 @@ authority you trust. ` + errMessage;
   }
 
   /**
-   * Iterates each vulnerability resource in the provider.
+   * Iterates each vulnerability finding resource in the provider for an asset
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
-  public async iterateVulnerabilities(
+  public async iterateAssetVulnerabilityFinding(
     assetId: string,
     iteratee: ResourceIteratee<InsightVmAssetVulnerability>,
   ): Promise<void> {
     await this.paginatedRequest<InsightVmAssetVulnerability>(
       `assets/${assetId}/vulnerabilities`,
-      async (vulnerabilities) => {
-        for (const vulnerability of vulnerabilities) {
+      async (assetVulnerabilities) => {
+        for (const vulnerability of assetVulnerabilities) {
           await iteratee(vulnerability);
         }
       },
     );
+  }
+
+  /**
+   * Gets a vulnerability resource in the provider
+   *
+   */
+  public async getVulnerability(
+    vulnerabilityId: string,
+  ): Promise<Vulnerability> {
+    const response = await this.request(
+      this.withBaseUri(`vulnerabilities/${vulnerabilityId}`),
+      'GET',
+    );
+    return response.json();
   }
 }
 
