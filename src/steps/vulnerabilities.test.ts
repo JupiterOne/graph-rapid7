@@ -12,6 +12,7 @@ describe('#fetchVulnerability', () => {
       name: 'fetchVulnerabilities',
       options: {
         matchRequestsBy: {
+          headers: false,
           url: {
             hostname: false,
           },

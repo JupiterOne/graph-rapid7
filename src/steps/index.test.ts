@@ -25,6 +25,7 @@ describe('Rapid7 InsightVM', () => {
       name: 'insightvm_recordings',
       options: {
         matchRequestsBy: {
+          headers: false,
           url: {
             hostname: false,
           },
