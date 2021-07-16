@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [14.x]
+        node-version: [12.x]
         os: [ubuntu-latest]
 
     steps:
@@ -38,13 +38,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [14]
+        node: [12]
 
     steps:
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 12.x
 
       - name: Check out repo
         uses: actions/checkout@v2

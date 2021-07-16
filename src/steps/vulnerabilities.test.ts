@@ -33,7 +33,7 @@ describe('#fetchVulnerability', () => {
     });
 
     await fetchVulnerability(context, vulnId);
-    expect(context.jobState.collectedEntities?.length).toBeTruthy();
+    expect(context.jobState.collectedEntities?.length).toBeTruthy;
     expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
       _class: ['Vulnerability'],
       schema: {
