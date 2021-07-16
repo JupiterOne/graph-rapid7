@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## 0.3.3 - 2021-07-16
+
+### Changed
+
+- Changed `insightvm_vulnerability` to hit the vulnerabilities endpoint to
+  generate the entity.
+- Changed how the config is pulled in for tests to be run
+
 ## 0.3.2 - 2021-06-01
 
 ### Fixed
