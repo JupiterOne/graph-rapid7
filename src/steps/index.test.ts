@@ -8,7 +8,10 @@ import { fetchSites } from './sites';
 import { fetchScans } from './scans';
 import { fetchAssets } from './assets';
 import { fetchSiteAssets } from './site-assets';
-import { fetchAssetVulnerabilityFinding } from './vulnerabilities';
+import {
+  fetchAssetVulnerabilityFinding,
+  fetchVulnerability,
+} from './vulnerabilities';
 import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
 import { entities } from '../constants';
@@ -284,6 +287,38 @@ describe('Rapid7 InsightVM', () => {
             type: 'string',
           },
         },
+      },
+    });
+  });
+
+  test('should collect data', async () => {
+    const vulnId = 'apache-httpd-cve-2020-9490';
+    const context = createMockStepExecutionContext({
+      instanceConfig: integrationConfig,
+    });
+
+    await fetchVulnerability(context, vulnId);
+    expect(context.jobState.collectedEntities?.length).toBeTruthy;
+    expect(context.jobState.collectedEntities).toMatchGraphObjectSchema({
+      _class: ['Vulnerability'],
+      schema: {
+        additionalProperties: true,
+        properties: {
+          _type: { const: 'insightvm_vulnerability' },
+          _key: { type: 'string' },
+          id: { type: 'string' },
+          name: { type: 'string' },
+          severity: { type: 'string' },
+          numericSeverity: { type: 'number' },
+          category: { type: 'string' },
+          description: { type: 'string' },
+          exploits: { type: 'number' },
+          _rawData: {
+            type: 'array',
+            items: { type: 'object' },
+          },
+        },
+        required: [],
       },
     });
   });
