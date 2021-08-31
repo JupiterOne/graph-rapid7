@@ -1,31 +1,3 @@
-import { IntegrationInstanceConfig } from '@jupiterone/integration-sdk-core';
-
-/**
- * Properties provided by the `IntegrationInstance.config`. This reflects the
- * same properties defined by `instanceConfigFields`.
- */
-export interface IntegrationConfig extends IntegrationInstanceConfig {
-  /**
-   * The hostname of the InsightVM instance.
-   */
-  insightHost: string;
-
-  /**
-   * The administrator account username for authentication.
-   */
-  insightClientUsername: string;
-
-  /**
-   * The administrator account password for authentication.
-   */
-  insightClientPassword: string;
-
-  /**
-   * Disable TLS certificate verification for hosts that cannot install certificates.
-   */
-  disableTlsVerification?: boolean;
-}
-
 export type SiteAssetsMap = {
   [key: string]: string[];
 };

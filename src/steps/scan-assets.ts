@@ -7,8 +7,9 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
-import { IntegrationConfig, SiteAssetsMap } from '../types';
+import { IntegrationConfig } from '../config';
 import { relationships, steps } from '../constants';
+import { SiteAssetsMap } from '../types';
 import { getScanKey } from './scans';
 
 async function buildSiteAssetsMap(jobState: JobState): Promise<SiteAssetsMap> {

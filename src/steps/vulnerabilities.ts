@@ -8,12 +8,9 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
-import {
-  InsightVmAssetVulnerability,
-  IntegrationConfig,
-  Vulnerability,
-} from '../types';
+import { IntegrationConfig } from '../config';
 import { entities, relationships, steps } from '../constants';
+import { InsightVmAssetVulnerability, Vulnerability } from '../types';
 
 function getAssetVulnerabilityKey(
   assetId: string,

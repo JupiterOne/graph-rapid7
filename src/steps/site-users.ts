@@ -6,9 +6,8 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
-import { IntegrationConfig } from '../types';
-import { relationships, entities, steps } from '../constants';
-
+import { IntegrationConfig } from '../config';
+import { entities, relationships, steps } from '../constants';
 import { getUserKey } from './access';
 
 export async function fetchSiteUsers({

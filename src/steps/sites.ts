@@ -8,7 +8,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
-import { IntegrationConfig } from '../types';
+import { IntegrationConfig } from '../config';
 import {
   ACCOUNT_ENTITY_DATA_KEY,
   entities,
