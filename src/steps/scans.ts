@@ -3,12 +3,12 @@ import {
   createIntegrationEntity,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  RelationshipClass,
   parseTimePropertyValue,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
-import { IntegrationConfig } from '../types';
+import { IntegrationConfig } from '../config';
 import { entities, relationships, steps } from '../constants';
 import { getSiteKey } from './sites';
 

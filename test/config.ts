@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { IntegrationConfig } from '../src/types';
+
+import { IntegrationConfig } from '../src/config';
 
 if (process.env.LOAD_ENV) {
   dotenv.config({

@@ -7,10 +7,14 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
-import { IntegrationConfig } from '../types';
-import { entities, relationships, steps } from '../constants';
+import { IntegrationConfig } from '../config';
+import {
+  ACCOUNT_ENTITY_DATA_KEY,
+  entities,
+  relationships,
+  steps,
+} from '../constants';
 import { getAssetKey } from './assets';
-import { ACCOUNT_ENTITY_DATA_KEY } from '../constants';
 
 export async function fetchSiteAssets({
   logger,

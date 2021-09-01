@@ -3,9 +3,8 @@ import {
   setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 
-import { IntegrationConfig } from './types';
-import validateInvocation from './validateInvocation';
 import { APIClient } from './client';
+import { IntegrationConfig, validateInvocation } from './config';
 
 it('requires valid config', async () => {
   const executionContext = createMockExecutionContext<IntegrationConfig>({

@@ -25,16 +25,16 @@
     "test:no-tls-verify": "NODE_TLS_REJECT_UNAUTHORIZED=0 && yarn test",
     "test:ci": "yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration",
-    "prepush": "yarn lint && yarn type-check && jest --changedSince master",
+    "prepush": "yarn lint && yarn type-check && jest --changedSince main",
     "prepack": "yarn build"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^6.3.0"
+    "@jupiterone/integration-sdk-core": "^6.18.0"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^6.3.0",
-    "@jupiterone/integration-sdk-dev-tools": "^6.3.0",
-    "@jupiterone/integration-sdk-testing": "^6.3.0",
+    "@jupiterone/integration-sdk-core": "^6.18.0",
+    "@jupiterone/integration-sdk-dev-tools": "^6.18.0",
+    "@jupiterone/integration-sdk-testing": "^6.18.0",
     "@types/node-fetch": "^2.5.8"
   },
   "dependencies": {

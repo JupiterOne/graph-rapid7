@@ -5,7 +5,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
-import { IntegrationConfig } from '../types';
+import { IntegrationConfig } from '../config';
 import { entities, steps } from '../constants';
 
 export function getAssetKey(id: number): string {

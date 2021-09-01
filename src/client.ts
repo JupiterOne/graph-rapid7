@@ -1,18 +1,19 @@
 import fetch, { Response } from 'node-fetch';
+
 import {
-  IntegrationValidationError,
-  IntegrationProviderAPIError,
   IntegrationLogger,
+  IntegrationProviderAPIError,
+  IntegrationValidationError,
 } from '@jupiterone/integration-sdk-core';
 
+import { IntegrationConfig } from './config';
 import {
   InsightVMAccount,
   InsightVMAsset,
+  InsightVmAssetVulnerability,
   InsightVMScan,
   InsightVMSite,
   InsightVMUser,
-  InsightVmAssetVulnerability,
-  IntegrationConfig,
   PageIteratee,
   PaginatedResource,
   Vulnerability,
