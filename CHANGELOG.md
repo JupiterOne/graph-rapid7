@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.3.6] - 2021-09-07
+
+- Tag for release
+
 ## [0.3.5] - 2021-08-31
 
 ### Changed
