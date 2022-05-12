@@ -22,25 +22,26 @@ export async function fetchAssets({
   await apiClient.iterateAssets(async (asset) => {
     const webLink = asset.links.find((link) => link.rel === 'self')?.href;
 
-    const assetEntity = createIntegrationEntity({
-      entityData: {
-        source: {},
-        assign: {
-          _key: getAssetKey(asset.id),
-          _type: entities.ASSET._type,
-          _class: entities.ASSET._class,
-          id: `${asset.id}`,
-          name: asset.hostName,
-          category: 'server',
-          make: 'unknown',
-          model: 'unknown',
-          serial: 'unknown',
-          webLink,
+    if (asset.hostName != undefined) {
+      const assetEntity = createIntegrationEntity({
+        entityData: {
+          source: {},
+          assign: {
+            _key: getAssetKey(asset.id),
+            _type: entities.ASSET._type,
+            _class: entities.ASSET._class,
+            id: `${asset.id}`,
+            name: asset.hostName,
+            category: 'server',
+            make: 'unknown',
+            model: 'unknown',
+            serial: 'unknown',
+            webLink,
+          },
         },
-      },
-    });
-
-    await jobState.addEntity(assetEntity);
+      });
+      await jobState.addEntity(assetEntity);
+    }
   });
 }
 

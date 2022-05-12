@@ -51,16 +51,21 @@ export async function fetchSites({
       },
     });
 
-    await Promise.all([
+    const promArray: (Promise<void> | Promise<Entity>)[] = [
       jobState.addEntity(siteEntity),
-      jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          from: accountEntity,
-          to: siteEntity,
-        }),
-      ),
-    ]);
+    ];
+    if (accountEntity != undefined) {
+      promArray.push(
+        jobState.addRelationship(
+          createDirectRelationship({
+            _class: RelationshipClass.HAS,
+            from: accountEntity,
+            to: siteEntity,
+          }),
+        ),
+      );
+    }
+    await Promise.all(promArray);
   });
 }
 

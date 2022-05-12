@@ -87,6 +87,7 @@ export async function validateInvocation(
     });
   }
 
-  const apiClient = createAPIClient(config, context.logger);
-  await apiClient.verifyAuthentication();
+  // const apiClient = createAPIClient(config, context.logger);
+  // TODO: better implementation of verifyAuthentication
+  // await apiClient.verifyAuthentication();
 }
