@@ -7,6 +7,14 @@ import {
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { entities, steps } from '../constants';
+import { InsightVMAsset } from '../types';
+
+function getAssetCategory(asset: InsightVMAsset): string {
+  if (asset.osFingerprint.family == 'Switch') {
+    return 'network';
+  }
+  return 'server';
+}
 
 export function getAssetKey(id: number): string {
   return `insightvm_asset:${id}`;
@@ -32,7 +40,9 @@ export async function fetchAssets({
             _class: entities.ASSET._class,
             id: `${asset.id}`,
             name: asset.hostName,
-            category: 'server',
+            osName: asset.os,
+            ipAddress: asset.ip,
+            category: getAssetCategory(asset),
             make: 'unknown',
             model: 'unknown',
             serial: 'unknown',
