@@ -767,19 +767,30 @@
     upath "^1.2.0"
     vis "^4.21.0-EOL"
 
+<<<<<<< HEAD
 "@jupiterone/integration-sdk-cli@^6.22.1":
   version "6.22.1"
   resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-cli/-/integration-sdk-cli-6.22.1.tgz#34c078d7c09829a8cb5743ac347d706fff25c123"
   integrity sha512-zQiOfTiJ3DvUgYgRxWumA6Ez1j+VuSWxIVjOab9MyPEBQ5u3a+8nG4IgnW5qwUUgVG2iRpy0V0tNM8vStSbH9A==
   dependencies:
     "@jupiterone/integration-sdk-runtime" "^6.22.1"
+=======
+"@jupiterone/integration-sdk-cli@^6.18.0":
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/@jupiterone/integration-sdk-cli/-/integration-sdk-cli-6.18.0.tgz#8d609585c4713d2fdbe93f98e6ab58738261bf7b"
+  integrity sha512-ccpIoR5/AGY8hNtr0DYjO1NQw4E/7BQn1KuKbdiq8fySG/ZVkcybmOUFWZBHEzZqJQ7Y7pxCWLKenfamLJ248A==
+  dependencies:
+    "@jupiterone/integration-sdk-runtime" "^6.18.0"
+>>>>>>> 3ab506b84d402f3ac6d62b431fd4ed092cd2301b
     commander "^5.0.0"
     globby "^11.0.0"
-    js-yaml "^4.1.0"
     json-diff "^0.5.4"
     lodash "^4.17.19"
     markdown-table "^2.0.0"
+<<<<<<< HEAD
     runtypes "5.1.0"
+=======
+>>>>>>> 3ab506b84d402f3ac6d62b431fd4ed092cd2301b
     upath "^1.2.0"
     vis "^4.21.0-EOL"
 
