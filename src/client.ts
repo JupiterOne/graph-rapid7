@@ -97,7 +97,7 @@ export class APIClient {
   }
 
   public async verifyAuthentication(): Promise<void> {
-    const usersApiRoute = this.withBaseUri('users');
+    const usersApiRoute = this.withBaseUri('sites');
     try {
       await this.request(usersApiRoute, 'GET');
     } catch (err) {

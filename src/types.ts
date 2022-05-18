@@ -73,12 +73,13 @@ export type InsightVMAsset = {
   os: string;
   type: string;
   siteId: number;
-  osFingerprint: {
-    description: string;
-    family: string;
-    product: string;
-    systemName: string;
-    type: string;
+  vulnerabilities: {
+    critical: number;
+    severe: number;
+    moderate: number;
+    exploits: number;
+    malwareKits: number;
+    total: number;
   };
 };
 

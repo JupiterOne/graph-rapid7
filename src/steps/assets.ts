@@ -7,14 +7,6 @@ import {
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { entities, steps } from '../constants';
-import { InsightVMAsset } from '../types';
-
-function getAssetCategory(asset: InsightVMAsset): string {
-  if (asset.osFingerprint.family == 'Switch') {
-    return 'network';
-  }
-  return 'server';
-}
 
 export function getAssetKey(id: number): string {
   return `insightvm_asset:${id}`;
@@ -33,20 +25,21 @@ export async function fetchAssets({
     if (asset.hostName != undefined) {
       const assetEntity = createIntegrationEntity({
         entityData: {
-          source: {},
+          source: asset,
           assign: {
             _key: getAssetKey(asset.id),
             _type: entities.ASSET._type,
             _class: entities.ASSET._class,
             id: `${asset.id}`,
             name: asset.hostName,
-            osName: asset.os,
+            osName: asset.os, // in our case r7 does not always correctly identify the OS
             ipAddress: asset.ip,
-            category: getAssetCategory(asset),
+            category: 'server',
             make: 'unknown',
             model: 'unknown',
             serial: 'unknown',
             webLink,
+            criticalVulnerabilities: asset.vulnerabilities.critical,
           },
         },
       });
