@@ -97,11 +97,11 @@ export class APIClient {
   }
 
   public async verifyAuthentication(): Promise<void> {
-    const usersApiRoute = this.withBaseUri('sites');
+    const rootApiRoute = this.withBaseUri('');
     try {
-      await this.request(usersApiRoute, 'GET');
+      await this.request(rootApiRoute, 'GET');
     } catch (err) {
-      let errMessage = `Error occurred validating invocation at ${usersApiRoute} (code=${err.code}, message=${err.message})`;
+      let errMessage = `Error occurred validating invocation at ${rootApiRoute} (code=${err.code}, message=${err.message})`;
       if (err.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
         errMessage =
           `The InsightVM Security Console is using a self-signed certificate. \

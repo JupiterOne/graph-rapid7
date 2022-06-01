@@ -65,6 +65,16 @@ export async function fetchSites({
         ),
       ]);
     }
+    // await Promise.all([
+    //   jobState.addEntity(siteEntity),
+    //   jobState.addRelationship(
+    //     createDirectRelationship({
+    //       _class: RelationshipClass.HAS,
+    //       from: accountEntity,
+    //       to: siteEntity,
+    //     }),
+    //   ),
+    // ]);
   });
 }
 

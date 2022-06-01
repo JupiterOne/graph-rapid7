@@ -7,9 +7,32 @@ import {
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { entities, steps } from '../constants';
+import { InsightVMAsset } from '../types';
 
 export function getAssetKey(id: number): string {
   return `insightvm_asset:${id}`;
+}
+
+export function getPlatform(asset: InsightVMAsset): string {
+  // This function might not be handling all possible cases correctly
+  // and return the default value 'other' where it shouldn't.
+  if (asset.osFingerprint?.family) {
+    const insightFamily = asset.osFingerprint.family.toLowerCase();
+    const platforms = [
+      'darwin',
+      'linux',
+      'unix',
+      'windows',
+      'android',
+      'ios',
+      'embedded',
+      'other',
+    ];
+    if (platforms.includes(insightFamily)) {
+      return insightFamily;
+    }
+  }
+  return 'other';
 }
 
 export async function fetchAssets({
@@ -22,29 +45,28 @@ export async function fetchAssets({
   await apiClient.iterateAssets(async (asset) => {
     const webLink = asset.links.find((link) => link.rel === 'self')?.href;
 
-    if (asset.hostName != undefined) {
-      const assetEntity = createIntegrationEntity({
-        entityData: {
-          source: asset,
-          assign: {
-            _key: getAssetKey(asset.id),
-            _type: entities.ASSET._type,
-            _class: entities.ASSET._class,
-            id: `${asset.id}`,
-            name: asset.hostName,
-            osName: asset.os, // in our case r7 does not always correctly identify the OS
-            ipAddress: asset.ip,
-            category: 'server',
-            make: 'unknown',
-            model: 'unknown',
-            serial: 'unknown',
-            webLink,
-            criticalVulnerabilities: asset.vulnerabilities.critical,
-          },
+    const assetEntity = createIntegrationEntity({
+      entityData: {
+        source: asset,
+        assign: {
+          _key: getAssetKey(asset.id),
+          _type: entities.ASSET._type,
+          _class: entities.ASSET._class,
+          id: `${asset.id}`,
+          name: asset.hostName || asset.ip,
+          osName: asset.osFingerprint?.systemName,
+          osVersion: asset.osFingerprint?.version,
+          osDetails: asset.os,
+          platform: getPlatform(asset),
+          ipAddress: asset.ip,
+          category: asset.osFingerprint?.type,
+          webLink,
+          numCriticalVulnerabilities: asset.vulnerabilities.critical,
+          // TODO: add lastScanDate ??
         },
-      });
-      await jobState.addEntity(assetEntity);
-    }
+      },
+    });
+    await jobState.addEntity(assetEntity);
   });
 }
 

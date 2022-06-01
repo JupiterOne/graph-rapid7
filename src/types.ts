@@ -81,6 +81,12 @@ export type InsightVMAsset = {
     malwareKits: number;
     total: number;
   };
+  osFingerprint: {
+    systemName: string;
+    version: string;
+    family: string;
+    type: string;
+  };
 };
 
 export type InsightVmAssetVulnerability = {
