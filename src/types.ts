@@ -87,6 +87,12 @@ export type InsightVMAsset = {
     family: string;
     type: string;
   };
+  history: {
+    date: string;
+    scanId: number;
+    type: string;
+    version: number;
+  }[];
 };
 
 export type InsightVmAssetVulnerability = {

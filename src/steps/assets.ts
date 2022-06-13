@@ -62,7 +62,10 @@ export async function fetchAssets({
           category: asset.osFingerprint?.type,
           webLink,
           numCriticalVulnerabilities: asset.vulnerabilities.critical,
-          // TODO: add lastScanDate ??
+          make: null,
+          model: null,
+          serial: null,
+          lastScanDate: asset.history[asset.history.length - 1]?.date,
         },
       },
     });
