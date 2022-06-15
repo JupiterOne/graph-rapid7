@@ -2,6 +2,7 @@ import {
   createIntegrationEntity,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
@@ -65,7 +66,9 @@ export async function fetchAssets({
           make: null,
           model: null,
           serial: null,
-          lastScanDate: asset.history[asset.history.length - 1]?.date,
+          lastScanDate: parseTimePropertyValue(
+            asset.history[asset.history.length - 1]?.date,
+          ),
         },
       },
     });
