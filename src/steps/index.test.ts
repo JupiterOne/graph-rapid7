@@ -13,6 +13,7 @@ import { fetchAssetUsers } from './asset-users';
 import { fetchScanAssets } from './scan-assets';
 import { entities } from '../constants';
 import { integrationConfig } from '../../test/config';
+import { fetchAccountSiteRelationships } from './account-sites';
 
 jest.setTimeout(10 * 1000);
 
@@ -49,6 +50,7 @@ describe('Rapid7 InsightVM', () => {
     await fetchAccountDetails(context);
     await fetchUsers(context);
     await fetchSites(context);
+    await fetchAccountSiteRelationships(context);
     await fetchScans(context);
     await fetchAssets(context);
     await fetchAssetUsers(context);
@@ -203,18 +205,6 @@ describe('Rapid7 InsightVM', () => {
             items: { type: 'object' },
           },
           name: {
-            type: 'string',
-          },
-          category: {
-            type: 'string',
-          },
-          make: {
-            type: 'string',
-          },
-          model: {
-            type: 'string',
-          },
-          serial: {
             type: 'string',
           },
           webLink: {
