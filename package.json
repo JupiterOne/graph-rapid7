@@ -14,7 +14,7 @@
   "scripts": {
     "start:console": "./console/scripts/start-console.sh",
     "stop:console": "./console/scripts/stop-console.sh",
-    "start": "j1-integration collect",
+    "start": "j1-integration collect --disable-schema-validation",
     "start:no-tls-verify": "NODE_TLS_REJECT_UNAUTHORIZED=0 j1-integration collect",
     "graph": "j1-integration visualize",
     "graph:types": "j1-integration visualize-types",
@@ -29,12 +29,12 @@
     "prepush": "yarn lint && yarn type-check && jest --changedSince main"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^6.18.0"
+    "@jupiterone/integration-sdk-core": "^8.13.11"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^6.18.0",
-    "@jupiterone/integration-sdk-dev-tools": "^6.18.0",
-    "@jupiterone/integration-sdk-testing": "^6.18.0",
+    "@jupiterone/integration-sdk-core": "^8.13.11",
+    "@jupiterone/integration-sdk-dev-tools": "^8.13.11",
+    "@jupiterone/integration-sdk-testing": "^8.13.11",
     "@types/node-fetch": "^2.5.8"
   },
   "dependencies": {

@@ -44,6 +44,7 @@ export async function fetchUsers({
           id: `${user.id}`,
           username: user.login,
           email: user.email,
+          active: user.enabled === true,
           webLink,
         },
       },

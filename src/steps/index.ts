@@ -8,6 +8,7 @@ import { siteUsersSteps } from './site-users';
 import { vulnerabilitiesSteps } from './vulnerabilities';
 import { assetUsersStep } from './asset-users';
 import { scanAssetsStep } from './scan-assets';
+import { accountSitesRelationshipSteps } from './account-sites';
 
 const integrationSteps = [
   ...accountSteps,
@@ -20,6 +21,7 @@ const integrationSteps = [
   ...vulnerabilitiesSteps,
   ...assetUsersStep,
   ...scanAssetsStep,
+  ...accountSitesRelationshipSteps,
 ];
 
 export { integrationSteps };

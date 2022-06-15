@@ -13,6 +13,7 @@ export const steps = {
   FETCH_SITE_ASSETS: 'fetch-site-assets',
   FETCH_SCANS: 'fetch-scans',
   FETCH_SCAN_ASSETS: 'fetch-scan-assets',
+  FETCH_ACCOUNT_SITE_RELATIONSHIPS: 'fetch-account-site-relationships',
 };
 
 export const entities = {

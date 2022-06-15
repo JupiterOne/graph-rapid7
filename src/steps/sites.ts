@@ -1,20 +1,12 @@
 import {
-  createDirectRelationship,
   createIntegrationEntity,
-  Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
-  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import {
-  ACCOUNT_ENTITY_DATA_KEY,
-  entities,
-  relationships,
-  steps,
-} from '../constants';
+import { entities, steps } from '../constants';
 
 export function getSiteKey(id: number): string {
   return `insightvm_site:${id}`;
@@ -26,10 +18,6 @@ export async function fetchSites({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const apiClient = createAPIClient(instance.config, logger);
-
-  const accountEntity = (await jobState.getData(
-    ACCOUNT_ENTITY_DATA_KEY,
-  )) as Entity;
 
   await apiClient.iterateSites(async (site) => {
     const webLink = site.links.find((link) => link.rel === 'self')?.href;
@@ -51,16 +39,7 @@ export async function fetchSites({
       },
     });
 
-    await Promise.all([
-      jobState.addEntity(siteEntity),
-      jobState.addRelationship(
-        createDirectRelationship({
-          _class: RelationshipClass.HAS,
-          from: accountEntity,
-          to: siteEntity,
-        }),
-      ),
-    ]);
+    await Promise.all([jobState.addEntity(siteEntity)]);
   });
 }
 
@@ -69,8 +48,8 @@ export const sitesSteps: IntegrationStep<IntegrationConfig>[] = [
     id: steps.FETCH_SITES,
     name: 'Fetch Sites',
     entities: [entities.SITE],
-    relationships: [relationships.ACCOUNT_HAS_SITE],
-    dependsOn: [steps.FETCH_ACCOUNT],
+    relationships: [],
+    dependsOn: [],
     executionHandler: fetchSites,
   },
 ];
