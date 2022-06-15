@@ -214,6 +214,7 @@ Object {
         },
       ],
       "_type": "insightvm_user",
+      "active": true,
       "createdOn": undefined,
       "displayName": "nxadmin",
       "email": undefined,
@@ -400,16 +401,156 @@ Object {
         "Device",
       ],
       "_key": "insightvm_asset:1",
-      "_rawData": Array [],
+      "_rawData": Array [
+        Object {
+          "name": "default",
+          "rawData": Object {
+            "addresses": Array [
+              Object {
+                "ip": "172.18.0.3",
+                "mac": "02:42:AC:12:00:03",
+              },
+            ],
+            "assessedForPolicies": false,
+            "assessedForVulnerabilities": true,
+            "history": Array [
+              Object {
+                "date": "2021-07-16T14:23:59.026Z",
+                "scanId": 1,
+                "type": "SCAN",
+                "version": 1,
+              },
+            ],
+            "hostName": "768e2e89e370.vuln-web",
+            "hostNames": Array [
+              Object {
+                "name": "768e2e89e370.vuln-web",
+                "source": "dns",
+              },
+            ],
+            "id": 1,
+            "ip": "172.18.0.3",
+            "links": Array [
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1",
+                "rel": "self",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/software",
+                "rel": "Software",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/files",
+                "rel": "Files",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/users",
+                "rel": "Users",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/user_groups",
+                "rel": "User Groups",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/databases",
+                "rel": "Databases",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/services",
+                "rel": "Services",
+              },
+              Object {
+                "href": "https://localhost:3780/api/3/assets/1/tags",
+                "rel": "Tags",
+              },
+            ],
+            "mac": "02:42:AC:12:00:03",
+            "os": "Debian Linux",
+            "osFingerprint": Object {
+              "description": "Debian Linux",
+              "family": "Linux",
+              "id": 6,
+              "product": "Linux",
+              "systemName": "Debian Linux",
+              "vendor": "Debian",
+            },
+            "rawRiskScore": 10248.0263671875,
+            "riskScore": 10248.0263671875,
+            "services": Array [
+              Object {
+                "configurations": Array [
+                  Object {
+                    "name": "http.banner",
+                    "value": "Apache/2.4.25 (Debian)",
+                  },
+                  Object {
+                    "name": "http.banner.server",
+                    "value": "Apache/2.4.25 (Debian)",
+                  },
+                ],
+                "family": "Apache",
+                "links": Array [
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/80",
+                    "rel": "self",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/80/configurations",
+                    "rel": "Configurations",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/80/databases",
+                    "rel": "Databases",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/80/users",
+                    "rel": "Users",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/80/user_groups",
+                    "rel": "User Groups",
+                  },
+                  Object {
+                    "href": "https://localhost:3780/api/3/assets/1/services/tcp/80/web_applications",
+                    "rel": "Web Applications",
+                  },
+                ],
+                "name": "HTTP",
+                "port": 80,
+                "product": "HTTPD",
+                "protocol": "tcp",
+                "vendor": "Apache",
+                "version": "2.4.25",
+              },
+            ],
+            "vulnerabilities": Object {
+              "critical": 5,
+              "exploits": 4,
+              "malwareKits": 0,
+              "moderate": 1,
+              "severe": 26,
+              "total": 32,
+            },
+          },
+        },
+      ],
       "_type": "insightvm_asset",
-      "category": "server",
+      "category": null,
       "createdOn": undefined,
+      "deviceId": null,
       "displayName": "768e2e89e370.vuln-web",
       "id": "1",
-      "make": "unknown",
-      "model": "unknown",
+      "ipAddress": "172.18.0.3",
+      "lastScanDate": 1626445439026,
+      "make": null,
+      "model": null,
       "name": "768e2e89e370.vuln-web",
-      "serial": "unknown",
+      "numCriticalVulnerabilities": 5,
+      "osDetails": "Debian Linux",
+      "osName": "Debian Linux",
+      "osVersion": undefined,
+      "platform": "linux",
+      "serial": null,
       "webLink": "https://localhost:3780/api/3/assets/1",
     },
     Object {

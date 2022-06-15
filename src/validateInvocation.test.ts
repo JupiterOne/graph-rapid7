@@ -35,8 +35,8 @@ it('auth error', async () => {
   });
 
   await expect(validateInvocation(executionContext)).rejects.toThrow(
-    'Error occurred validating invocation at https://INVALID/api/3/users (code=PROVIDER_API_ERROR, \
-message=Provider API failed at https://INVALID/api/3/users: 401 Unauthorized)',
+    'Error occurred validating invocation at https://INVALID/api/3/ (code=PROVIDER_API_ERROR, \
+message=Provider API failed at https://INVALID/api/3/: 401 Unauthorized)',
   );
 });
 
