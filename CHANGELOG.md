@@ -8,6 +8,18 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.0] - 2022-12-02
+
+### Changed
+
+- Updated `validateInvocation`
+- Added `FETCH_ACCOUNT_SITE_RELATIONSHIPS`
+- Added `active` property to User entity.
+- Added the following properties to rapid7 assets:
+  - name, osName, osVersion, osDetails, platform, ipAddress, category, webLink,
+    numCriticalVulnerabilities, lastScanDate
+- Thanks @jakopako!
+
 ## [0.3.6] - 2021-09-07
 
 - Tag for release

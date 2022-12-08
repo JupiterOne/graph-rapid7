@@ -97,7 +97,7 @@ export class APIClient {
   }
 
   public async verifyAuthentication(): Promise<void> {
-    const rootApiRoute = this.withBaseUri('');
+    const rootApiRoute = `https://${this.insightHost}/api/3`;
     try {
       await this.request(rootApiRoute, 'GET');
     } catch (err) {
