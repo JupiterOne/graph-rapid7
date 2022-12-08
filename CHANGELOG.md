@@ -18,6 +18,7 @@ and this project adheres to
 - Added the following properties to rapid7 assets:
   - name, osName, osVersion, osDetails, platform, ipAddress, category, webLink,
     numCriticalVulnerabilities, lastScanDate
+- Thanks @jakopako!
 
 ## [0.3.6] - 2021-09-07
 
