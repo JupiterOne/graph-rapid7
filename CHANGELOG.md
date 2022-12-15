@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-12-15
+
 ### Fixed
 
 - Updated jupiterone.md docs to correct part about Global Administrator role.
