@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Added `impact`, `recommendations`, and `references` to `insightvm_finding`
+
+### Changed
+
+- Changed `insightvm_finding` and `insightvm_vulnerability`'s `name` property to
+  use `vulnerability.title` from the API response
+
 ## [0.4.1] - 2022-12-15
 
 ### Fixed

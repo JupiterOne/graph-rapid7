@@ -10,7 +10,11 @@ import {
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { entities, relationships, steps } from '../constants';
-import { InsightVmAssetVulnerability, Vulnerability } from '../types';
+import {
+  InsightVmAssetVulnerability,
+  Vulnerability,
+  VulnerabilityInfo,
+} from '../types';
 
 function getAssetVulnerabilityKey(
   assetId: string,
@@ -23,6 +27,7 @@ function createAssetVulnerabilityEntity(
   assetVulnerability: InsightVmAssetVulnerability,
   vulnerability: Entity,
   assetId: string,
+  info: VulnerabilityInfo,
 ) {
   return createIntegrationEntity({
     entityData: {
@@ -32,11 +37,12 @@ function createAssetVulnerabilityEntity(
         _type: entities.FINDING._type,
         _class: entities.FINDING._class,
         id: `${assetVulnerability.id}`,
-        name: assetVulnerability.id,
+        name: vulnerability.name,
         category: 'host',
         open: assetVulnerability.status === 'vulnerable' ? true : undefined,
         severity: vulnerability.severity,
         numericSeverity: vulnerability.numericSeverity,
+        ...info,
       },
     },
   });
@@ -71,6 +77,7 @@ export async function fetchVulnerability(
     'Fetching and creating new vulnerability entity in jobState.',
   );
   const apiClient = createAPIClient(instance.config, logger);
+
   return jobState.addEntity(
     createVulnerabilityEntity(
       await apiClient.getVulnerability(vulnerabilityId),
@@ -87,7 +94,7 @@ function createVulnerabilityEntity(vulnerability: Vulnerability) {
         _type: entities.VULNERABILITY._type,
         _class: entities.VULNERABILITY._class,
         id: vulnerability.id,
-        name: vulnerability.id,
+        name: vulnerability.title,
         severity: vulnerability.severity,
         numericSeverity: vulnerability.severityScore,
         category: vulnerability.categories?.toString() || '',
@@ -126,13 +133,20 @@ export async function fetchAssetVulnerabilityFindings(
             context,
             assetVulnerability.id,
           );
+
+          const vulnerabilityInfo = await apiClient.getVulnerabilityInformation(
+            assetVulnerability.id,
+          );
+
           const findingEntity = await jobState.addEntity(
             createAssetVulnerabilityEntity(
               assetVulnerability,
               vulnerabilityEntity,
               assetEntity.id! as string,
+              vulnerabilityInfo,
             ),
           );
+
           await jobState.addRelationship(
             createDirectRelationship({
               _class: RelationshipClass.HAS,

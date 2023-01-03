@@ -134,4 +134,10 @@ export type Vulnerability = {
   categories?: string[];
 };
 
+export type VulnerabilityInfo = {
+  impact: string;
+  references: string;
+  recommendations: string;
+};
+
 export type PageIteratee<T> = (page: T[]) => Promise<void>;
