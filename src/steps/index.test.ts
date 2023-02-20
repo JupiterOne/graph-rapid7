@@ -232,10 +232,12 @@ describe('Rapid7 InsightVM', () => {
             type: 'string',
           },
           impact: {
-            type: 'string',
+            type: 'array',
+            items: { type: 'string' },
           },
           references: {
-            type: 'string',
+            type: 'array',
+            items: { type: 'string' },
           },
           recommendations: {
             type: 'string',

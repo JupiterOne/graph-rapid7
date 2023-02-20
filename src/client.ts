@@ -318,12 +318,13 @@ authority you trust. ` + errMessage;
 
     const impact =
       exploits?.page?.totalResources > 0
-        ? exploits.resources.map((r) => r.title || '').join('\n')
-        : 'No impact information available';
+        ? exploits.resources.map((r) => r.title || '')
+        : undefined;
+
     const references =
       refs?.page?.totalResources > 0
-        ? refs.resources.map((r) => r.advisory?.href).join('\n')
-        : 'No references available';
+        ? refs.resources.map((r) => r.advisory?.href)
+        : undefined;
 
     const recommendations = async () => {
       if (solutions?.links.length > 0) {
@@ -335,9 +336,8 @@ authority you trust. ` + errMessage;
           }
         }
         return rec;
-      } else {
-        return 'No recommendation available';
       }
+      return;
     };
 
     return { impact, references, recommendations: await recommendations() };

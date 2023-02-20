@@ -2053,7 +2053,7 @@ Object {
       "createdOn": undefined,
       "displayName": "ICMP timestamp response",
       "id": "generic-icmp-timestamp",
-      "impact": "No impact information available",
+      "impact": undefined,
       "name": "ICMP timestamp response",
       "numericSeverity": 2,
       "open": true,
@@ -2210,10 +2210,12 @@ ICMP timestamp responses can be disabled by deselecting the \\"allow incoming ti
   12. Select \\"OK\\" to exit the internet adapter dialog.
 
 For more information, see: http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/hnw_understanding_firewall.mspx?mfr=true (http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/hnw_understanding_firewall.mspx?mfr=true)",
-      "references": "http://nvd.nist.gov/vuln/detail/CVE-1999-0524
-http://www.osvdb.org/95
-https://exchange.xforce.ibmcloud.com/vulnerabilities/306
-https://exchange.xforce.ibmcloud.com/vulnerabilities/322",
+      "references": Array [
+        "http://nvd.nist.gov/vuln/detail/CVE-1999-0524",
+        "http://www.osvdb.org/95",
+        "https://exchange.xforce.ibmcloud.com/vulnerabilities/306",
+        "https://exchange.xforce.ibmcloud.com/vulnerabilities/322",
+      ],
       "severity": "Moderate",
       "status": "vulnerable",
     },
@@ -2369,7 +2371,7 @@ https://exchange.xforce.ibmcloud.com/vulnerabilities/322",
       "createdOn": undefined,
       "displayName": "TCP timestamp response",
       "id": "generic-tcp-timestamp",
-      "impact": "No impact information available",
+      "impact": undefined,
       "name": "TCP timestamp response",
       "numericSeverity": 1,
       "open": true,
@@ -2437,9 +2439,11 @@ Disable TCP timestamp responses on Windows versions since Vista
 
 Steps:
 TCP timestamps cannot be reliably disabled on this OS. If TCP timestamps present enough of a risk, put a firewall capable of blocking TCP timestamp packets in front of the affected assets.",
-      "references": "http://uptime.netcraft.com
-http://www.forensicswiki.org/wiki/TCP_timestamps
-http://www.ietf.org/rfc/rfc1323.txt",
+      "references": Array [
+        "http://uptime.netcraft.com",
+        "http://www.forensicswiki.org/wiki/TCP_timestamps",
+        "http://www.ietf.org/rfc/rfc1323.txt",
+      ],
       "severity": "Moderate",
       "status": "vulnerable",
     },
@@ -2593,7 +2597,7 @@ http://www.ietf.org/rfc/rfc1323.txt",
       "createdOn": undefined,
       "displayName": "HTTP OPTIONS Method Enabled",
       "id": "http-options-method-enabled",
-      "impact": "No impact information available",
+      "impact": undefined,
       "name": "HTTP OPTIONS Method Enabled",
       "numericSeverity": 3,
       "open": true,
@@ -2634,7 +2638,9 @@ Steps:
 Disable the OPTIONS method by adding the following line to your server block, you can add other HTTP methods to be allowed to run after POST
 
 limit_except GET POST { deny  all; }",
-      "references": "https://www.owasp.org/index.php/Test_HTTP_Methods_(OTG-CONFIG-006)",
+      "references": Array [
+        "https://www.owasp.org/index.php/Test_HTTP_Methods_(OTG-CONFIG-006)",
+      ],
       "severity": "Moderate",
       "status": "vulnerable",
     },
@@ -2796,7 +2802,7 @@ limit_except GET POST { deny  all; }",
       "createdOn": undefined,
       "displayName": "Database Open Access",
       "id": "database-open-access",
-      "impact": "No impact information available",
+      "impact": undefined,
       "name": "Database Open Access",
       "numericSeverity": 5,
       "open": true,
@@ -2806,7 +2812,9 @@ Restrict database access
 
 Steps:
 Configure the database server to only allow access to trusted systems. For example, the PCI DSS standard requires you to place the database in an  internal network zone, segregated from the DMZ",
-      "references": "https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf",
+      "references": Array [
+        "https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf",
+      ],
       "severity": "Severe",
       "status": "vulnerable",
     },
@@ -2860,7 +2868,7 @@ Configure the database server to only allow access to trusted systems. For examp
       "createdOn": undefined,
       "displayName": "ICMP timestamp response",
       "id": "generic-icmp-timestamp",
-      "impact": "No impact information available",
+      "impact": undefined,
       "name": "ICMP timestamp response",
       "numericSeverity": 2,
       "open": true,
@@ -3017,10 +3025,12 @@ ICMP timestamp responses can be disabled by deselecting the \\"allow incoming ti
   12. Select \\"OK\\" to exit the internet adapter dialog.
 
 For more information, see: http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/hnw_understanding_firewall.mspx?mfr=true (http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/hnw_understanding_firewall.mspx?mfr=true)",
-      "references": "http://nvd.nist.gov/vuln/detail/CVE-1999-0524
-http://www.osvdb.org/95
-https://exchange.xforce.ibmcloud.com/vulnerabilities/306
-https://exchange.xforce.ibmcloud.com/vulnerabilities/322",
+      "references": Array [
+        "http://nvd.nist.gov/vuln/detail/CVE-1999-0524",
+        "http://www.osvdb.org/95",
+        "https://exchange.xforce.ibmcloud.com/vulnerabilities/306",
+        "https://exchange.xforce.ibmcloud.com/vulnerabilities/322",
+      ],
       "severity": "Moderate",
       "status": "vulnerable",
     },
@@ -3074,7 +3084,7 @@ https://exchange.xforce.ibmcloud.com/vulnerabilities/322",
       "createdOn": undefined,
       "displayName": "TCP timestamp response",
       "id": "generic-tcp-timestamp",
-      "impact": "No impact information available",
+      "impact": undefined,
       "name": "TCP timestamp response",
       "numericSeverity": 1,
       "open": true,
@@ -3142,9 +3152,11 @@ Disable TCP timestamp responses on Windows versions since Vista
 
 Steps:
 TCP timestamps cannot be reliably disabled on this OS. If TCP timestamps present enough of a risk, put a firewall capable of blocking TCP timestamp packets in front of the affected assets.",
-      "references": "http://uptime.netcraft.com
-http://www.forensicswiki.org/wiki/TCP_timestamps
-http://www.ietf.org/rfc/rfc1323.txt",
+      "references": Array [
+        "http://uptime.netcraft.com",
+        "http://www.forensicswiki.org/wiki/TCP_timestamps",
+        "http://www.ietf.org/rfc/rfc1323.txt",
+      ],
       "severity": "Moderate",
       "status": "vulnerable",
     },
@@ -3200,7 +3212,7 @@ http://www.ietf.org/rfc/rfc1323.txt",
       "createdOn": undefined,
       "displayName": "HTTP OPTIONS Method Enabled",
       "id": "http-options-method-enabled",
-      "impact": "No impact information available",
+      "impact": undefined,
       "name": "HTTP OPTIONS Method Enabled",
       "numericSeverity": 3,
       "open": true,
@@ -3241,7 +3253,9 @@ Steps:
 Disable the OPTIONS method by adding the following line to your server block, you can add other HTTP methods to be allowed to run after POST
 
 limit_except GET POST { deny  all; }",
-      "references": "https://www.owasp.org/index.php/Test_HTTP_Methods_(OTG-CONFIG-006)",
+      "references": Array [
+        "https://www.owasp.org/index.php/Test_HTTP_Methods_(OTG-CONFIG-006)",
+      ],
       "severity": "Moderate",
       "status": "vulnerable",
     },
