@@ -36,7 +36,7 @@ Jupiterone requires the following information to complete authentication:
 
 1. The InsightVM Security Console Socket Address
    - The publicly-accessible socket (host:port) of your InsightVM Security
-     Console. e.g. <hostname>:3780.
+     Console. e.g. `{hostname}:3780`.
 2. An InsightVM Username and Password
    - Use an existing user or create a user that has the
      [Global Administrator Role](https://docs.rapid7.com/insightvm/managing-users-and-authentication/#global-administrator)
