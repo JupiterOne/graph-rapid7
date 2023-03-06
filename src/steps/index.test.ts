@@ -231,6 +231,17 @@ describe('Rapid7 InsightVM', () => {
           name: {
             type: 'string',
           },
+          impact: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          references: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          recommendations: {
+            type: 'string',
+          },
         },
       },
     });

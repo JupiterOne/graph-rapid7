@@ -289,6 +289,59 @@ authority you trust. ` + errMessage;
     );
     return response.json();
   }
+
+  /**
+   * Gets detailed vulnerability information in the provider
+   *
+   */
+  public async getVulnerabilityInformation(
+    vulnerabilityId: string,
+  ): Promise<any> {
+    const exploits = await (
+      await this.request(
+        this.withBaseUri(`vulnerabilities/${vulnerabilityId}/exploits`),
+        'GET',
+      )
+    ).json();
+    const refs = await (
+      await this.request(
+        this.withBaseUri(`vulnerabilities/${vulnerabilityId}/references`),
+        'GET',
+      )
+    ).json();
+    const solutions = await (
+      await this.request(
+        this.withBaseUri(`vulnerabilities/${vulnerabilityId}/solutions`),
+        'GET',
+      )
+    ).json();
+
+    const impact =
+      exploits?.page?.totalResources > 0
+        ? exploits.resources.map((r) => r.title || '')
+        : undefined;
+
+    const references =
+      refs?.page?.totalResources > 0
+        ? refs.resources.map((r) => r.advisory?.href)
+        : undefined;
+
+    const recommendations = async () => {
+      if (solutions?.links.length > 0) {
+        let rec = 'Recommendation(s):';
+        for (const s of solutions.links) {
+          if (s.rel !== 'self') {
+            const sol = await (await this.request(s.href)).json();
+            rec += `\n\n${sol.summary.text}\n\nSteps:\n${sol.steps.text}`;
+          }
+        }
+        return rec;
+      }
+      return;
+    };
+
+    return { impact, references, recommendations: await recommendations() };
+  }
 }
 
 export function createAPIClient(
