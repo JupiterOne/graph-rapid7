@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Updated
+
+- Added the `cause` property on API errors for further information
+
+### Fixed
+
+- Check if `accountEntity` exists before building relationships in
+  `build-account-site-relationships`
+
 ## [0.4.1] - 2022-12-15
 
 ### Fixed
