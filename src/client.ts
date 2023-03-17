@@ -65,6 +65,7 @@ export class APIClient {
         endpoint: uri,
         status: response.status,
         statusText: response.statusText,
+        cause: new Error(await response.text()),
       });
     }
     return response;

@@ -16,9 +16,8 @@ import {
 export async function fetchAccountSiteRelationships({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
-  const accountEntity = (await jobState.getData(
-    ACCOUNT_ENTITY_DATA_KEY,
-  )) as Entity;
+  const accountEntity = await jobState.getData<Entity>(ACCOUNT_ENTITY_DATA_KEY);
+  if (!accountEntity) return;
   await jobState.iterateEntities(
     { _type: entities.SITE._type },
     async (siteEntity) => {
