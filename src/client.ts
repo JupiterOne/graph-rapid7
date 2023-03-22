@@ -101,7 +101,7 @@ export class APIClient {
     const rootApiRoute = `https://${this.insightHost}/api/3`;
     try {
       const response = await this.request(rootApiRoute, 'GET');
-      const { body } = await response.json();
+      const body = await response.json();
       this.logger.info({ body }, 'Root API response');
     } catch (err) {
       let errMessage = `Error occurred validating invocation at ${rootApiRoute} (code=${err.code}, message=${err.message})`;
