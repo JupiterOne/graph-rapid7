@@ -10,6 +10,12 @@ and this project adheres to
 
 ### Updated
 
+- Added logging of root enpoint response to `verifyAuthentication`
+
+## [0.4.2] - 2023-03-22
+
+### Updated
+
 - Added the `cause` property on API errors for further information
 
 ### Fixed
