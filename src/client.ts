@@ -100,7 +100,9 @@ export class APIClient {
   public async verifyAuthentication(): Promise<void> {
     const rootApiRoute = `https://${this.insightHost}/api/3`;
     try {
-      await this.request(rootApiRoute, 'GET');
+      const response = await this.request(rootApiRoute, 'GET');
+      const body = await response.json();
+      this.logger.info({ body }, 'Root API response');
     } catch (err) {
       let errMessage = `Error occurred validating invocation at ${rootApiRoute} (code=${err.code}, message=${err.message})`;
       if (err.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
