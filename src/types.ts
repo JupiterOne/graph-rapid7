@@ -69,10 +69,12 @@ export type InsightVMAsset = {
   hostName: string;
   id: number;
   ip: string;
+  mac: string;
   links: Link[];
   os: string;
   type: string;
   siteId: number;
+  riskScore: number;
   vulnerabilities: {
     critical: number;
     severe: number;

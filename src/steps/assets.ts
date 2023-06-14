@@ -63,11 +63,16 @@ export async function fetchAssets({
           category: asset.osFingerprint?.type ?? null,
           webLink,
           numCriticalVulnerabilities: asset.vulnerabilities.critical,
+          riskScore: asset.riskScore,
           make: null,
           model: null,
           serial: null,
-          deviceId: null,
+          deviceId: `${asset.id}`,
+          macAddress: asset.mac,
           lastScanDate: parseTimePropertyValue(
+            asset.history[asset.history.length - 1]?.date,
+          ),
+          lastSeenOn: parseTimePropertyValue(
             asset.history[asset.history.length - 1]?.date,
           ),
         },
