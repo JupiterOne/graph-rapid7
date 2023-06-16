@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.2] - 2023-03-22
+
+### Added
+
+- `riskScore`, `deviceId`, `macAddress` and `lastSeenOn` to Device entities.
+
 ### Updated
 
 - Added logging of root enpoint response to `verifyAuthentication`
