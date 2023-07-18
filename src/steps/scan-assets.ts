@@ -9,11 +9,12 @@ import {
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { relationships, steps } from '../constants';
-import { SiteAssetsMap } from '../types';
 import { getScanKey } from './scans';
 
-async function buildSiteAssetsMap(jobState: JobState): Promise<SiteAssetsMap> {
-  const siteAssetsMap: SiteAssetsMap = {};
+const RELATIONSHIPS_BATCH_SIZE = 5;
+
+async function buildSiteAssetsMap(jobState: JobState) {
+  const siteAssetsMap = new Map<string, string[]>();
 
   await jobState.iterateRelationships(
     {
@@ -26,11 +27,14 @@ async function buildSiteAssetsMap(jobState: JobState): Promise<SiteAssetsMap> {
       const assetKey = _toEntityKey?.toString();
 
       if (siteKey && assetKey) {
-        if (!siteAssetsMap[siteKey]) {
-          siteAssetsMap[siteKey] = [];
+        if (!siteAssetsMap.has(siteKey)) {
+          siteAssetsMap.set(siteKey, []);
         }
 
-        siteAssetsMap[siteKey].push(assetKey);
+        siteAssetsMap.set(siteKey, [
+          ...(siteAssetsMap.get(siteKey) as string[]),
+          assetKey,
+        ]);
       }
     },
   );
@@ -47,39 +51,50 @@ export async function fetchScanAssets({
 
   const siteAssetsMap = await buildSiteAssetsMap(jobState);
 
-  const jobs: Promise<void>[] = [];
+  let relationships: Parameters<typeof createDirectRelationship>[0][] = [];
 
-  for (const [siteKey, assetKeys] of Object.entries(siteAssetsMap)) {
+  for (const [siteKey, assetKeys] of siteAssetsMap) {
     const siteEntity = await jobState.findEntity(siteKey);
 
-    if (siteEntity && siteEntity.id) {
-      await apiClient.iterateSiteScans(
-        siteEntity.id as string,
-        async (scan) => {
-          const scanEntity = await jobState.findEntity(getScanKey(scan.id));
-
-          if (scanEntity) {
-            for (const assetKey of assetKeys) {
-              const assetEntity = await jobState.findEntity(assetKey);
-              if (assetEntity) {
-                jobs.push(
-                  jobState.addRelationship(
-                    createDirectRelationship({
-                      _class: RelationshipClass.MONITORS,
-                      from: scanEntity,
-                      to: assetEntity,
-                    }),
-                  ),
-                );
-              }
-            }
-          }
-        },
-      );
+    if (!siteEntity || !siteEntity.id || typeof siteEntity.id !== 'string') {
+      continue;
     }
+
+    await apiClient.iterateSiteScans(siteEntity.id, async (scan) => {
+      const scanEntity = await jobState.findEntity(getScanKey(scan.id));
+
+      if (!scanEntity) {
+        return;
+      }
+
+      for (const assetKey of assetKeys) {
+        const assetEntity = await jobState.findEntity(assetKey);
+        if (!assetEntity) {
+          continue;
+        }
+        relationships.push({
+          _class: RelationshipClass.MONITORS,
+          from: scanEntity,
+          to: assetEntity,
+        });
+
+        // batch the relationships upload
+        if (relationships.length >= RELATIONSHIPS_BATCH_SIZE) {
+          await jobState.addRelationships(
+            relationships.map(createDirectRelationship),
+          );
+          relationships = [];
+        }
+      }
+    });
   }
 
-  await Promise.all(jobs);
+  // flush
+  if (relationships.length) {
+    await jobState.addRelationships(
+      relationships.map(createDirectRelationship),
+    );
+  }
 }
 
 export const scanAssetsStep: IntegrationStep<IntegrationConfig>[] = [
