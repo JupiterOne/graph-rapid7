@@ -56,7 +56,7 @@ export async function fetchScanAssets({
   for (const [siteKey, assetKeys] of siteAssetsMap) {
     const siteEntity = await jobState.findEntity(siteKey);
 
-    if (!siteEntity || !siteEntity.id || typeof siteEntity.id !== 'string') {
+    if (typeof siteEntity?.id !== 'string') {
       continue;
     }
 
