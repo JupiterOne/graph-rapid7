@@ -8,7 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [0.4.4] - 2023-03-22
+## [0.4.5] - 2023-07-23
+
+### Changed
+
+- `name` on to Device entities to default to the `id`.
+
+## [0.4.4] - 2023-06-22
 
 ### Added
 
