@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.6] - 2023-07-24
+
+### Changed
+
+- improve memory handling on scan assets step
+
 ## [0.4.5] - 2023-07-23
 
 ### Changed
