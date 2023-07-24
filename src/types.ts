@@ -1,7 +1,3 @@
-export type SiteAssetsMap = {
-  [key: string]: string[];
-};
-
 export type Link = {
   href: string;
   rel?: string;
