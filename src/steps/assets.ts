@@ -54,7 +54,7 @@ export async function fetchAssets({
           _type: entities.ASSET._type,
           _class: entities.ASSET._class,
           id: `${asset.id}`,
-          name: asset.hostName || asset.ip,
+          name: asset.hostName || asset.ip || asset.id,
           osName: asset.osFingerprint?.systemName,
           osVersion: asset.osFingerprint?.version,
           osDetails: asset.os,
