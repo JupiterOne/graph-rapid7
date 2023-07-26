@@ -4,7 +4,7 @@ import {
 } from '@jupiterone/integration-sdk-testing';
 
 import { APIClient } from './client';
-import { IntegrationConfig, validateInvocation } from './config';
+import { IntegrationConfig, validateHost, validateInvocation } from './config';
 
 it('requires valid config', async () => {
   const executionContext = createMockExecutionContext<IntegrationConfig>({
@@ -35,8 +35,8 @@ it('auth error', async () => {
   });
 
   await expect(validateInvocation(executionContext)).rejects.toThrow(
-    'Error occurred validating invocation at https://INVALID/api/3 (code=PROVIDER_API_ERROR, \
-message=Provider API failed at https://INVALID/api/3: 401 Unauthorized)',
+    'Error occurred validating invocation at https://invalid/api/3 (code=PROVIDER_API_ERROR, \
+message=Provider API failed at https://invalid/api/3: 401 Unauthorized)',
   );
 });
 
@@ -64,4 +64,19 @@ it('should direct users to Rapid7 cert documentation if validation fails with DE
 guidelines to install a valid TLS certificate: https://docs.rapid7.com/insightvm/managing-the-security-console/#managing-the-https-certificate. We recommend \
 installing a certificate from https://letsencrypt.org/ or a certificate authority you trust.',
   );
+});
+
+describe('validateHost', () => {
+  it('returns valid hostname', () => {
+    expect(validateHost('example.com')).toBe('example.com');
+    expect(validateHost('subdomain.example.com')).toBe('subdomain.example.com');
+    expect(validateHost('https://example.com')).toBe('example.com');
+    expect(validateHost('example.com/path')).toBe('example.com');
+  });
+
+  it('throws error for invalid host', () => {
+    expect(() => validateHost('1.2.3.4.5.6.7.8')).toThrow(
+      'Invalid InsightVM hostname: 1.2.3.4.5.6.7.8',
+    );
+  });
 });
