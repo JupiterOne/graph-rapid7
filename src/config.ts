@@ -95,7 +95,7 @@ export async function validateInvocation(
 
 export function validateHost(host: string) {
   let validHost = host;
-  if (!validHost.startsWith('http')) {
+  if (!/^http/.test(host)) {
     validHost = `https://${host}`;
   }
   try {
