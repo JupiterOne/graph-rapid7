@@ -76,8 +76,9 @@ describe('validateHost', () => {
   });
 
   it('throws error for invalid host', () => {
-    expect(() => validateHost('.127.0.0.1')).toThrow(
-      'Invalid InsightVM hostname: .127.0.0.1',
+    expect(() => validateHost('')).toThrow('Invalid InsightVM hostname: ');
+    expect(() => validateHost('!@#$')).toThrow(
+      'Invalid InsightVM hostname: !@#$',
     );
   });
 });
