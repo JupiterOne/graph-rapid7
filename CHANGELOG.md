@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.7] - 2023-07-26
+
+### Changed
+
+- add validation and parse of insightHost config
+
 ## [0.4.6] - 2023-07-24
 
 ### Changed
