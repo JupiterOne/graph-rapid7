@@ -78,6 +78,8 @@ export async function validateInvocation(
     );
   }
 
+  config.insightHost = validateHost(config.insightHost);
+
   if (config.disableTlsVerification) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     context.logger.publishEvent({
@@ -89,4 +91,18 @@ export async function validateInvocation(
 
   const apiClient = createAPIClient(config, context.logger);
   await apiClient.verifyAuthentication();
+}
+
+export function validateHost(host: string) {
+  let validHost = host;
+  if (!validHost.startsWith('http')) {
+    validHost = `https://${host}`;
+  }
+  try {
+    const url = new URL(validHost);
+
+    return url.hostname;
+  } catch (error) {
+    throw new IntegrationValidationError(`Invalid InsightVM hostname: ${host}`);
+  }
 }
