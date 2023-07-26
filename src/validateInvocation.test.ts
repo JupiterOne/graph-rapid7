@@ -72,11 +72,12 @@ describe('validateHost', () => {
     expect(validateHost('subdomain.example.com')).toBe('subdomain.example.com');
     expect(validateHost('https://example.com')).toBe('example.com');
     expect(validateHost('example.com/path')).toBe('example.com');
+    expect(validateHost('localhost')).toBe('localhost');
   });
 
   it('throws error for invalid host', () => {
-    expect(() => validateHost('1.2.3.4.5.6.7.8')).toThrow(
-      'Invalid InsightVM hostname: 1.2.3.4.5.6.7.8',
+    expect(() => validateHost('.127.0.0.1')).toThrow(
+      'Invalid InsightVM hostname: .127.0.0.1',
     );
   });
 });
