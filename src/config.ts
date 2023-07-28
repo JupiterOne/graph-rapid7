@@ -101,7 +101,7 @@ export function validateHost(host: string) {
   try {
     const url = new URL(validHost);
 
-    return url.hostname;
+    return url.host;
   } catch (error) {
     throw new IntegrationValidationError(`Invalid InsightVM hostname: ${host}`);
   }

@@ -28,14 +28,24 @@ with JupiterOne in the [integration documentation](docs/jupiterone.md).
 
    The `.env` file is loaded into `process.env` before the integration code is
    executed. This file is not required should you configure the environment
-   another way. `.gitignore` is configured to to avoid commiting the `.env`
-   file.
+   another way. `.gitignore` is configured to avoid committing the `.env` file.
 
 ### Running the integration
+
+#### Running directly
 
 1. `yarn start` to collect data
 2. `yarn graph` to show a visualization of the collected data
 3. `yarn j1-integration -h` for additional commands
+
+#### Running with Docker
+
+Create an integration instance for the integration in JupiterOne. With an
+**JupiterOne API Key** scoped to the integration or an API Key with permissions
+to synchronize data and the **Integration Instance ID**:
+
+1. `docker build -t $IMAGE_NAME .`
+2. `docker run -e "JUPITERONE_API_KEY=<JUPITERONE_API_KEY>" -e "JUPITERONE_ACCOUNT=<JUPITERONE_ACCOUNT> -e "INTEGRATION_INSTANCE_ID=<INTEGRATION_INSTANCE_ID>" "JUPITERONE_API_BASE_URL=<JUPITERONE_API_BASE_URL>" $IMAGE_NAME`
 
 ### Making Contributions
 
@@ -52,6 +62,17 @@ for a deep dive into the mechanics of how integrations work.
 
 See [docs/development.md](docs/development.md) for any additional details about
 developing this integration.
+
+## Testing the integration
+
+Ideally, all major calls to the API and converter functions would be tested. You
+can run the tests with `yarn test`, and you can run the tests as they execute in
+the CI/CD environment with `yarn test:ci` (adds linting and type-checking to
+`yarn test`). If you have a valid runtime configuration, you can run the tests
+with your credentials using `yarn test:env`.
+
+For more details on setting up tests, and specifically on using recordings to
+simulate API responses, see `test/README.md`.
 
 ### Changelog
 
