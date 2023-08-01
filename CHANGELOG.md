@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.0] - 2023-08-01
+
+### Changed
+
+- make integration halo-ready and upgrade to node 18
+
 ## [0.4.7] - 2023-07-26
 
 ### Changed
