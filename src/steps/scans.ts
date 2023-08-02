@@ -1,8 +1,10 @@
 import {
   createDirectRelationship,
   createIntegrationEntity,
+  IntegrationLogger,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  JobState,
   parseTimePropertyValue,
   Relationship,
   RelationshipClass,
@@ -18,8 +20,8 @@ export function getScanKey(id: number): string {
 }
 
 async function addPerformedRelationship(
-  jobState,
-  logger,
+  jobState: JobState,
+  logger: IntegrationLogger,
   relationship: Relationship,
 ) {
   if (!jobState.hasKey(relationship._key)) {
