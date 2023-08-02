@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.2] - 2023-08-02
+
+### Fixed
+
+- Possible duplicate scan entities are now properly handled.
+
 ## [0.5.1] - 2023-08-02
 
 ### Fixed
