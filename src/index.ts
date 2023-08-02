@@ -7,9 +7,8 @@ import {
 } from './config';
 import { integrationSteps } from './steps';
 
-export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> =
-  {
-    instanceConfigFields,
-    validateInvocation,
-    integrationSteps,
-  };
+export const invocationConfig: IntegrationInvocationConfig<IntegrationConfig> = {
+  instanceConfigFields,
+  validateInvocation,
+  integrationSteps,
+};

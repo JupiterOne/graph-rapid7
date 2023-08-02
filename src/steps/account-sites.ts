@@ -32,14 +32,15 @@ export async function fetchAccountSiteRelationships({
   );
 }
 
-export const accountSitesRelationshipSteps: IntegrationStep<IntegrationConfig>[] =
-  [
-    {
-      id: steps.FETCH_ACCOUNT_SITE_RELATIONSHIPS,
-      name: 'Fetch Account Site relationships',
-      entities: [],
-      relationships: [relationships.ACCOUNT_HAS_SITE],
-      dependsOn: [steps.FETCH_ACCOUNT, steps.FETCH_SITES],
-      executionHandler: fetchAccountSiteRelationships,
-    },
-  ];
+export const accountSitesRelationshipSteps: IntegrationStep<
+  IntegrationConfig
+>[] = [
+  {
+    id: steps.FETCH_ACCOUNT_SITE_RELATIONSHIPS,
+    name: 'Fetch Account Site relationships',
+    entities: [],
+    relationships: [relationships.ACCOUNT_HAS_SITE],
+    dependsOn: [steps.FETCH_ACCOUNT, steps.FETCH_SITES],
+    executionHandler: fetchAccountSiteRelationships,
+  },
+];
