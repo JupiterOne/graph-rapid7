@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.1] - 2023-08-02
+
+### Fixed
+
+- Possible duplicate relationships between site and scan entities are now 
+  properly handled.
+
 ## [0.5.0] - 2023-08-01
 
 ### Changed
