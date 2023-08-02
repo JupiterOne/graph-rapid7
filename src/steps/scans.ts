@@ -43,7 +43,7 @@ export async function fetchScans({
 
     const siteEntity = await jobState.findEntity(getSiteKey(scan.siteId));
 
-    if (siteEntity) {
+    if (siteEntity && !jobState.hasKey(getScanKey(scan.id))) {
       const scanEntity = createIntegrationEntity({
         entityData: {
           source: scan,
