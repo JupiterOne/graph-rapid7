@@ -4,6 +4,7 @@ import {
   IntegrationStep,
   IntegrationStepExecutionContext,
   parseTimePropertyValue,
+  Relationship,
   RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 
@@ -14,6 +15,18 @@ import { getSiteKey } from './sites';
 
 export function getScanKey(id: number): string {
   return `insightvm_scan:${id}`;
+}
+
+async function addPerformedRelationship(
+  jobState,
+  logger,
+  relationship: Relationship,
+) {
+  if (!jobState.hasKey(relationship._key)) {
+    await jobState.addRelationship(relationship);
+  } else {
+    logger.info({ relationship }, `Relationship already exists.  Skipping.`);
+  }
 }
 
 export async function fetchScans({
@@ -57,7 +70,9 @@ export async function fetchScans({
 
       await Promise.all([
         jobState.addEntity(scanEntity),
-        jobState.addRelationship(
+        addPerformedRelationship(
+          jobState,
+          logger,
           createDirectRelationship({
             _class: RelationshipClass.PERFORMED,
             from: siteEntity,
