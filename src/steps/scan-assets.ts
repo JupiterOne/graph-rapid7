@@ -8,8 +8,10 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { relationships, steps } from '../constants';
+import { entities, relationships, steps } from '../constants';
 import { getScanKey } from './scans';
+import { getSiteIdFromSiteKey } from './sites';
+import pMap from 'p-map';
 
 const RELATIONSHIPS_BATCH_SIZE = 5;
 
@@ -50,32 +52,33 @@ export async function fetchScanAssets({
   const apiClient = createAPIClient(instance.config, logger);
 
   const siteAssetsMap = await buildSiteAssetsMap(jobState);
+  logger.info({ size: siteAssetsMap.size }, 'Built site assets map');
 
-  let relationships: Parameters<typeof createDirectRelationship>[0][] = [];
+  const mapper = async ([siteKey, assetKeys]: [string, string[]]) => {
+    const siteId = getSiteIdFromSiteKey(siteKey);
 
-  for (const [siteKey, assetKeys] of siteAssetsMap) {
-    const siteEntity = await jobState.findEntity(siteKey);
-
-    if (typeof siteEntity?.id !== 'string') {
-      continue;
+    if (!siteId) {
+      return;
     }
 
-    await apiClient.iterateSiteScans(siteEntity.id, async (scan) => {
-      const scanEntity = await jobState.findEntity(getScanKey(scan.id));
+    await apiClient.iterateSiteScans(siteId, async (scan) => {
+      const scanKey = getScanKey(scan.id);
 
-      if (!scanEntity) {
+      if (!jobState.hasKey(scanKey)) {
         return;
       }
 
+      let relationships: Parameters<typeof createDirectRelationship>[0][] = [];
       for (const assetKey of assetKeys) {
-        const assetEntity = await jobState.findEntity(assetKey);
-        if (!assetEntity) {
+        if (!jobState.hasKey(assetKey)) {
           continue;
         }
         relationships.push({
           _class: RelationshipClass.MONITORS,
-          from: scanEntity,
-          to: assetEntity,
+          fromType: entities.SCAN._type,
+          fromKey: scanKey,
+          toType: entities.ASSET._type,
+          toKey: assetKey,
         });
 
         // batch the relationships upload
@@ -86,15 +89,17 @@ export async function fetchScanAssets({
           relationships = [];
         }
       }
-    });
-  }
 
-  // flush
-  if (relationships.length) {
-    await jobState.addRelationships(
-      relationships.map(createDirectRelationship),
-    );
-  }
+      // flush
+      if (relationships.length) {
+        await jobState.addRelationships(
+          relationships.map(createDirectRelationship),
+        );
+      }
+    });
+  };
+
+  await pMap(siteAssetsMap, mapper, { concurrency: 5 });
 }
 
 export const scanAssetsStep: IntegrationStep<IntegrationConfig>[] = [

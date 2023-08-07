@@ -14,6 +14,7 @@ import {
   InsightVMScan,
   InsightVMSite,
   InsightVMUser,
+  InsightVmVulnerability,
   PageIteratee,
   PaginatedResource,
   Vulnerability,
@@ -267,12 +268,28 @@ authority you trust. ` + errMessage;
    */
   public async iterateAssetVulnerabilityFinding(
     assetId: string,
-    iteratee: ResourceIteratee<InsightVmAssetVulnerability>,
+    iteratee: ResourceIteratee<InsightVmAssetVulnerability[]>,
   ): Promise<void> {
     await this.paginatedRequest<InsightVmAssetVulnerability>(
       `assets/${assetId}/vulnerabilities`,
       async (assetVulnerabilities) => {
-        for (const vulnerability of assetVulnerabilities) {
+        await iteratee(assetVulnerabilities);
+      },
+    );
+  }
+
+  /**
+   * Iterates each vulnerability.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateVulnerabilities(
+    iteratee: ResourceIteratee<InsightVmVulnerability>,
+  ): Promise<void> {
+    await this.paginatedRequest<InsightVmVulnerability>(
+      `vulnerabilities`,
+      async (vulnerabilities) => {
+        for (const vulnerability of vulnerabilities) {
           await iteratee(vulnerability);
         }
       },

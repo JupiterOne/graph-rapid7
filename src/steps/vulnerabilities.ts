@@ -1,7 +1,6 @@
 import {
   createDirectRelationship,
   createIntegrationEntity,
-  Entity,
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
@@ -9,8 +8,14 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { entities, relationships, steps } from '../constants';
+import {
+  entities,
+  relationships,
+  steps,
+  VULNERABILITIES_DATA,
+} from '../constants';
 import { InsightVmAssetVulnerability, Vulnerability } from '../types';
+import pMap from 'p-map';
 
 function getAssetVulnerabilityKey(
   assetId: string,
@@ -21,7 +26,7 @@ function getAssetVulnerabilityKey(
 
 function createAssetVulnerabilityEntity(
   assetVulnerability: InsightVmAssetVulnerability,
-  vulnerability: Entity,
+  vulnerability: { _key: string; severity: string; numericSeverity: number },
   assetId: string,
 ) {
   return createIntegrationEntity({
@@ -46,36 +51,77 @@ export function getVulnerabilityKey(id: string): string {
   return `insightvm_vulnerability:${id}`;
 }
 
-export async function fetchVulnerability(
+async function fetchVulnerabilities(
   context: IntegrationStepExecutionContext<IntegrationConfig>,
-  vulnerabilityId: string,
-): Promise<Entity> {
+) {
   const { logger, instance, jobState } = context;
-  const existingVulnerability = await jobState.findEntity(
-    getVulnerabilityKey(vulnerabilityId),
-  );
-
-  if (existingVulnerability) {
-    logger.debug(
-      {
-        id: vulnerabilityId,
-      },
-      'Found existing vulnerability entity in jobState.',
-    );
-    return existingVulnerability;
-  }
-  logger.debug(
-    {
-      id: vulnerabilityId,
-    },
-    'Fetching and creating new vulnerability entity in jobState.',
-  );
   const apiClient = createAPIClient(instance.config, logger);
-  return jobState.addEntity(
-    createVulnerabilityEntity(
-      await apiClient.getVulnerability(vulnerabilityId),
-    ),
-  );
+
+  const vulnerabilities = new Map<string, Vulnerability>();
+
+  await apiClient.iterateVulnerabilities((vulnerability) => {
+    vulnerabilities.set(getVulnerabilityKey(vulnerability.id), {
+      id: vulnerability.id,
+      severity: vulnerability.severity,
+      severityScore: vulnerability.severityScore,
+      categories: vulnerability.categories?.toString() || '',
+      description: vulnerability.description?.text,
+      exploits: vulnerability.exploits,
+    });
+  });
+
+  await jobState.setData(VULNERABILITIES_DATA, vulnerabilities);
+}
+
+async function getVulnerabilityFetcher({
+  logger,
+  jobState,
+}: IntegrationStepExecutionContext<IntegrationConfig>): Promise<
+  (
+    vulnerabilityId: string,
+  ) => Promise<
+    { _key: string; severity: string; numericSeverity: number } | undefined
+  >
+> {
+  const vulnerabilities = (await jobState.getData(VULNERABILITIES_DATA)) as Map<
+    string,
+    Vulnerability
+  >;
+
+  return async (vulnerabilityId: string) => {
+    const vulnerabilityKey = getVulnerabilityKey(vulnerabilityId);
+    if (!vulnerabilities.has(vulnerabilityKey)) {
+      return undefined;
+    }
+
+    const vulnerability = vulnerabilities.get(
+      vulnerabilityKey,
+    ) as Vulnerability;
+
+    if (jobState.hasKey(vulnerabilityKey)) {
+      logger.debug(
+        {
+          id: vulnerabilityId,
+        },
+        'Found existing vulnerability entity in jobState.',
+      );
+    } else {
+      logger.debug(
+        {
+          id: vulnerabilityId,
+        },
+        'Creating new vulnerability entity in jobState.',
+      );
+      await jobState.addEntity(createVulnerabilityEntity(vulnerability));
+    }
+
+    const { severity, severityScore } = vulnerability;
+    return {
+      _key: vulnerabilityKey,
+      severity: severity,
+      numericSeverity: severityScore,
+    };
+  };
 }
 
 function createVulnerabilityEntity(vulnerability: Vulnerability) {
@@ -90,8 +136,8 @@ function createVulnerabilityEntity(vulnerability: Vulnerability) {
         name: vulnerability.id,
         severity: vulnerability.severity,
         numericSeverity: vulnerability.severityScore,
-        category: vulnerability.categories?.toString() || '',
-        description: vulnerability.description?.text,
+        category: vulnerability.categories,
+        description: vulnerability.description,
         exploits: vulnerability.exploits,
         // Response doesn't contain these attributes
         // but are needed for data model:
@@ -110,6 +156,8 @@ export async function fetchAssetVulnerabilityFindings(
   const { logger, instance, jobState } = context;
   const apiClient = createAPIClient(instance.config, logger);
 
+  const fetchVulnerability = await getVulnerabilityFetcher(context);
+
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
@@ -121,32 +169,48 @@ export async function fetchAssetVulnerabilityFindings(
       );
       await apiClient.iterateAssetVulnerabilityFinding(
         assetEntity.id! as string,
-        async (assetVulnerability) => {
-          const vulnerabilityEntity = await fetchVulnerability(
-            context,
-            assetVulnerability.id,
-          );
-          const findingEntity = await jobState.addEntity(
-            createAssetVulnerabilityEntity(
-              assetVulnerability,
-              vulnerabilityEntity,
-              assetEntity.id! as string,
-            ),
-          );
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.HAS,
-              from: assetEntity,
-              to: findingEntity,
-            }),
-          );
+        async (assetVulnerabilities) => {
+          await pMap(
+            assetVulnerabilities,
+            async (assetVulnerability) => {
+              const vulnerabilityEntity = await fetchVulnerability(
+                assetVulnerability.id,
+              );
+              if (!vulnerabilityEntity) {
+                logger.warn(
+                  { assetVulnerabilityId: assetVulnerability.id },
+                  'No vulnerability data found in memory.',
+                );
+                return;
+              }
 
-          await jobState.addRelationship(
-            createDirectRelationship({
-              _class: RelationshipClass.IS,
-              from: findingEntity,
-              to: vulnerabilityEntity,
-            }),
+              const findingEntity = await jobState.addEntity(
+                createAssetVulnerabilityEntity(
+                  assetVulnerability,
+                  vulnerabilityEntity,
+                  assetEntity.id! as string,
+                ),
+              );
+              const assetFindingRelationship = createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                from: assetEntity,
+                to: findingEntity,
+              });
+              const findingVulnerabilityRelationship = createDirectRelationship(
+                {
+                  _class: RelationshipClass.IS,
+                  fromType: entities.FINDING._type,
+                  fromKey: findingEntity._key,
+                  toType: entities.VULNERABILITY._type,
+                  toKey: vulnerabilityEntity._key,
+                },
+              );
+              await jobState.addRelationships([
+                assetFindingRelationship,
+                findingVulnerabilityRelationship,
+              ]);
+            },
+            { concurrency: 5 },
           );
         },
       );
@@ -155,6 +219,14 @@ export async function fetchAssetVulnerabilityFindings(
 }
 
 export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
+  {
+    id: steps.FETCH_VULNERABILITIES,
+    name: 'Fetch Vulnerabilities',
+    entities: [],
+    relationships: [],
+    dependsOn: [],
+    executionHandler: fetchVulnerabilities,
+  },
   {
     id: steps.FETCH_ASSET_VULNERABILITIES,
     name: 'Fetch Asset Vulnerabilities',
@@ -169,6 +241,6 @@ export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
 ];
 
 export const testFunctions = {
-  fetchVulnerability,
+  getVulnerabilityFetcher,
   createVulnerabilityEntity,
 };
