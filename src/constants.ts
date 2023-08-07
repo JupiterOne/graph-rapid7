@@ -2,8 +2,6 @@ import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export const ACCOUNT_ENTITY_DATA_KEY = 'entity:account';
 
-export const VULNERABILITIES_DATA = 'VULNERABILITIES_DATA';
-
 export const steps = {
   FETCH_ACCOUNT: 'fetch-account',
   FETCH_USERS: 'fetch-users',
@@ -16,7 +14,6 @@ export const steps = {
   FETCH_SCANS: 'fetch-scans',
   FETCH_SCAN_ASSETS: 'fetch-scan-assets',
   FETCH_ACCOUNT_SITE_RELATIONSHIPS: 'fetch-account-site-relationships',
-  FETCH_VULNERABILITIES: 'fetch-vulnerabilities',
 };
 
 export const entities = {

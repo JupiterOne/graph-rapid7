@@ -106,73 +106,6 @@ export type InsightVmAssetVulnerability = {
   status: string;
 };
 
-export type InsightVmVulnerability = {
-  added: string;
-  categories: string[];
-  cves: string[];
-  cvss: Cvss;
-  denialOfService: boolean;
-  description: Description;
-  exploits: number;
-  id: string;
-  links: Link[];
-  malwareKits: string;
-  modified: string;
-  pci: Pci;
-  published: string;
-  riskScore: number;
-  severity: string;
-  severityScore: number;
-  title: string;
-};
-
-export interface Cvss {
-  links: Link[];
-  v2: CvssV2;
-  v3: CvssV3;
-}
-
-export interface CvssV2 {
-  accessComplexity: string;
-  accessVector: string;
-  authentication: string;
-  availabilityImpact: string;
-  confidentialityImpact: string;
-  exploitScore: number;
-  impactScore: number;
-  integrityImpact: string;
-  score: number;
-  vector: string;
-}
-
-export interface CvssV3 {
-  attackComplexity: string;
-  attackVector: string;
-  availabilityImpact: string;
-  confidentialityImpact: string;
-  exploitScore: number;
-  impactScore: number;
-  integrityImpact: string;
-  privilegeRequired: string;
-  scope: string;
-  score: number;
-  userInteraction: string;
-  vector: string;
-}
-
-export interface Description {
-  html: string;
-  text: string;
-}
-
-export interface Pci {
-  adjustedCVSSScore: number;
-  adjustedSeverityScore: number;
-  fail: boolean;
-  specialNotes: string;
-  status: string;
-}
-
 export type PaginatedResource<T> = {
   resources: T[];
   page: {
@@ -184,13 +117,19 @@ export type PaginatedResource<T> = {
   links?: Link[];
 };
 
+export type VulnerabilityDescription = {
+  text: string;
+};
 export type Vulnerability = {
-  id: string;
+  denialOfService: boolean;
+  description?: VulnerabilityDescription;
   exploits?: number;
-  description?: string;
-  categories: string;
+  id: string;
+  riskScore: number;
   severity: string;
   severityScore: number;
+  title: string;
+  categories?: string[];
 };
 
 export type PageIteratee<T> = (page: T[]) => Promise<void>;
