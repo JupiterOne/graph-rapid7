@@ -2,11 +2,22 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 import { IntegrationConfig } from '../src/config';
+import { invocationConfig } from '../src';
+import { IntegrationInvocationConfig } from '@jupiterone/integration-sdk-core';
+import { StepTestConfig } from '@jupiterone/integration-sdk-testing';
 
 if (process.env.LOAD_ENV) {
   dotenv.config({
     path: path.join(__dirname, '../.env'),
   });
+}
+
+export function buildStepTestConfig(stepId: string): StepTestConfig {
+  return {
+    stepId,
+    instanceConfig: integrationConfig,
+    invocationConfig: invocationConfig as IntegrationInvocationConfig,
+  };
 }
 
 const DEFAULT_INSIGHT_HOST = 'localhost:3780';

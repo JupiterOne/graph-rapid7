@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fetch-asset-users success 1`] = `
+Object {
+  "collectedData": Object {},
+  "collectedEntities": Array [],
+  "collectedRelationships": Array [],
+  "encounteredEntityKeys": Set {
+    "insightvm_asset:1",
+    "insightvm_asset:2",
+    "insightvm_account:root",
+    "insightvm_user:1",
+  },
+  "encounteredTypes": Array [
+    "insightvm_asset",
+    "insightvm_account",
+    "insightvm_user",
+    "insightvm_account_has_user",
+  ],
+}
+`;

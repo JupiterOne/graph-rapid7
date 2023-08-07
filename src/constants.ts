@@ -20,37 +20,37 @@ export const entities = {
   ACCOUNT: {
     resourceName: 'Account',
     _type: 'insightvm_account',
-    _class: 'Account',
+    _class: ['Account'],
   },
   USER: {
     resourceName: 'User',
     _type: 'insightvm_user',
-    _class: 'User',
+    _class: ['User'],
   },
   SITE: {
     resourceName: 'Site',
     _type: 'insightvm_site',
-    _class: 'Site',
+    _class: ['Site'],
   },
   SCAN: {
     resourceName: 'Scan',
     _type: 'insightvm_scan',
-    _class: 'Assessment',
+    _class: ['Assessment'],
   },
   ASSET: {
     resourceName: 'Asset',
     _type: 'insightvm_asset',
-    _class: 'Device',
+    _class: ['Device'],
   },
   FINDING: {
     resourceName: 'Finding',
     _type: 'insightvm_finding',
-    _class: 'Finding',
+    _class: ['Finding'],
   },
   VULNERABILITY: {
     resourceName: 'Vulnerability',
     _type: 'insightvm_vulnerability',
-    _class: 'Vulnerability',
+    _class: ['Vulnerability'],
   },
 };
 
