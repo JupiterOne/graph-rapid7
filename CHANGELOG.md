@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.3] - 2023-08-08
+
+### Fixed
+
+- improve execution time on scan-assets and vulnerabilities steps
+
 ## [0.5.2] - 2023-08-02
 
 ### Fixed
