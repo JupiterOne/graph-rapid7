@@ -267,14 +267,12 @@ authority you trust. ` + errMessage;
    */
   public async iterateAssetVulnerabilityFinding(
     assetId: string,
-    iteratee: ResourceIteratee<InsightVmAssetVulnerability>,
+    iteratee: ResourceIteratee<InsightVmAssetVulnerability[]>,
   ): Promise<void> {
     await this.paginatedRequest<InsightVmAssetVulnerability>(
       `assets/${assetId}/vulnerabilities`,
       async (assetVulnerabilities) => {
-        for (const vulnerability of assetVulnerabilities) {
-          await iteratee(vulnerability);
-        }
+        await iteratee(assetVulnerabilities);
       },
     );
   }

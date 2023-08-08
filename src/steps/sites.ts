@@ -8,6 +8,10 @@ import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { entities, steps } from '../constants';
 
+export function getSiteIdFromSiteKey(siteKey: string): string {
+  return siteKey.split(':')[1];
+}
+
 export function getSiteKey(id: number): string {
   return `insightvm_site:${id}`;
 }

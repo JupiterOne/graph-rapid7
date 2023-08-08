@@ -31,7 +31,7 @@
     "format:check": "prettier --check \"**/*.{ts,js,json,css,md,yml}\"",
     "type-check": "tsc",
     "test": "jest",
-    "test:env": "LOAD_ENV=1 yarn test",
+    "test:env": "NODE_TLS_REJECT_UNAUTHORIZED=0 LOAD_ENV=1 yarn test",
     "test:no-tls-verify": "NODE_TLS_REJECT_UNAUTHORIZED=0 && yarn test",
     "test:ci": "yarn format:check && yarn lint && yarn type-check && yarn test",
     "build": "tsc -p tsconfig.dist.json --declaration && cp README.md dist/README.md && cp -r jupiterone/ dist/jupiterone/",
@@ -49,6 +49,7 @@
     "@types/node-fetch": "^2.6.2"
   },
   "dependencies": {
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "p-map": "^4.0.0"
   }
 }

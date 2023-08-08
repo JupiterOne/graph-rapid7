@@ -1,69 +1,93 @@
 import {
+  Recording,
   createMockExecutionContext,
-  setupRecording,
 } from '@jupiterone/integration-sdk-testing';
 
 import { APIClient } from './client';
 import { IntegrationConfig, validateHost, validateInvocation } from './config';
+import { setupRapid7Recording } from '../test/helpers/recording';
+import { integrationConfig } from '../test/config';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 
-it('requires valid config', async () => {
-  const executionContext = createMockExecutionContext<IntegrationConfig>({
-    instanceConfig: {} as IntegrationConfig,
+describe('configTest', () => {
+  let recording: Recording;
+
+  afterEach(async () => {
+    if (recording) {
+      await recording.stop();
+    }
   });
 
-  await expect(validateInvocation(executionContext)).rejects.toThrow(
-    'Config requires all of {insightHost, insightClientUsername, insightClientPassword}',
-  );
-});
+  it('requires valid config', async () => {
+    const executionContext = createMockExecutionContext<IntegrationConfig>({
+      instanceConfig: {} as IntegrationConfig,
+    });
 
-it('auth error', async () => {
-  const recording = setupRecording({
-    directory: '__recordings__',
-    name: 'client-auth-error',
+    await expect(validateInvocation(executionContext)).rejects.toThrow(
+      'Config requires all of {insightHost, insightClientUsername, insightClientPassword}',
+    );
   });
 
-  recording.server.any().intercept((req, res) => {
-    res.status(401);
+  it('validates invocation', async () => {
+    recording = setupRapid7Recording({
+      directory: __dirname,
+      name: 'client-validates-invocation',
+    });
+
+    const executionContext = createMockExecutionContext({
+      instanceConfig: integrationConfig,
+    });
+
+    await expect(validateInvocation(executionContext)).resolves.toBe(undefined);
   });
 
-  const executionContext = createMockExecutionContext({
-    instanceConfig: {
-      insightHost: 'INVALID',
-      insightClientUsername: 'INVALID',
-      insightClientPassword: 'INVALID',
-    },
+  it('auth error', async () => {
+    recording = setupRapid7Recording({
+      directory: __dirname,
+      name: 'client-auth-error',
+      options: {
+        recordFailedRequests: true,
+      },
+    });
+
+    const executionContext = createMockExecutionContext({
+      instanceConfig: {
+        insightHost: 'INVALID',
+        insightClientUsername: 'INVALID',
+        insightClientPassword: 'INVALID',
+      },
+    });
+
+    await expect(validateInvocation(executionContext)).rejects.toThrow(
+      IntegrationValidationError,
+    );
   });
 
-  await expect(validateInvocation(executionContext)).rejects.toThrow(
-    'Error occurred validating invocation at https://invalid/api/3 (code=PROVIDER_API_ERROR, \
-message=Provider API failed at https://invalid/api/3: 401 Unauthorized)',
-  );
-});
+  it('should direct users to Rapid7 cert documentation if validation fails with DEPTH_ZERO_SELF_SIGNED_CERT', async () => {
+    const executionContext = createMockExecutionContext({
+      instanceConfig: {
+        insightHost: 'localhost:3780',
+        insightClientUsername: 'INVALID',
+        insightClientPassword: 'INVALID',
+      },
+    });
 
-it('should direct users to Rapid7 cert documentation if validation fails with DEPTH_ZERO_SELF_SIGNED_CERT', async () => {
-  const executionContext = createMockExecutionContext({
-    instanceConfig: {
-      insightHost: 'localhost:3780',
-      insightClientUsername: 'INVALID',
-      insightClientPassword: 'INVALID',
-    },
-  });
+    const selfSignedCertificateError = Object.assign(new Error(), {
+      message: `request to https://${executionContext.instance.config.insightHost}/api/3/users failed, reason: self signed certificate`,
+      type: 'system',
+      errno: 'DEPTH_ZERO_SELF_SIGNED_CERT',
+      code: 'DEPTH_ZERO_SELF_SIGNED_CERT',
+    });
+    jest
+      .spyOn(APIClient.prototype, 'request' as any)
+      .mockRejectedValueOnce(selfSignedCertificateError);
 
-  const selfSignedCertificateError = Object.assign(new Error(), {
-    message: `request to https://${executionContext.instance.config.insightHost}/api/3/users failed, reason: self signed certificate`,
-    type: 'system',
-    errno: 'DEPTH_ZERO_SELF_SIGNED_CERT',
-    code: 'DEPTH_ZERO_SELF_SIGNED_CERT',
-  });
-  jest
-    .spyOn(APIClient.prototype, 'request' as any)
-    .mockRejectedValueOnce(selfSignedCertificateError);
-
-  await expect(validateInvocation(executionContext)).rejects.toThrow(
-    'The InsightVM Security Console is using a self-signed certificate. Please follow the Rapid7 \
+    await expect(validateInvocation(executionContext)).rejects.toThrow(
+      'The InsightVM Security Console is using a self-signed certificate. Please follow the Rapid7 \
 guidelines to install a valid TLS certificate: https://docs.rapid7.com/insightvm/managing-the-security-console/#managing-the-https-certificate. We recommend \
 installing a certificate from https://letsencrypt.org/ or a certificate authority you trust.',
-  );
+    );
+  });
 });
 
 describe('validateHost', () => {

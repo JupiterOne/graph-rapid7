@@ -8,10 +8,6 @@ import {
 
 export { Recording };
 
-export const rapid7Mutations = {
-  ...mutations,
-};
-
 export function setupRapid7Recording(input: SetupRecordingInput): Recording {
   return setupRecording({
     ...input,
@@ -20,5 +16,5 @@ export function setupRapid7Recording(input: SetupRecordingInput): Recording {
 }
 
 function mutateRecordingEntry(entry: RecordingEntry): void {
-  rapid7Mutations.unzipGzippedRecordingEntry(entry);
+  mutations.unzipGzippedRecordingEntry(entry);
 }
