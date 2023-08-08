@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`fetch-site-assets success 1`] = `
-Object {
-  "collectedData": Object {},
-  "collectedEntities": Array [],
-  "collectedRelationships": Array [
-    Object {
+{
+  "collectedData": {},
+  "collectedEntities": [],
+  "collectedRelationships": [
+    {
       "_class": "HAS",
       "_fromEntityKey": "insightvm_site:1",
       "_key": "insightvm_site:1|has|insightvm_asset:1",
@@ -13,7 +13,7 @@ Object {
       "_type": "insightvm_site_has_asset",
       "displayName": "HAS",
     },
-    Object {
+    {
       "_class": "HAS",
       "_fromEntityKey": "insightvm_site:2",
       "_key": "insightvm_site:2|has|insightvm_asset:2",
@@ -29,7 +29,7 @@ Object {
     "insightvm_asset:1",
     "insightvm_asset:2",
   },
-  "encounteredTypes": Array [
+  "encounteredTypes": [
     "insightvm_account",
     "insightvm_site",
     "insightvm_asset",

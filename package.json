@@ -40,16 +40,15 @@
     "postversion": "cp package.json ./dist/package.json"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^9.0.0"
+    "@jupiterone/integration-sdk-core": "^9.11.1"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^9.0.0",
-    "@jupiterone/integration-sdk-dev-tools": "^9.0.0",
-    "@jupiterone/integration-sdk-testing": "^9.0.0",
-    "@types/node-fetch": "^2.6.2"
+    "@jupiterone/integration-sdk-core": "^9.11.1",
+    "@jupiterone/integration-sdk-dev-tools": "^9.11.1",
+    "@jupiterone/integration-sdk-testing": "^9.11.1"
   },
   "dependencies": {
-    "node-fetch": "^2.6.7",
+    "node-fetch": "2",
     "p-map": "^4.0.0"
   }
 }
