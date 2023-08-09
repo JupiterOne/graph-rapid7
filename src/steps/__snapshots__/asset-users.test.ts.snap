@@ -7,7 +7,6 @@ Object {
   "collectedRelationships": Array [],
   "encounteredEntityKeys": Set {
     "insightvm_asset:1",
-    "insightvm_asset:2",
     "insightvm_account:root",
     "insightvm_user:1",
   },

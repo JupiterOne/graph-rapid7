@@ -13,21 +13,11 @@ Object {
       "_type": "insightvm_site_has_asset",
       "displayName": "HAS",
     },
-    Object {
-      "_class": "HAS",
-      "_fromEntityKey": "insightvm_site:2",
-      "_key": "insightvm_site:2|has|insightvm_asset:2",
-      "_toEntityKey": "insightvm_asset:2",
-      "_type": "insightvm_site_has_asset",
-      "displayName": "HAS",
-    },
   ],
   "encounteredEntityKeys": Set {
     "insightvm_account:root",
     "insightvm_site:1",
-    "insightvm_site:2",
     "insightvm_asset:1",
-    "insightvm_asset:2",
   },
   "encounteredTypes": Array [
     "insightvm_account",

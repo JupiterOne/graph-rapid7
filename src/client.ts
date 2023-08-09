@@ -18,6 +18,7 @@ import {
   PaginatedResource,
   Vulnerability,
 } from './types';
+import { retry } from '@lifeomic/attempt';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -33,14 +34,21 @@ export class APIClient {
   private readonly insightHost: string;
   private readonly insightClientUsername: string;
   private readonly insightClientPassword: string;
-  private readonly paginateEntitiesPerPage = 10;
+  private readonly paginateEntitiesPerPage = 500;
   private readonly logger: IntegrationLogger;
+  private readonly retryMaxAttempts: number;
 
-  constructor(readonly config: IntegrationConfig, logger: IntegrationLogger) {
+  constructor(
+    readonly config: IntegrationConfig,
+    logger: IntegrationLogger,
+    retryMaxAttempts?: number,
+  ) {
     this.insightHost = config.insightHost;
     this.insightClientUsername = config.insightClientUsername;
     this.insightClientPassword = config.insightClientPassword;
     this.logger = logger;
+    this.retryMaxAttempts =
+      retryMaxAttempts === undefined ? 10 : retryMaxAttempts;
   }
 
   private withBaseUri(path: string): string {
@@ -60,15 +68,77 @@ export class APIClient {
         ).toString('base64')}`,
       },
     });
-    if (!response.ok) {
-      throw new IntegrationProviderAPIError({
-        endpoint: uri,
-        status: response.status,
-        statusText: response.statusText,
-        cause: new Error(await response.text()),
-      });
-    }
     return response;
+  }
+
+  private async retryRequest(
+    url: string,
+    method: 'GET' | 'HEAD' = 'GET',
+  ): Promise<Response> {
+    let retryDelay = 0;
+
+    return retry(
+      async () => {
+        const response = await this.request(url, method);
+
+        if (response.status === 429) {
+          const serverRetryDelay = response.headers.get('retry-after');
+          this.logger.info(
+            { serverRetryDelay, url: response.url },
+            'Received 429 response from endpoint; waiting to retry.',
+          );
+          if (serverRetryDelay) {
+            retryDelay = Number.parseInt(serverRetryDelay, 10) * 1000;
+          }
+        }
+
+        if (response.status >= 400) {
+          try {
+            const errorBody: { status?: number; message?: string } =
+              await response.json();
+            const message = errorBody.message;
+            this.logger.warn(
+              { errMessage: message },
+              'Encountered error from API',
+            );
+          } catch (e) {
+            // pass
+          }
+          throw new IntegrationProviderAPIError({
+            code: 'Rapid7ClientApiError',
+            status: response.status,
+            endpoint: response.url,
+            statusText: response.statusText,
+          });
+        } else {
+          return response;
+        }
+      },
+      {
+        maxAttempts: this.retryMaxAttempts,
+        calculateDelay: () => {
+          return retryDelay;
+        },
+        handleError: (err, context) => {
+          if (![429, 500, 502, 504].includes(err.status)) {
+            context.abort();
+            return;
+          }
+          if (err.status === 500 && context.attemptsRemaining > 2) {
+            context.attemptsRemaining = 2;
+          }
+          this.logger.info(
+            {
+              err,
+              retryDelay,
+              attemptNum: context.attemptNum,
+              attemptsRemaining: context.attemptsRemaining,
+            },
+            'Encountered retryable API response. Retrying.',
+          );
+        },
+      },
+    );
   }
 
   private async paginatedRequest<T>(
@@ -88,10 +158,18 @@ export class APIClient {
         },
         'Calling API endpoint.',
       );
-      const response = await this.request(endpoint, 'GET');
-      body = await response.json();
-
-      await pageIteratee(body.resources);
+      try {
+        const response = await this.retryRequest(endpoint, 'GET');
+        body = await response.json();
+        await pageIteratee(body.resources);
+      } catch (err) {
+        if (err instanceof IntegrationProviderAPIError && err.status === 404) {
+          await pageIteratee([]);
+          return;
+        } else {
+          throw err;
+        }
+      }
 
       currentPage++;
     } while (body.page?.totalPages && currentPage < body.page.totalPages);
@@ -100,8 +178,7 @@ export class APIClient {
   public async verifyAuthentication(): Promise<void> {
     const rootApiRoute = `https://${this.insightHost}/api/3`;
     try {
-      const response = await this.request(rootApiRoute, 'GET');
-      const body = await response.json();
+      const body = await this.retryRequest(rootApiRoute, 'GET');
       this.logger.info({ body }, 'Root API response');
     } catch (err) {
       let errMessage = `Error occurred validating invocation at ${rootApiRoute} (code=${err.code}, message=${err.message})`;
@@ -118,7 +195,7 @@ authority you trust. ` + errMessage;
   }
 
   public async getAccount(): Promise<InsightVMAccount> {
-    const response = await this.request(
+    const response = await this.retryRequest(
       this.withBaseUri('administration/info'),
     );
     return response.json();
@@ -210,14 +287,12 @@ authority you trust. ` + errMessage;
    */
   public async iterateSiteAssets(
     siteId: string,
-    iteratee: ResourceIteratee<InsightVMAsset>,
+    iteratee: ResourceIteratee<InsightVMAsset[]>,
   ): Promise<void> {
     await this.paginatedRequest<InsightVMAsset>(
       `sites/${siteId}/assets`,
       async (assets) => {
-        for (const asset of assets) {
-          await iteratee(asset);
-        }
+        await iteratee(assets);
       },
     );
   }
@@ -284,7 +359,7 @@ authority you trust. ` + errMessage;
   public async getVulnerability(
     vulnerabilityId: string,
   ): Promise<Vulnerability> {
-    const response = await this.request(
+    const response = await this.retryRequest(
       this.withBaseUri(`vulnerabilities/${vulnerabilityId}`),
       'GET',
     );

@@ -10,6 +10,8 @@ import { IntegrationConfig } from '../config';
 import { entities, relationships, steps } from '../constants';
 import { getUserKey } from './access';
 
+const RELATIONSHIPS_BATCH_SIZE = 5;
+
 export async function fetchAssetUsers({
   logger,
   instance,
@@ -17,27 +19,42 @@ export async function fetchAssetUsers({
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const apiClient = createAPIClient(instance.config, logger);
 
+  let userAssetRelationships: ReturnType<typeof createDirectRelationship>[] =
+    [];
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
       await apiClient.iterateAssetUsers(
         assetEntity.id as string,
         async (user) => {
-          const userEntity = await jobState.findEntity(getUserKey(user.id));
+          const userKey = getUserKey(user.id);
 
-          if (userEntity) {
-            await jobState.addRelationship(
-              createDirectRelationship({
-                _class: RelationshipClass.OWNS,
-                from: userEntity,
-                to: assetEntity,
-              }),
-            );
+          if (!jobState.hasKey(userKey)) {
+            return;
+          }
+
+          userAssetRelationships.push(
+            createDirectRelationship({
+              _class: RelationshipClass.OWNS,
+              fromKey: userKey,
+              fromType: entities.USER._type,
+              toKey: assetEntity._key,
+              toType: entities.ASSET._type,
+            }),
+          );
+          if (userAssetRelationships.length >= RELATIONSHIPS_BATCH_SIZE) {
+            await jobState.addRelationships(userAssetRelationships);
+            userAssetRelationships = [];
           }
         },
       );
     },
   );
+  // flush relationships
+  if (userAssetRelationships.length) {
+    await jobState.addRelationships(userAssetRelationships);
+    userAssetRelationships = [];
+  }
 }
 
 export const assetUsersStep: IntegrationStep<IntegrationConfig>[] = [
