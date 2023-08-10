@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.4] - 2023-08-10
+
+### Fixed
+
+- improve execution time on site-assets and asset-users steps
+- added retry logic on client requests
+- increased page size on client requests
+
 ## [0.5.3] - 2023-08-08
 
 ### Fixed
