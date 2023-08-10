@@ -23,18 +23,18 @@ export async function fetchSiteUsers({
       await apiClient.iterateSiteUsers(
         siteEntity.id as string,
         async (user) => {
-          const userEntity = await jobState.findEntity(getUserKey(user.id));
+          const userKey = getUserKey(user.id);
 
-          if (userEntity) {
-            await Promise.all([
-              jobState.addRelationship(
-                createDirectRelationship({
-                  _class: RelationshipClass.HAS,
-                  from: siteEntity,
-                  to: userEntity,
-                }),
-              ),
-            ]);
+          if (jobState.hasKey(userKey)) {
+            await jobState.addRelationship(
+              createDirectRelationship({
+                _class: RelationshipClass.HAS,
+                fromKey: siteEntity._key,
+                fromType: entities.SITE._type,
+                toKey: userKey,
+                toType: entities.USER._type,
+              }),
+            );
           }
         },
       );
