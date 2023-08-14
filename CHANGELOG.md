@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.5] - 2023-08-14
+
+### Fixed
+
+- adjust error handling and handle econnreset errors
+
 ## [0.5.4] - 2023-08-10
 
 ### Fixed
