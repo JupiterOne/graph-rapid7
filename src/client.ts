@@ -18,7 +18,8 @@ import {
   PaginatedResource,
   Vulnerability,
 } from './types';
-import { retry } from '@lifeomic/attempt';
+import { retry, sleep } from '@lifeomic/attempt';
+import { fatalRequestError, retryableRequestError } from './error';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -48,7 +49,7 @@ export class APIClient {
     this.insightClientPassword = config.insightClientPassword;
     this.logger = logger;
     this.retryMaxAttempts =
-      retryMaxAttempts === undefined ? 10 : retryMaxAttempts;
+      retryMaxAttempts === undefined ? 4 : retryMaxAttempts;
   }
 
   private withBaseUri(path: string): string {
@@ -75,67 +76,52 @@ export class APIClient {
     url: string,
     method: 'GET' | 'HEAD' = 'GET',
   ): Promise<Response> {
-    let retryDelay = 0;
-
     return retry(
       async () => {
-        const response = await this.request(url, method);
-
-        if (response.status === 429) {
-          const serverRetryDelay = response.headers.get('retry-after');
+        let response: Response | undefined;
+        try {
+          response = await this.request(url, method);
+        } catch (err) {
           this.logger.info(
-            { serverRetryDelay, url: response.url },
-            'Received 429 response from endpoint; waiting to retry.',
+            { code: err.code, err, url },
+            'Error sending request',
           );
-          if (serverRetryDelay) {
-            retryDelay = Number.parseInt(serverRetryDelay, 10) * 1000;
-          }
+          throw err;
         }
 
-        if (response.status >= 400) {
-          try {
-            const errorBody: { status?: number; message?: string } =
-              await response.json();
-            const message = errorBody.message;
-            this.logger.warn(
-              { errMessage: message },
-              'Encountered error from API',
-            );
-          } catch (e) {
-            // pass
-          }
-          throw new IntegrationProviderAPIError({
-            code: 'Rapid7ClientApiError',
-            status: response.status,
-            endpoint: response.url,
-            statusText: response.statusText,
-          });
-        } else {
+        if (response.ok) {
           return response;
+        }
+
+        if (isRetryableRequest(response)) {
+          throw retryableRequestError(url, response);
+        } else {
+          throw fatalRequestError(url, response);
         }
       },
       {
         maxAttempts: this.retryMaxAttempts,
-        calculateDelay: () => {
-          return retryDelay;
-        },
-        handleError: (err, context) => {
-          if (![429, 500, 502, 504].includes(err.status)) {
+        delay: 5000,
+        factor: 2,
+        handleError: async (err, context) => {
+          if (err.code === 'ECONNRESET' || err.message.includes('ECONNRESET')) {
+            return;
+          }
+
+          if (!err.retryable) {
+            // can't retry this? just abort
             context.abort();
             return;
           }
-          if (err.status === 500 && context.attemptsRemaining > 2) {
-            context.attemptsRemaining = 2;
+
+          if (err.status === 429) {
+            const retryAfter = err.retryAfter ? err.retryAfter * 1000 : 5000;
+            this.logger.info(
+              { retryAfter },
+              `Received a rate limit error.  Waiting before retrying.`,
+            );
+            await sleep(retryAfter);
           }
-          this.logger.info(
-            {
-              err,
-              retryDelay,
-              attemptNum: context.attemptNum,
-              attemptsRemaining: context.attemptsRemaining,
-            },
-            'Encountered retryable API response. Retrying.',
-          );
         },
       },
     );
@@ -365,6 +351,18 @@ authority you trust. ` + errMessage;
     );
     return response.json();
   }
+}
+
+/**
+ * Function for determining if a request is retryable
+ * based on the returned status.
+ */
+function isRetryableRequest({ status }: Response): boolean {
+  return (
+    // 5xx error from provider (their fault, might be retryable)
+    // 429 === too many requests, we got rate limited so safe to try again
+    status >= 500 || status === 429
+  );
 }
 
 export function createAPIClient(
