@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.6] - 2023-08-30
+
+### Changed
+
+- Improve site -> asset relationships
+
 ## [0.5.5] - 2023-08-14
 
 ### Fixed
