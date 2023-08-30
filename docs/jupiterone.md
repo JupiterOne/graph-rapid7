@@ -107,9 +107,8 @@ The following relationships are created:
 | `insightvm_account`   | **HAS**               | `insightvm_user`          |
 | `insightvm_asset`     | **HAS**               | `insightvm_finding`       |
 | `insightvm_finding`   | **IS**                | `insightvm_vulnerability` |
-| `insightvm_scan`      | **MONITORS**          | `insightvm_asset`         |
-| `insightvm_site`      | **HAS**               | `insightvm_asset`         |
 | `insightvm_site`      | **HAS**               | `insightvm_user`          |
+| `insightvm_site`      | **MONITORS**          | `insightvm_asset`         |
 | `insightvm_site`      | **PERFORMED**         | `insightvm_scan`          |
 | `insightvm_user`      | **OWNS**              | `insightvm_asset`         |
 

@@ -44,7 +44,7 @@ export async function fetchSiteAssets({
             if (jobState.hasKey(assetKey)) {
               siteAssetRelationships.push(
                 createDirectRelationship({
-                  _class: RelationshipClass.HAS,
+                  _class: RelationshipClass.MONITORS,
                   fromKey: siteEntity._key,
                   fromType: entities.SITE._type,
                   toKey: assetKey,
@@ -99,7 +99,7 @@ export const siteAssetsSteps: IntegrationStep<IntegrationConfig>[] = [
     name: 'Fetch Site Assets',
     entities: [],
     relationships: [
-      relationships.SITE_HAS_ASSET,
+      relationships.SITE_MONITORS_ASSET,
       relationships.ACCOUNT_HAS_ASSET,
     ],
     dependsOn: [steps.FETCH_ACCOUNT, steps.FETCH_SITES, steps.FETCH_ASSETS],
