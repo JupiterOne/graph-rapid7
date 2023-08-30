@@ -12,7 +12,6 @@ export const steps = {
   FETCH_SITE_USERS: 'fetch-site-users',
   FETCH_SITE_ASSETS: 'fetch-site-assets',
   FETCH_SCANS: 'fetch-scans',
-  FETCH_SCAN_ASSETS: 'fetch-scan-assets',
   FETCH_ACCOUNT_SITE_RELATIONSHIPS: 'fetch-account-site-relationships',
 };
 
@@ -85,9 +84,9 @@ export const relationships = {
     sourceType: entities.SITE._type,
     targetType: entities.SCAN._type,
   },
-  SITE_HAS_ASSET: {
-    _type: 'insightvm_site_has_asset',
-    _class: RelationshipClass.HAS,
+  SITE_MONITORS_ASSET: {
+    _type: 'insightvm_site_monitors_asset',
+    _class: RelationshipClass.MONITORS,
     sourceType: entities.SITE._type,
     targetType: entities.ASSET._type,
   },
@@ -96,12 +95,6 @@ export const relationships = {
     _class: RelationshipClass.HAS,
     sourceType: entities.SITE._type,
     targetType: entities.USER._type,
-  },
-  SCAN_MONITORS_ASSET: {
-    _type: 'insightvm_scan_monitors_asset',
-    _class: RelationshipClass.MONITORS,
-    sourceType: entities.SCAN._type,
-    targetType: entities.ASSET._type,
   },
   ASSET_HAS_FINDING: {
     _type: 'insightvm_asset_has_finding',

@@ -6,12 +6,12 @@ Object {
   "collectedEntities": Array [],
   "collectedRelationships": Array [
     Object {
-      "_class": "HAS",
+      "_class": "MONITORS",
       "_fromEntityKey": "insightvm_site:1",
-      "_key": "insightvm_site:1|has|insightvm_asset:1",
+      "_key": "insightvm_site:1|monitors|insightvm_asset:1",
       "_toEntityKey": "insightvm_asset:1",
-      "_type": "insightvm_site_has_asset",
-      "displayName": "HAS",
+      "_type": "insightvm_site_monitors_asset",
+      "displayName": "MONITORS",
     },
   ],
   "encounteredEntityKeys": Set {
@@ -23,7 +23,7 @@ Object {
     "insightvm_account",
     "insightvm_site",
     "insightvm_asset",
-    "insightvm_site_has_asset",
+    "insightvm_site_monitors_asset",
   ],
 }
 `;
