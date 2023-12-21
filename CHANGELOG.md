@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.6.0] - 2023-12-21
+
+### Changed
+
+- Created docker image for integration
+
 ## [0.5.6] - 2023-08-30
 
 ### Changed
