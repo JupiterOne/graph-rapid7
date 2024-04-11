@@ -12,6 +12,7 @@ import { IntegrationConfig } from '../config';
 import {
   ACCOUNT_ENTITY_DATA_KEY,
   entities,
+  IngestionSources,
   relationships,
   steps,
 } from '../constants';
@@ -70,6 +71,7 @@ export const accessSteps: IntegrationStep<IntegrationConfig>[] = [
     entities: [entities.USER],
     relationships: [relationships.ACCOUNT_HAS_USER],
     dependsOn: [steps.FETCH_ACCOUNT],
+    ingestionSourceId: IngestionSources.USERS,
     executionHandler: fetchUsers,
   },
 ];

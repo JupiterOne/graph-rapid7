@@ -12,7 +12,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { entities, relationships, steps } from '../constants';
+import { entities, IngestionSources, relationships, steps } from '../constants';
 import { getSiteKey } from './sites';
 
 export function getScanKey(id: number): string {
@@ -93,6 +93,7 @@ export const scansSteps: IntegrationStep<IntegrationConfig>[] = [
     entities: [entities.SCAN],
     relationships: [relationships.SITE_PERFORMED_SCAN],
     dependsOn: [steps.FETCH_SITES],
+    ingestionSourceId: IngestionSources.SCANS,
     executionHandler: fetchScans,
   },
 ];
