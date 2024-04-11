@@ -6,6 +6,7 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 import { createAPIClient } from './client';
+import { VulnerabilitySeverity, VulnerabilityState } from './types';
 
 /**
  * A type describing the configuration fields required to execute the
@@ -36,6 +37,42 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'boolean',
     optional: true,
   },
+  vulnerabilitySeverities: {
+    type: 'string',
+    mask: false,
+    optional: true,
+  },
+  vulnerabilityStates: {
+    type: 'boolean',
+    mask: false,
+    optional: true,
+  },
+};
+
+const validateVulnerabilitySeverities = (vulnerabilitySeverities: string) => {
+  const vulnerabilitySeveritiesArray = vulnerabilitySeverities.split(',');
+  const validSeverities = Object.values(VulnerabilitySeverity);
+  for (const vulnerabilitySeverity of vulnerabilitySeveritiesArray) {
+    if (
+      !validSeverities.includes(vulnerabilitySeverity as VulnerabilitySeverity)
+    ) {
+      throw new IntegrationValidationError(
+        `Severity - ${vulnerabilitySeverity} - is not valid. Valid vulnerability severities include ${validSeverities}`,
+      );
+    }
+  }
+};
+
+const validateVulnerabilityStates = (vulnerabilityStates: string) => {
+  const vulnerabilityStatesArray = vulnerabilityStates.split(',');
+  const validStates = Object.values(VulnerabilityState);
+  for (const vulnerabilityState of vulnerabilityStatesArray) {
+    if (!validStates.includes(vulnerabilityState as VulnerabilityState)) {
+      throw new IntegrationValidationError(
+        `Status - ${vulnerabilityState} - is not valid. Valid vulnerability status include ${validStates}`,
+      );
+    }
+  }
 };
 
 /**
@@ -62,6 +99,16 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
    * Disable TLS certificate verification for hosts that cannot install certificates.
    */
   disableTlsVerification?: boolean;
+
+  /**
+   * Comma separated vulnerability severity levels to filter by
+   */
+  vulnerabilitySeverities?: string;
+
+  /**
+   * Comma separated vulnerability states to filter by
+   */
+  vulnerabilityStates?: string;
 }
 
 export async function validateInvocation(
@@ -88,6 +135,19 @@ export async function validateInvocation(
       description:
         'Disabling TLS certificate verification. NOT RECOMMENDED: Please install valid TLS certificates into Rapid7 server.',
     });
+  }
+
+  if (config.vulnerabilitySeverities) {
+    config.vulnerabilitySeverities = config.vulnerabilitySeverities.replace(
+      /\s+/g,
+      '',
+    );
+    validateVulnerabilitySeverities(config.vulnerabilitySeverities);
+  }
+
+  if (config.vulnerabilityStates) {
+    config.vulnerabilityStates = config.vulnerabilityStates.replace(/\s+/g, '');
+    validateVulnerabilityStates(config.vulnerabilityStates);
   }
 
   const apiClient = createAPIClient(config, context.logger);

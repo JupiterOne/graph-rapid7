@@ -93,6 +93,12 @@ export type InsightVMAsset = {
   }[];
 };
 
+export enum VulnerabilityState {
+  VULNERABLE = 'vulnerable',
+  INVULNERABLE = 'invulnerable',
+  NO_RESULTS = 'no-results',
+}
+
 export type InsightVmAssetVulnerability = {
   id: string;
   instances: number;
@@ -103,7 +109,7 @@ export type InsightVmAssetVulnerability = {
     status: string;
   }[];
   since: string;
-  status: string;
+  status: VulnerabilityState;
 };
 
 export type PaginatedResource<T> = {
@@ -120,13 +126,20 @@ export type PaginatedResource<T> = {
 export type VulnerabilityDescription = {
   text: string;
 };
+
+export enum VulnerabilitySeverity {
+  MODERATE = 'Moderate',
+  SEVERE = 'Severe',
+  CRITICAL = 'Critical',
+}
+
 export type Vulnerability = {
   denialOfService: boolean;
   description?: VulnerabilityDescription;
   exploits?: number;
   id: string;
   riskScore: number;
-  severity: string;
+  severity: VulnerabilitySeverity;
   severityScore: number;
   title: string;
   categories?: string[];

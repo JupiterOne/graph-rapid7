@@ -6,7 +6,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { entities, steps } from '../constants';
+import { entities, IngestionSources, steps } from '../constants';
 
 export function getSiteIdFromSiteKey(siteKey: string): string {
   return siteKey.split(':')[1];
@@ -54,6 +54,7 @@ export const sitesSteps: IntegrationStep<IntegrationConfig>[] = [
     entities: [entities.SITE],
     relationships: [],
     dependsOn: [],
+    ingestionSourceId: IngestionSources.SITES,
     executionHandler: fetchSites,
   },
 ];

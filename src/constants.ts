@@ -15,6 +15,13 @@ export const steps = {
   FETCH_ACCOUNT_SITE_RELATIONSHIPS: 'fetch-account-site-relationships',
 };
 
+export const IngestionSources = {
+  USERS: 'users',
+  ASSETS: 'assets',
+  SITES: 'sites',
+  SCANS: 'scans',
+};
+
 export const entities = {
   ACCOUNT: {
     resourceName: 'Account',

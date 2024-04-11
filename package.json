@@ -44,13 +44,14 @@
     "postversion": "cp package.json ./dist/package.json"
   },
   "peerDependencies": {
-    "@jupiterone/integration-sdk-core": "^9.0.0"
+    "@jupiterone/integration-sdk-core": "^11.3.1"
   },
   "devDependencies": {
-    "@jupiterone/integration-sdk-core": "^9.0.0",
-    "@jupiterone/integration-sdk-dev-tools": "^9.0.0",
-    "@jupiterone/integration-sdk-testing": "^9.0.0",
-    "@types/node-fetch": "^2.6.2"
+    "@jupiterone/integration-sdk-core": "^11.3.1",
+    "@jupiterone/integration-sdk-dev-tools": "^11.3.1",
+    "@jupiterone/integration-sdk-testing": "^11.3.1",
+    "@types/node-fetch": "^2.6.2",
+    "@types/node": "^18"
   },
   "dependencies": {
     "@lifeomic/attempt": "^3.0.3",

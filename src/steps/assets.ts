@@ -7,7 +7,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { entities, steps } from '../constants';
+import { entities, IngestionSources, steps } from '../constants';
 import { InsightVMAsset } from '../types';
 
 export function getAssetKey(id: number): string {
@@ -88,6 +88,7 @@ export const assetsSteps: IntegrationStep<IntegrationConfig>[] = [
     name: 'Fetch Assets',
     entities: [entities.ASSET],
     relationships: [],
+    ingestionSourceId: IngestionSources.ASSETS,
     executionHandler: fetchAssets,
   },
 ];
