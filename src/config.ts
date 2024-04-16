@@ -43,7 +43,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     optional: true,
   },
   vulnerabilityStates: {
-    type: 'boolean',
+    type: 'string',
     mask: false,
     optional: true,
   },
