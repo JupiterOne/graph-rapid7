@@ -9,12 +9,18 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import { entities, relationships, steps } from '../constants';
+import {
+  ASSET_VULN_COUNT_MAP,
+  entities,
+  relationships,
+  steps,
+} from '../constants';
 import {
   InsightVmAssetVulnerability,
   Vulnerability,
   VulnerabilityState,
 } from '../types';
+import { getAssetKey } from './assets';
 import pMap from 'p-map';
 
 function getAssetVulnerabilityKey(
@@ -25,24 +31,22 @@ function getAssetVulnerabilityKey(
 }
 
 function createAssetVulnerabilityEntity(
-  assetVulnerability: InsightVmAssetVulnerability,
+  finding: Pick<InsightVmAssetVulnerability, 'id' | 'status'>,
   vulnerability: Entity,
   assetId: string,
 ) {
   return createIntegrationEntity({
     entityData: {
-      source: assetVulnerability,
+      source: finding,
       assign: {
-        _key: getAssetVulnerabilityKey(assetId, assetVulnerability.id),
+        _key: getAssetVulnerabilityKey(assetId, finding.id),
         _type: entities.FINDING._type,
         _class: entities.FINDING._class,
-        id: `${assetVulnerability.id}`,
-        name: assetVulnerability.id,
+        id: `${finding.id}`,
+        name: finding.id,
         category: 'host',
         open:
-          assetVulnerability.status === VulnerabilityState.VULNERABLE
-            ? true
-            : undefined,
+          finding.status === VulnerabilityState.VULNERABLE ? true : undefined,
         severity: vulnerability.severity,
         numericSeverity: vulnerability.numericSeverity,
       },
@@ -52,26 +56,6 @@ function createAssetVulnerabilityEntity(
 
 export function getVulnerabilityKey(id: string): string {
   return `insightvm_vulnerability:${id}`;
-}
-
-async function getVulnerabilityEntityFromJobState(
-  context: IntegrationStepExecutionContext<IntegrationConfig>,
-  vulnerabilityId: string,
-) {
-  const { logger, jobState } = context;
-  const vulnerabilityEntity = await jobState.findEntity(
-    getVulnerabilityKey(vulnerabilityId),
-  );
-
-  if (vulnerabilityEntity) {
-    logger.debug(
-      {
-        id: vulnerabilityId,
-      },
-      'Found existing vulnerability entity in jobState.',
-    );
-  }
-  return vulnerabilityEntity;
 }
 
 function createVulnerabilityEntity(vulnerability: Vulnerability) {
@@ -106,8 +90,18 @@ export async function fetchAssetVulnerabilityFindings(
   const { logger, instance, jobState } = context;
   const apiClient = createAPIClient(instance.config, logger);
 
+  const assetVulnCountMap =
+    await jobState.getData<
+      Map<string, { critical: number; severe: number; moderate: number }>
+    >(ASSET_VULN_COUNT_MAP);
+
   const severityFilter = instance.config.vulnerabilitySeverities?.split(',');
   const stateFilter = instance.config.vulnerabilityStates?.split(',');
+
+  const vulnAssetsMap = new Map<
+    string,
+    { status: VulnerabilityState; assetId: string }[]
+  >();
 
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
@@ -118,71 +112,90 @@ export async function fetchAssetVulnerabilityFindings(
         },
         'Getting vulnerability findings for asset.',
       );
+      const vulnCounts = assetVulnCountMap?.get(assetEntity.id as string);
+      if (
+        vulnCounts &&
+        severityFilter &&
+        severityFilter.every(
+          (severity) => vulnCounts[severity.toLowerCase()] === 0,
+        )
+      ) {
+        // Skip if the asset has no vulnerabilities of the specified severities.
+        return;
+      }
       await apiClient.iterateAssetVulnerabilityFinding(
         assetEntity.id! as string,
-        async (assetVulnerabilities) => {
+        (assetVulnerabilities) => {
           const filteredVulnerabilities = stateFilter
             ? assetVulnerabilities.filter((vulnerability) =>
                 stateFilter.includes(vulnerability.status),
               )
             : assetVulnerabilities;
 
-          await pMap(
-            filteredVulnerabilities,
-            async (assetVulnerability) => {
-              let vulnerabilityEntity =
-                await getVulnerabilityEntityFromJobState(
-                  context,
-                  assetVulnerability.id,
-                );
-              if (!vulnerabilityEntity) {
-                const vulnerability = await apiClient.getVulnerability(
-                  assetVulnerability.id,
-                );
-                if (
-                  severityFilter &&
-                  !severityFilter.includes(vulnerability.severity)
-                ) {
-                  return;
-                }
-                vulnerabilityEntity = await jobState.addEntity(
-                  createVulnerabilityEntity(vulnerability),
-                );
-              }
-
-              const findingEntity = createAssetVulnerabilityEntity(
-                assetVulnerability,
-                vulnerabilityEntity,
-                assetEntity.id! as string,
-              );
-              if (jobState.hasKey(findingEntity._key)) {
-                return;
-              }
-              await jobState.addEntity(findingEntity);
-              const assetFindingRelationship = createDirectRelationship({
-                _class: RelationshipClass.HAS,
-                from: assetEntity,
-                to: findingEntity,
-              });
-              const findingVulnerabilityRelationship = createDirectRelationship(
-                {
-                  _class: RelationshipClass.IS,
-                  fromType: entities.FINDING._type,
-                  fromKey: findingEntity._key,
-                  toType: entities.VULNERABILITY._type,
-                  toKey: vulnerabilityEntity._key,
-                },
-              );
-              await jobState.addRelationships([
-                assetFindingRelationship,
-                findingVulnerabilityRelationship,
-              ]);
-            },
-            { concurrency: 5 },
-          );
+          for (const assetVulnerability of filteredVulnerabilities) {
+            if (!vulnAssetsMap.has(assetVulnerability.id)) {
+              vulnAssetsMap.set(assetVulnerability.id, []);
+            }
+            vulnAssetsMap.get(assetVulnerability.id)?.push({
+              status: assetVulnerability.status,
+              assetId: assetEntity.id! as string,
+            });
+          }
         },
       );
     },
+  );
+
+  await pMap(
+    Array.from(vulnAssetsMap.keys()),
+    async (vulnId) => {
+      const vulnerability = await apiClient.getVulnerability(vulnId);
+      const vulnAssets = vulnAssetsMap.get(vulnId);
+      if (!vulnAssets) {
+        // Should never happen.
+        return;
+      }
+      // If this vulnerability does not pass the severity filter, skip it.
+      if (severityFilter && !severityFilter.includes(vulnerability.severity)) {
+        return;
+      }
+
+      const vulnerabilityEntity = createVulnerabilityEntity(vulnerability);
+      if (!jobState.hasKey(vulnerabilityEntity._key)) {
+        await jobState.addEntity(vulnerabilityEntity);
+      }
+
+      for (const { status, assetId } of vulnAssets) {
+        const findingEntity = createAssetVulnerabilityEntity(
+          { id: vulnId, status },
+          vulnerabilityEntity,
+          assetId,
+        );
+        if (jobState.hasKey(findingEntity._key)) {
+          return;
+        }
+        await jobState.addEntity(findingEntity);
+        const assetFindingRelationship = createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromType: entities.ASSET._type,
+          fromKey: getAssetKey(Number(assetId)),
+          toType: entities.FINDING._type,
+          toKey: findingEntity._key,
+        });
+        const findingVulnerabilityRelationship = createDirectRelationship({
+          _class: RelationshipClass.IS,
+          fromType: entities.FINDING._type,
+          fromKey: findingEntity._key,
+          toType: entities.VULNERABILITY._type,
+          toKey: vulnerabilityEntity._key,
+        });
+        await jobState.addRelationships([
+          assetFindingRelationship,
+          findingVulnerabilityRelationship,
+        ]);
+      }
+    },
+    { concurrency: 5 },
   );
 }
 

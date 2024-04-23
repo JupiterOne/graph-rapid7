@@ -164,7 +164,7 @@ export class APIClient {
   public async verifyAuthentication(): Promise<void> {
     const rootApiRoute = `https://${this.insightHost}/api/3`;
     try {
-      const body = await this.retryRequest(rootApiRoute, 'GET');
+      const body = await this.request(rootApiRoute, 'GET');
       this.logger.info({ body }, 'Root API response');
     } catch (err) {
       let errMessage = `Error occurred validating invocation at ${rootApiRoute} (code=${err.code}, message=${err.message})`;
