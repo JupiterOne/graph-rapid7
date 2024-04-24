@@ -1,6 +1,7 @@
 import { RelationshipClass } from '@jupiterone/integration-sdk-core';
 
 export const ACCOUNT_ENTITY_DATA_KEY = 'entity:account';
+export const ASSET_VULN_COUNT_MAP = 'ASSET_VULN_COUNT_MAP';
 
 export const steps = {
   FETCH_ACCOUNT: 'fetch-account',
