@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.4] - 2024-04-24
+
+### Fixed
+
+- don't make requests to fetch vulns when the asset has vuln counts on zero.
+
 ## [0.6.3] - 2024-03-16
 
 ### Fixed
