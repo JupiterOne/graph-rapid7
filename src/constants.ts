@@ -1,4 +1,8 @@
-import { RelationshipClass } from '@jupiterone/integration-sdk-core';
+import {
+  RelationshipClass,
+  StepEntityMetadata,
+  StepRelationshipMetadata,
+} from '@jupiterone/integration-sdk-core';
 
 export const ACCOUNT_ENTITY_DATA_KEY = 'entity:account';
 export const ASSET_VULN_COUNT_MAP = 'ASSET_VULN_COUNT_MAP';
@@ -23,7 +27,10 @@ export const IngestionSources = {
   SCANS: 'scans',
 };
 
-export const entities = {
+export const entities: Record<
+  'ACCOUNT' | 'USER' | 'SITE' | 'SCAN' | 'ASSET' | 'FINDING' | 'VULNERABILITY',
+  StepEntityMetadata
+> = {
   ACCOUNT: {
     resourceName: 'Account',
     _type: 'insightvm_account',
@@ -53,15 +60,32 @@ export const entities = {
     resourceName: 'Finding',
     _type: 'insightvm_finding',
     _class: ['Finding'],
+    indexMetadata: {
+      enabled: false,
+    },
   },
   VULNERABILITY: {
     resourceName: 'Vulnerability',
     _type: 'insightvm_vulnerability',
     _class: ['Vulnerability'],
+    indexMetadata: {
+      enabled: false,
+    },
   },
 };
 
-export const relationships = {
+export const relationships: Record<
+  | 'ACCOUNT_HAS_USER'
+  | 'ACCOUNT_HAS_SITE'
+  | 'ACCOUNT_HAS_ASSET'
+  | 'USER_OWNS_ASSET'
+  | 'SITE_PERFORMED_SCAN'
+  | 'SITE_MONITORS_ASSET'
+  | 'SITE_HAS_USER'
+  | 'ASSET_HAS_FINDING'
+  | 'FINDING_IS_VULNERABILITY',
+  StepRelationshipMetadata
+> = {
   ACCOUNT_HAS_USER: {
     _type: 'insightvm_account_has_user',
     _class: RelationshipClass.HAS,
@@ -109,11 +133,17 @@ export const relationships = {
     _class: RelationshipClass.HAS,
     sourceType: entities.ASSET._type,
     targetType: entities.FINDING._type,
+    indexMetadata: {
+      enabled: false,
+    },
   },
   FINDING_IS_VULNERABILITY: {
     _type: 'insightvm_finding_is_vulnerability',
     _class: RelationshipClass.IS,
     sourceType: entities.FINDING._type,
     targetType: entities.VULNERABILITY._type,
+    indexMetadata: {
+      enabled: false,
+    },
   },
 };

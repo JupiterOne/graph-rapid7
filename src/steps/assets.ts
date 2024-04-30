@@ -15,7 +15,7 @@ import {
 } from '../constants';
 import { InsightVMAsset } from '../types';
 
-export function getAssetKey(id: number): string {
+export function getAssetKey(id: number | string): string {
   return `insightvm_asset:${id}`;
 }
 
