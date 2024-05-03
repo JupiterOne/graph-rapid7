@@ -29,7 +29,6 @@ jobs:
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
