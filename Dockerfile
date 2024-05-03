@@ -1,6 +1,7 @@
 FROM node:18-alpine
 
 ENV JUPITERONE_INTEGRATION_DIR=/opt/jupiterone/integration
+ENV USE_ON_DISK_DKT='1'
 
 COPY package.json yarn.lock tsconfig.json LICENSE ${JUPITERONE_INTEGRATION_DIR}/
 COPY src/ ${JUPITERONE_INTEGRATION_DIR}/src
