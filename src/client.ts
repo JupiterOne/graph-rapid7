@@ -138,12 +138,6 @@ export class APIClient {
       const endpoint = this.withBaseUri(
         `${uri}?page=${currentPage}&size=${this.paginateEntitiesPerPage}`,
       );
-      this.logger.debug(
-        {
-          endpoint,
-        },
-        'Calling API endpoint.',
-      );
       try {
         const response = await this.retryRequest(endpoint, 'GET');
         body = await response.json();
