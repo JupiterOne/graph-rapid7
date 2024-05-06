@@ -22,6 +22,22 @@ import {
 import { getAssetKey } from './assets';
 import pMap from 'p-map';
 
+function formatMemoryUsage(data: number) {
+  return `${Math.round((data / 1024 / 1024) * 100) / 100} MB`;
+}
+
+function getMemoryUsage() {
+  const memoryData = process.memoryUsage();
+
+  const memoryUsage = {
+    rss: formatMemoryUsage(memoryData.rss), // Resident Set Size - total memory allocated for the process execution
+    heapTotal: formatMemoryUsage(memoryData.heapTotal), // total size of the allocated heap
+    heapUsed: formatMemoryUsage(memoryData.heapUsed), // actual memory used during the execution
+    external: formatMemoryUsage(memoryData.external), // V8 external memory
+  };
+  return memoryUsage;
+}
+
 function getAssetVulnerabilityKey(
   assetId: string,
   assetVulnerabilityId: string,
@@ -102,6 +118,13 @@ export async function fetchAssetVulnerabilityFindings(
     { severity: string; numericSeverity: number }
   >();
 
+  const debugCounts = {
+    findings: 0,
+    vulnerabilities: 0,
+    finding_is_vulnerability: 0,
+    asset_has_finding: 0,
+  };
+
   const processFinding = async ({
     vulnId,
     assetId,
@@ -121,6 +144,7 @@ export async function fetchAssetVulnerabilityFindings(
 
       const vulnerabilityEntity = createVulnerabilityEntity(vulnerability);
       await jobState.addEntity(vulnerabilityEntity);
+      debugCounts.vulnerabilities++;
       seenVulns.set(vulnId, {
         severity: vulnerability.severity,
         numericSeverity: vulnerability.severityScore,
@@ -147,6 +171,7 @@ export async function fetchAssetVulnerabilityFindings(
       return;
     }
     await jobState.addEntity(findingEntity);
+    debugCounts.findings++;
     const assetFindingRelationship = createDirectRelationship({
       _class: RelationshipClass.HAS,
       fromType: entities.ASSET._type,
@@ -165,17 +190,25 @@ export async function fetchAssetVulnerabilityFindings(
       assetFindingRelationship,
       findingVulnerabilityRelationship,
     ]);
+    debugCounts.asset_has_finding++;
+    debugCounts.finding_is_vulnerability++;
   };
 
+  let assetCount = 0;
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
-      logger.debug(
-        {
-          assetId: assetEntity.id,
-        },
-        'Getting vulnerability findings for asset.',
-      );
+      assetCount++;
+      if (assetCount % 500 === 0) {
+        // Log memory usage every 500 assets
+        logger.debug(
+          {
+            memoryUsage: JSON.stringify(getMemoryUsage()),
+            debugCounts: JSON.stringify(debugCounts),
+          },
+          'Memory usage',
+        );
+      }
       const vulnCounts = assetVulnCountMap?.get(assetEntity.id as string);
       if (
         vulnCounts &&
