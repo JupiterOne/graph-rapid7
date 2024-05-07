@@ -201,7 +201,7 @@ export async function fetchAssetVulnerabilityFindings(
       assetCount++;
       if (assetCount % 500 === 0) {
         // Log memory usage every 500 assets
-        logger.debug(
+        logger.info(
           {
             memoryUsage: JSON.stringify(getMemoryUsage()),
             debugCounts: JSON.stringify(debugCounts),
