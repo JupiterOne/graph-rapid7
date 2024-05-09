@@ -194,6 +194,14 @@ export async function fetchAssetVulnerabilityFindings(
     debugCounts.finding_is_vulnerability++;
   };
 
+  // For debugging purposes
+  try {
+    const totalPages = await apiClient.getVulnPages();
+    logger.info({ totalPages }, 'Total pages of vulnerabilities');
+  } catch (err) {
+    logger.error({ err }, 'Failed to get total pages of vulnerabilities');
+  }
+
   let assetCount = 0;
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
