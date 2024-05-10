@@ -1,6 +1,8 @@
 import {
   createDirectRelationship,
   createIntegrationEntity,
+  IntegrationError,
+  IntegrationInfoEventName,
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
@@ -110,6 +112,13 @@ export async function fetchAssetVulnerabilityFindings(
       Map<string, { critical: number; severe: number; moderate: number }>
     >(ASSET_VULN_COUNT_MAP);
 
+  if (!assetVulnCountMap) {
+    throw new IntegrationError({
+      code: 'MISSING_ASSET_VULN_COUNT_MAP',
+      message: 'Missing asset vulnerability count map',
+    });
+  }
+
   const severityFilter = instance.config.vulnerabilitySeverities?.split(',');
   const stateFilter = instance.config.vulnerabilityStates?.split(',');
 
@@ -124,6 +133,21 @@ export async function fetchAssetVulnerabilityFindings(
     finding_is_vulnerability: 0,
     asset_has_finding: 0,
   };
+
+  // For debugging purposes
+  try {
+    const totalPages = await apiClient.getVulnPages();
+    let totalCriticalVulns = 0;
+    for (const { critical } of assetVulnCountMap.values()) {
+      totalCriticalVulns += critical;
+    }
+    logger.publishInfoEvent({
+      name: IntegrationInfoEventName.Stats,
+      description: `Total pages of vulnerabilities: ${totalPages}, Total critical vulnerabilities: ${totalCriticalVulns}`,
+    });
+  } catch (err) {
+    logger.error({ err }, 'Failed to get total pages of vulnerabilities');
+  }
 
   const processFinding = async ({
     vulnId,
@@ -209,7 +233,7 @@ export async function fetchAssetVulnerabilityFindings(
           'Memory usage',
         );
       }
-      const vulnCounts = assetVulnCountMap?.get(assetEntity.id as string);
+      const vulnCounts = assetVulnCountMap.get(assetEntity.id as string);
       if (
         vulnCounts &&
         severityFilter &&

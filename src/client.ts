@@ -332,6 +332,16 @@ authority you trust. ` + errMessage;
     );
   }
 
+  public async getVulnPages() {
+    const response = await this.retryRequest(
+      this.withBaseUri(
+        `vulnerabilities?page=0&size=${this.paginateEntitiesPerPage}`,
+      ),
+    );
+    const body = await response.json();
+    return body.page?.totalPages as number | undefined;
+  }
+
   /**
    * Gets a vulnerability resource in the provider
    *
