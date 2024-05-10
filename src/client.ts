@@ -332,7 +332,7 @@ authority you trust. ` + errMessage;
     );
   }
 
-  public async getVulnPages() {
+  private async getVulnPages() {
     const response = await this.retryRequest(
       this.withBaseUri(
         `vulnerabilities?page=0&size=${this.paginateEntitiesPerPage}`,
@@ -340,6 +340,51 @@ authority you trust. ` + errMessage;
     );
     const body = await response.json();
     return body.page?.totalPages as number | undefined;
+  }
+
+  public async iterateVulnerabilities(
+    iteratee: ResourceIteratee<Vulnerability>,
+  ): Promise<void> {
+    const totalPages = await this.getVulnPages();
+    if (!totalPages || totalPages < 5) {
+      await this.paginatedRequest<Vulnerability>(
+        `vulnerabilities`,
+        async (vulnerabilities) => {
+          for (const vulnerability of vulnerabilities) {
+            await iteratee(vulnerability);
+          }
+        },
+      );
+      return;
+    }
+
+    let pagesToRequest: number[] = [];
+    for (let i = 0; i < totalPages; i++) {
+      pagesToRequest.push(i);
+      if (pagesToRequest.length < 5) {
+        continue;
+      }
+      // Request 5 pages at a time
+      const results = await Promise.allSettled(
+        pagesToRequest.map(async (page) => {
+          const response = await this.retryRequest(
+            this.withBaseUri(
+              `vulnerabilities?page=${page}&size=${this.paginateEntitiesPerPage}&sort=severityScore,DESC`,
+            ),
+          );
+          const body = await response.json();
+          for (const vulnerability of body.resources) {
+            await iteratee(vulnerability);
+          }
+        }),
+      );
+      results.forEach((result) => {
+        if (result.status === 'rejected') {
+          throw result.reason;
+        }
+      });
+      pagesToRequest = [];
+    }
   }
 
   /**
