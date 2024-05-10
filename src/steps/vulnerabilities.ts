@@ -132,6 +132,7 @@ export async function fetchAssetVulnerabilityFindings(
     vulnerabilities: 0,
     finding_is_vulnerability: 0,
     asset_has_finding: 0,
+    vulnRequests: 0,
   };
 
   // For debugging purposes
@@ -160,6 +161,7 @@ export async function fetchAssetVulnerabilityFindings(
   }) => {
     if (!seenVulns.has(vulnId)) {
       const vulnerability = await apiClient.getVulnerability(vulnId);
+      debugCounts.vulnRequests++;
 
       // If this vulnerability does not pass the severity filter, skip it.
       if (severityFilter && !severityFilter.includes(vulnerability.severity)) {
