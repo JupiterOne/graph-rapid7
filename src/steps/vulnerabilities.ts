@@ -139,12 +139,16 @@ export async function fetchAssetVulnerabilityFindings(
   try {
     const totalPages = await apiClient.getVulnPages();
     let totalCriticalVulns = 0;
-    for (const { critical } of assetVulnCountMap.values()) {
+    let totalVulns = 0;
+    for (const { critical, moderate, severe } of assetVulnCountMap.values()) {
       totalCriticalVulns += critical;
+      if (critical > 0) {
+        totalVulns += critical + moderate + severe;
+      }
     }
     logger.publishInfoEvent({
       name: IntegrationInfoEventName.Stats,
-      description: `Total pages of vulnerabilities: ${totalPages}, Total critical vulnerabilities: ${totalCriticalVulns}`,
+      description: `Total pages of vulnerabilities: ${totalPages}, Total findings: ${totalVulns}, Total critical findings: ${totalCriticalVulns}`,
     });
   } catch (err) {
     logger.error({ err }, 'Failed to get total pages of vulnerabilities');
