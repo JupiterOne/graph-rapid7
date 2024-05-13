@@ -7,12 +7,7 @@ import {
 
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
-import {
-  ASSET_VULN_COUNT_MAP,
-  entities,
-  IngestionSources,
-  steps,
-} from '../constants';
+import { entities, IngestionSources, steps } from '../constants';
 import { InsightVMAsset } from '../types';
 
 export function getAssetKey(id: number | string): string {
@@ -47,22 +42,14 @@ export async function fetchAssets({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const apiClient = createAPIClient(instance.config, logger);
-
-  const assetVulnCountMap = new Map<
-    string,
-    { critical: number; severe: number; moderate: number }
-  >();
+  const assetHasVulnSet = new Set<string>();
   await apiClient.iterateAssets(async (asset) => {
     const webLink = asset.links.find((link) => link.rel === 'self')?.href;
-    assetVulnCountMap.set(String(asset.id), {
-      critical: asset.vulnerabilities?.critical || 0,
-      severe: asset.vulnerabilities?.severe || 0,
-      moderate: asset.vulnerabilities?.moderate || 0,
-    });
-
     const assetEntity = createIntegrationEntity({
       entityData: {
-        source: {},
+        source: {
+          vulnerabilities: asset.vulnerabilities,
+        },
         assign: {
           _key: getAssetKey(asset.id),
           _type: entities.ASSET._type,
@@ -94,7 +81,6 @@ export async function fetchAssets({
     });
     await jobState.addEntity(assetEntity);
   });
-  await jobState.setData(ASSET_VULN_COUNT_MAP, assetVulnCountMap);
 }
 
 export const assetsSteps: IntegrationStep<IntegrationConfig>[] = [

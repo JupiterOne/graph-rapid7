@@ -5,9 +5,10 @@ import {
 } from '@jupiterone/integration-sdk-core';
 
 export const ACCOUNT_ENTITY_DATA_KEY = 'entity:account';
-export const ASSET_VULN_COUNT_MAP = 'ASSET_VULN_COUNT_MAP';
+export const ASSET_HAS_VULN_SET = 'ASSET_HAS_VULN_SET';
 
 export const steps = {
+  PREFETCH_VULNS: 'prefetch-vulnerabilities',
   FETCH_ACCOUNT: 'fetch-account',
   FETCH_USERS: 'fetch-users',
   FETCH_ASSETS: 'fetch-assets',

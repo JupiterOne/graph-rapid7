@@ -57,6 +57,7 @@
   "dependencies": {
     "@lifeomic/attempt": "^3.0.3",
     "node-fetch": "^2.6.7",
-    "p-map": "^4.0.0"
+    "p-map": "^4.0.0",
+    "p-queue": "^6"
   }
 }
