@@ -1,8 +1,8 @@
 import {
   createDirectRelationship,
   createIntegrationEntity,
+  Entity,
   IntegrationError,
-  IntegrationInfoEventName,
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
@@ -22,7 +22,7 @@ import {
   VulnerabilityState,
 } from '../types';
 import { getAssetKey } from './assets';
-import pMap from 'p-map';
+import { open } from 'lmdb';
 
 function formatMemoryUsage(data: number) {
   return `${Math.round((data / 1024 / 1024) * 100) / 100} MB`;
@@ -49,7 +49,7 @@ function getAssetVulnerabilityKey(
 
 function createAssetVulnerabilityEntity(
   finding: Pick<InsightVmAssetVulnerability, 'id' | 'status'>,
-  vulnerability: { severity: string; numericSeverity: number },
+  vulnerability: Entity,
   assetId: string,
 ) {
   return createIntegrationEntity({
@@ -122,11 +122,6 @@ export async function fetchAssetVulnerabilityFindings(
   const severityFilter = instance.config.vulnerabilitySeverities?.split(',');
   const stateFilter = instance.config.vulnerabilityStates?.split(',');
 
-  const seenVulns = new Map<
-    string,
-    { severity: string; numericSeverity: number }
-  >();
-
   const debugCounts = {
     findings: 0,
     vulnerabilities: 0,
@@ -135,111 +130,21 @@ export async function fetchAssetVulnerabilityFindings(
     vulnRequests: 0,
   };
 
-  // For debugging purposes
-  try {
-    const totalPages = await apiClient.getVulnPages();
-    let totalCriticalVulns = 0;
-    let totalVulns = 0;
-    for (const { critical, moderate, severe } of assetVulnCountMap.values()) {
-      totalCriticalVulns += critical;
-      if (critical > 0) {
-        totalVulns += critical + moderate + severe;
-      }
-    }
-    logger.publishInfoEvent({
-      name: IntegrationInfoEventName.Stats,
-      description: `Total pages of vulnerabilities: ${totalPages}, Total findings: ${totalVulns}, Total critical findings: ${totalCriticalVulns}`,
-    });
-  } catch (err) {
-    logger.error({ err }, 'Failed to get total pages of vulnerabilities');
-  }
+  const vulnAssetsMap = open<string>('vuln-assets-map', {
+    dupSort: true,
+    encoding: 'ordered-binary',
+  });
 
-  const processFinding = async ({
-    vulnId,
-    assetId,
-    status,
-  }: {
-    vulnId: string;
-    assetId: string;
-    status: VulnerabilityState;
-  }) => {
-    if (!seenVulns.has(vulnId)) {
-      const vulnerability = await apiClient.getVulnerability(vulnId);
-      debugCounts.vulnRequests++;
-
-      // If this vulnerability does not pass the severity filter, skip it.
-      if (severityFilter && !severityFilter.includes(vulnerability.severity)) {
-        return;
-      }
-
-      const vulnerabilityEntity = createVulnerabilityEntity(vulnerability);
-      await jobState.addEntity(vulnerabilityEntity);
-      debugCounts.vulnerabilities++;
-      seenVulns.set(vulnId, {
-        severity: vulnerability.severity,
-        numericSeverity: vulnerability.severityScore,
-      });
-    }
-
-    const vulnerabilityKey = getVulnerabilityKey(vulnId);
-    if (!jobState.hasKey(vulnerabilityKey)) {
-      // If the vulnerability entity was not added, skip this finding.
-      // This can happen if the vulnerability does not pass the severity filter.
-      return;
-    }
-
-    const vulnData = seenVulns.get(vulnId)!;
-    const findingEntity = createAssetVulnerabilityEntity(
-      { id: vulnId, status },
-      {
-        severity: vulnData.severity,
-        numericSeverity: vulnData.numericSeverity,
-      },
-      assetId,
-    );
-    if (jobState.hasKey(findingEntity._key)) {
-      return;
-    }
-    await jobState.addEntity(findingEntity);
-    debugCounts.findings++;
-    const assetFindingRelationship = createDirectRelationship({
-      _class: RelationshipClass.HAS,
-      fromType: entities.ASSET._type,
-      fromKey: getAssetKey(assetId),
-      toType: entities.FINDING._type,
-      toKey: findingEntity._key,
-    });
-    const findingVulnerabilityRelationship = createDirectRelationship({
-      _class: RelationshipClass.IS,
-      fromType: entities.FINDING._type,
-      fromKey: findingEntity._key,
-      toType: entities.VULNERABILITY._type,
-      toKey: vulnerabilityKey,
-    });
-    await jobState.addRelationships([
-      assetFindingRelationship,
-      findingVulnerabilityRelationship,
-    ]);
-    debugCounts.asset_has_finding++;
-    debugCounts.finding_is_vulnerability++;
-  };
-
-  let assetCount = 0;
   await jobState.iterateEntities(
     { _type: entities.ASSET._type },
     async (assetEntity) => {
-      assetCount++;
-      if (assetCount % 500 === 0) {
-        // Log memory usage every 500 assets
-        logger.info(
-          {
-            memoryUsage: JSON.stringify(getMemoryUsage()),
-            debugCounts: JSON.stringify(debugCounts),
-          },
-          'Memory usage',
-        );
-      }
-      const vulnCounts = assetVulnCountMap.get(assetEntity.id as string);
+      logger.debug(
+        {
+          assetId: assetEntity.id,
+        },
+        'Getting vulnerability findings for asset.',
+      );
+      const vulnCounts = assetVulnCountMap?.get(assetEntity.id as string);
       if (
         vulnCounts &&
         severityFilter &&
@@ -259,21 +164,109 @@ export async function fetchAssetVulnerabilityFindings(
               )
             : assetVulnerabilities;
 
-          await pMap(
-            filteredVulnerabilities,
-            async (assetVulnerability) => {
-              await processFinding({
-                vulnId: assetVulnerability.id,
-                assetId: assetEntity.id! as string,
-                status: assetVulnerability.status,
-              });
-            },
-            { concurrency: 5 },
+          await Promise.all(
+            filteredVulnerabilities.map(async (assetVulnerability) =>
+              vulnAssetsMap.put(
+                assetVulnerability.id,
+                `${assetEntity.id! as string}|${assetVulnerability.status}`,
+              ),
+            ),
           );
         },
       );
     },
   );
+
+  let uniqueVulnCount = 0;
+  vulnAssetsMap.getKeys().forEach(() => {
+    uniqueVulnCount++;
+  });
+
+  let stopAtSeverity: string | undefined;
+  if (severityFilter?.includes('Severe')) {
+    stopAtSeverity = 'Moderate';
+  } else if (severityFilter?.includes('Critical')) {
+    stopAtSeverity = 'Severe';
+  }
+
+  let processedVulns = 0;
+  try {
+    await apiClient.iterateVulnerabilities(async (vulnerability) => {
+      if (
+        processedVulns >= uniqueVulnCount ||
+        (stopAtSeverity && vulnerability.severity === stopAtSeverity)
+      ) {
+        // We sort the vulns by severityScore in descending order
+        // so we use that to stop iterating sooner.
+        // For example, if we're only interested in Critical and Severe we stop when we reach Moderate.
+        throw new IntegrationError({
+          code: 'FINISHED_PROCESSING_VULNS',
+          message: 'Finished processing vulnerabilities.',
+        });
+      }
+
+      if (!vulnAssetsMap.doesExist(vulnerability.id)) {
+        return;
+      }
+
+      const vulnerabilityEntity = createVulnerabilityEntity(vulnerability);
+      if (!jobState.hasKey(vulnerabilityEntity._key)) {
+        await jobState.addEntity(vulnerabilityEntity);
+        debugCounts.vulnerabilities++;
+      }
+
+      for (const value of vulnAssetsMap.getValues(vulnerability.id)) {
+        const [assetId, status] = value.split('|');
+        const findingEntity = createAssetVulnerabilityEntity(
+          { id: vulnerability.id, status: status as VulnerabilityState },
+          vulnerabilityEntity,
+          assetId,
+        );
+        if (jobState.hasKey(findingEntity._key)) {
+          return;
+        }
+        await jobState.addEntity(findingEntity);
+        debugCounts.findings++;
+        const assetFindingRelationship = createDirectRelationship({
+          _class: RelationshipClass.HAS,
+          fromType: entities.ASSET._type,
+          fromKey: getAssetKey(Number(assetId)),
+          toType: entities.FINDING._type,
+          toKey: findingEntity._key,
+        });
+        const findingVulnerabilityRelationship = createDirectRelationship({
+          _class: RelationshipClass.IS,
+          fromType: entities.FINDING._type,
+          fromKey: findingEntity._key,
+          toType: entities.VULNERABILITY._type,
+          toKey: vulnerabilityEntity._key,
+        });
+        await jobState.addRelationships([
+          assetFindingRelationship,
+          findingVulnerabilityRelationship,
+        ]);
+        debugCounts.asset_has_finding++;
+        debugCounts.finding_is_vulnerability++;
+      }
+      processedVulns++;
+      if (processedVulns % 500 === 0) {
+        logger.info(
+          {
+            memoryUsage: JSON.stringify(getMemoryUsage()),
+            debugCounts: JSON.stringify(debugCounts),
+            processedVulns,
+          },
+          'Memory usage',
+        );
+      }
+    });
+  } catch (err) {
+    if (err.code === 'FINISHED_PROCESSING_VULNS') {
+      logger.info('Finished processing vulnerabilities.');
+    } else {
+      throw err;
+    }
+  }
 }
 
 export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
