@@ -361,7 +361,7 @@ authority you trust. ` + errMessage;
     const pq = new PQueue({ concurrency: 5 });
 
     for (let page = 0; page < totalPages; page++) {
-      pq.add(async () => {
+      void pq.add(async () => {
         if (page > lastGoodPage) {
           return;
         }
