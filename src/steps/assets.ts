@@ -42,7 +42,6 @@ export async function fetchAssets({
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const apiClient = createAPIClient(instance.config, logger);
-  const assetHasVulnSet = new Set<string>();
   await apiClient.iterateAssets(async (asset) => {
     const webLink = asset.links.find((link) => link.rel === 'self')?.href;
     const assetEntity = createIntegrationEntity({
