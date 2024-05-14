@@ -3,6 +3,7 @@ import {
   createIntegrationEntity,
   Entity,
   IntegrationError,
+  IntegrationInfoEventName,
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
@@ -23,22 +24,7 @@ import {
 } from '../types';
 import { getAssetKey } from './assets';
 import { open } from 'lmdb';
-
-function formatMemoryUsage(data: number) {
-  return `${Math.round((data / 1024 / 1024) * 100) / 100} MB`;
-}
-
-function getMemoryUsage() {
-  const memoryData = process.memoryUsage();
-
-  const memoryUsage = {
-    rss: formatMemoryUsage(memoryData.rss), // Resident Set Size - total memory allocated for the process execution
-    heapTotal: formatMemoryUsage(memoryData.heapTotal), // total size of the allocated heap
-    heapUsed: formatMemoryUsage(memoryData.heapUsed), // actual memory used during the execution
-    external: formatMemoryUsage(memoryData.external), // V8 external memory
-  };
-  return memoryUsage;
-}
+import { getMemoryUsage } from '../utils';
 
 function getAssetVulnerabilityKey(
   assetId: string,
@@ -105,6 +91,12 @@ export async function fetchAssetVulnerabilityFindings(
   context: IntegrationStepExecutionContext<IntegrationConfig>,
 ) {
   const { logger, instance, jobState } = context;
+  if (process.env.USE_ON_DISK_DKT) {
+    logger.publishInfoEvent({
+      name: IntegrationInfoEventName.Info,
+      description: 'Using on-disk DKT',
+    });
+  }
   const apiClient = createAPIClient(instance.config, logger);
 
   const assetVulnCountMap =
@@ -223,7 +215,7 @@ export async function fetchAssetVulnerabilityFindings(
           assetId,
         );
         if (jobState.hasKey(findingEntity._key)) {
-          return;
+          continue;
         }
         await jobState.addEntity(findingEntity);
         debugCounts.findings++;
