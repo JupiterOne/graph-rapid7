@@ -119,7 +119,6 @@ export async function fetchAssetVulnerabilityFindings(
     vulnerabilities: 0,
     finding_is_vulnerability: 0,
     asset_has_finding: 0,
-    vulnRequests: 0,
   };
 
   const vulnAssetsMap = open<string>('vuln-assets-map', {
@@ -244,8 +243,8 @@ export async function fetchAssetVulnerabilityFindings(
       if (processedVulns % 500 === 0) {
         logger.info(
           {
-            memoryUsage: JSON.stringify(getMemoryUsage()),
-            debugCounts: JSON.stringify(debugCounts),
+            memoryUsage: getMemoryUsage(),
+            debugCounts: debugCounts,
             processedVulns,
           },
           'Memory usage',
