@@ -34,7 +34,7 @@ function vulnerabilityProcessor() {
       buffer.push(createVulnerabilityEntity(vuln));
     }
 
-    if (buffer.length === 1_000 || forceFlush) {
+    if (buffer.length > 1_000 || forceFlush) {
       await Promise.all(
         buffer.map((e) => vulnerabilitiesCache.put(e._key, JSON.stringify(e))),
       );
@@ -165,7 +165,7 @@ export async function fetchAssetVulnerabilityFindings(
                 debugCounts.vulnRequests++;
                 vulnerabilityEntity = createVulnerabilityEntity(vulnerability);
                 await vulnerabilitiesCache.put(
-                  av.id,
+                  vulnerabilityEntity._key,
                   JSON.stringify(vulnerabilityEntity),
                 );
               }
