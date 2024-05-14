@@ -361,7 +361,7 @@ authority you trust. ` + errMessage;
     const pq = new PQueue({ concurrency: 5 });
 
     for (let page = 0; page < totalPages; page++) {
-      void pq.add(async () => {
+      pq.add(async () => {
         if (page > lastGoodPage) {
           return;
         }
@@ -371,7 +371,7 @@ authority you trust. ` + errMessage;
           ),
         );
         const body = await response.json();
-        for (const vuln of body.resource) {
+        for (const vuln of body.resources) {
           if (vuln.severity === stopSeverity) {
             this.logger.info({ page }, 'Hit stop severity');
             lastGoodPage = Math.min(page, lastGoodPage);
