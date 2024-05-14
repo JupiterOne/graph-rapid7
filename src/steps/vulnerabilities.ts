@@ -55,6 +55,7 @@ export async function prefetchVulnerabilities(
     minimumIncludedSeverity = 'Severe';
   }
 
+  let vulnsPreprocessed = 0;
   const processor = vulnerabilityProcessor();
   await apiClient.iterateVulnerabilities(
     async (vuln) => {
@@ -63,6 +64,10 @@ export async function prefetchVulnerabilities(
       // work
       if (vulnsStepFinished) return false;
       await processor(vuln, false);
+      vulnsPreprocessed++;
+      if (vulnsPreprocessed % 2_000 === 0) {
+        logger.info({ vulnsPreprocessed }, 'preprocessed vulnerabilities');
+      }
       return true;
     },
     {
@@ -135,6 +140,7 @@ export async function fetchAssetVulnerabilityFindings(
         if (!shouldProcessAsset(rawData)) {
           return;
         }
+
         await apiClient.iterateAssetVulnerabilityFinding(
           assetEntity.id! as string,
           async (assetVulnerabilities) => {
@@ -156,6 +162,7 @@ export async function fetchAssetVulnerabilityFindings(
                 vulnerabilityEntity = JSON.parse(cachedVuln) as Entity;
               } else {
                 const vulnerability = await apiClient.getVulnerability(av.id);
+                debugCounts.vulnRequests++;
                 vulnerabilityEntity = createVulnerabilityEntity(vulnerability);
                 await vulnerabilitiesCache.put(
                   av.id,
