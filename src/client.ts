@@ -1,4 +1,5 @@
 import fetch, { Response } from 'node-fetch';
+import PQueue from 'p-queue';
 
 import {
   IntegrationLogger,
@@ -343,48 +344,44 @@ authority you trust. ` + errMessage;
   }
 
   public async iterateVulnerabilities(
-    iteratee: ResourceIteratee<Vulnerability>,
+    iteratee: (vuln: Vulnerability) => Promise<void>,
+    {
+      minimumIncludedSeverity,
+    }: { minimumIncludedSeverity: 'Critical' | 'Severe' | 'Moderate' },
   ): Promise<void> {
-    const totalPages = await this.getVulnPages();
-    if (!totalPages || totalPages < 5) {
-      await this.paginatedRequest<Vulnerability>(
-        `vulnerabilities`,
-        async (vulnerabilities) => {
-          for (const vulnerability of vulnerabilities) {
-            await iteratee(vulnerability);
-          }
-        },
-      );
-      return;
+    let stopSeverity: string | undefined = undefined;
+    if (minimumIncludedSeverity === 'Critical') {
+      stopSeverity = 'Severe';
+    } else if (minimumIncludedSeverity === 'Severe') {
+      stopSeverity = 'Moderate';
     }
 
-    let pagesToRequest: number[] = [];
-    for (let i = 0; i < totalPages; i++) {
-      pagesToRequest.push(i);
-      if (pagesToRequest.length < 5) {
-        continue;
-      }
-      // Request 5 pages at a time
-      const results = await Promise.allSettled(
-        pagesToRequest.map(async (page) => {
-          const response = await this.retryRequest(
-            this.withBaseUri(
-              `vulnerabilities?page=${page}&size=${this.paginateEntitiesPerPage}&sort=severityScore,DESC`,
-            ),
-          );
-          const body = await response.json();
-          for (const vulnerability of body.resources) {
-            await iteratee(vulnerability);
+    let lastGoodPage = Number.MAX_VALUE;
+    const totalPages = (await this.getVulnPages()) ?? 1;
+    const pq = new PQueue({ concurrency: 5 });
+
+    for (let page = 0; page < totalPages; page++) {
+      void pq.add(async () => {
+        if (page > lastGoodPage) {
+          return;
+        }
+        const response = await this.retryRequest(
+          this.withBaseUri(
+            `vulnerabilities?page=${page}&size=${this.paginateEntitiesPerPage}&sort=severityScore,DESC`,
+          ),
+        );
+        const body = await response.json();
+        for (const vuln of body.resources) {
+          if (stopSeverity && vuln.severity === stopSeverity) {
+            lastGoodPage = Math.min(page, lastGoodPage);
+            continue;
           }
-        }),
-      );
-      results.forEach((result) => {
-        if (result.status === 'rejected') {
-          throw result.reason;
+
+          await iteratee(vuln);
         }
       });
-      pagesToRequest = [];
     }
+    await pq.onIdle();
   }
 
   /**
