@@ -19,9 +19,9 @@ import { entities, relationships, steps } from '../constants';
 import { InsightVMAsset, Vulnerability } from '../types';
 import { getAssetKey } from './assets';
 import { open } from 'lmdb';
-import { getMemoryUsage } from '../utils';
+import { getDiskUsage, getMemoryUsage } from '../utils';
 
-const vulnerabilitiesCache = open<string>('vuln-assets-map', {
+const vulnerabilitiesCache = open<string>('vulnerabilities', {
   encoding: 'string',
 });
 
@@ -138,6 +138,7 @@ export async function fetchAssetVulnerabilityFindings(
 
           logger.info(
             {
+              diskUsage: await getDiskUsage(),
               memoryUsage: getMemoryUsage(),
               debugCounts: debugCounts,
               processedVulnerabilities,
