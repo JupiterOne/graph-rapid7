@@ -373,10 +373,8 @@ authority you trust. ` + errMessage;
         const body = await response.json();
         for (const vuln of body.resources) {
           if (stopSeverity && vuln.severity === stopSeverity) {
-            this.logger.info({ page, lastGoodPage }, 'Hit stop severity');
             lastGoodPage = Math.min(page, lastGoodPage);
-
-            return;
+            continue;
           }
 
           await iteratee(vuln);
