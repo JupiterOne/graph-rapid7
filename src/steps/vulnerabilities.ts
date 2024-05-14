@@ -118,6 +118,7 @@ export async function fetchAssetVulnerabilityFindings(
     );
 
     const debugCounts = {
+      processedAssets: 0,
       findings: 0,
       vulnerabilities: 0,
       finding_is_vulnerability: 0,
@@ -131,6 +132,20 @@ export async function fetchAssetVulnerabilityFindings(
     await jobState.iterateEntities(
       { _type: entities.ASSET._type },
       async (assetEntity) => {
+        debugCounts.processedAssets++;
+        if (debugCounts.processedAssets % 1000 === 0) {
+          require('v8').writeHeapSnapshot();
+
+          logger.info(
+            {
+              memoryUsage: getMemoryUsage(),
+              debugCounts: debugCounts,
+              processedVulnerabilities,
+            },
+            'Memory usage',
+          );
+        }
+
         const rawData = getRawData<InsightVMAsset>(assetEntity);
         if (!rawData) {
           throw new IntegrationMissingKeyError(
@@ -211,16 +226,6 @@ export async function fetchAssetVulnerabilityFindings(
               debugCounts.finding_is_vulnerability++;
 
               processedVulnerabilities++;
-              if (processedVulnerabilities % 250 === 0) {
-                logger.info(
-                  {
-                    memoryUsage: getMemoryUsage(),
-                    debugCounts: debugCounts,
-                    processedVulnerabilities,
-                  },
-                  'Memory usage',
-                );
-              }
             }
           },
         );
