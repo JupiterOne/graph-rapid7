@@ -344,7 +344,7 @@ authority you trust. ` + errMessage;
   }
 
   public async iterateVulnerabilities(
-    iteratee: (vuln: Vulnerability) => Promise<boolean>,
+    iteratee: (vuln: Vulnerability) => Promise<void>,
     {
       minimumIncludedSeverity,
     }: { minimumIncludedSeverity: 'Critical' | 'Severe' | 'Moderate' },
@@ -372,20 +372,14 @@ authority you trust. ` + errMessage;
         );
         const body = await response.json();
         for (const vuln of body.resources) {
-          if (vuln.severity === stopSeverity) {
-            this.logger.info({ page }, 'Hit stop severity');
+          if (stopSeverity && vuln.severity === stopSeverity) {
+            this.logger.info({ page, lastGoodPage }, 'Hit stop severity');
             lastGoodPage = Math.min(page, lastGoodPage);
 
             return;
           }
 
-          // if the iteratee returns false
-          // it means the pagination is over and we should short cirtcut
-          const result = await iteratee(vuln);
-          if (result === false) {
-            lastGoodPage = -1;
-            return;
-          }
+          await iteratee(vuln);
         }
       });
     }

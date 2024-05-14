@@ -25,8 +25,6 @@ const vulnerabilitiesCache = open<string>('vulnerabilities', {
   encoding: 'string',
 });
 
-let vulnsStepFinished = false;
-
 function vulnerabilityProcessor() {
   let buffer: Entity[] = [];
   return async (vuln: Vulnerability | undefined, forceFlush: boolean) => {
@@ -49,9 +47,9 @@ export async function prefetchVulnerabilities(
   const { logger, instance } = context;
   const apiClient = createAPIClient(instance.config, logger);
   let minimumIncludedSeverity: 'Critical' | 'Moderate' | 'Severe' = 'Critical';
-  if (instance.config.vulnerabilityStates?.includes('Moderate')) {
+  if (instance.config.vulnerabilitySeverities?.includes('Moderate')) {
     minimumIncludedSeverity = 'Moderate';
-  } else if (instance.config.vulnerabilityStates?.includes('Severe')) {
+  } else if (instance.config.vulnerabilitySeverities?.includes('Severe')) {
     minimumIncludedSeverity = 'Severe';
   }
 
@@ -59,16 +57,11 @@ export async function prefetchVulnerabilities(
   const processor = vulnerabilityProcessor();
   await apiClient.iterateVulnerabilities(
     async (vuln) => {
-      // this lets the client know to short circuit since
-      // the vulns step has finished and we don't need to do any more
-      // work
-      if (vulnsStepFinished) return false;
       await processor(vuln, false);
       vulnsPreprocessed++;
       if (vulnsPreprocessed % 2_000 === 0) {
         logger.info({ vulnsPreprocessed }, 'preprocessed vulnerabilities');
       }
-      return true;
     },
     {
       minimumIncludedSeverity,
@@ -110,131 +103,117 @@ function createShouldProcessAssetFunction(vulnerabilitySeverities?: string) {
 export async function fetchAssetVulnerabilityFindings(
   context: IntegrationStepExecutionContext<IntegrationConfig>,
 ) {
-  try {
-    const { logger, instance, jobState } = context;
-    const apiClient = createAPIClient(instance.config, logger);
-    const shouldProcessAsset = createShouldProcessAssetFunction(
-      instance.config.vulnerabilitySeverities,
-    );
+  const { logger, instance, jobState } = context;
+  const apiClient = createAPIClient(instance.config, logger);
+  const shouldProcessAsset = createShouldProcessAssetFunction(
+    instance.config.vulnerabilitySeverities,
+  );
 
-    const debugCounts = {
-      processedAssets: 0,
-      findings: 0,
-      vulnerabilities: 0,
-      finding_is_vulnerability: 0,
-      asset_has_finding: 0,
-      vulnRequests: 0,
-    };
+  const debugCounts = {
+    processedAssets: 0,
+    findings: 0,
+    vulnerabilities: 0,
+    finding_is_vulnerability: 0,
+    asset_has_finding: 0,
+    vulnRequests: 0,
+  };
 
-    const stateFilter = instance.config.vulnerabilityStates?.split(',');
+  const stateFilter = instance.config.vulnerabilityStates?.split(',');
 
-    let processedVulnerabilities = 0;
-    await jobState.iterateEntities(
-      { _type: entities.ASSET._type },
-      async (assetEntity) => {
-        debugCounts.processedAssets++;
-        if (debugCounts.processedAssets % 1000 === 0) {
-          require('v8').writeHeapSnapshot();
-
-          logger.info(
-            {
-              diskUsage: await getDiskUsage(),
-              memoryUsage: getMemoryUsage(),
-              debugCounts: debugCounts,
-              processedVulnerabilities,
-            },
-            'Memory usage',
-          );
-        }
-
-        const rawData = getRawData<InsightVMAsset>(assetEntity);
-        if (!rawData) {
-          throw new IntegrationMissingKeyError(
-            `Raw Data for ${assetEntity._key} is missing.`,
-          );
-        }
-        if (!shouldProcessAsset(rawData)) {
-          return;
-        }
-
-        await apiClient.iterateAssetVulnerabilityFinding(
-          assetEntity.id! as string,
-          async (assetVulnerabilities) => {
-            const filteredVulnerabilities = stateFilter
-              ? assetVulnerabilities.filter((vulnerability) =>
-                  stateFilter.includes(vulnerability.status),
-                )
-              : assetVulnerabilities;
-
-            for (const av of filteredVulnerabilities) {
-              const assetId = assetEntity.id as string;
-              const cachedVuln = vulnerabilitiesCache.get(
-                getVulnerabilityKey(av.id),
-              );
-
-              let vulnerabilityEntity: Entity;
-              // get the vulnerability from the cache or api
-              if (cachedVuln) {
-                vulnerabilityEntity = JSON.parse(cachedVuln) as Entity;
-              } else {
-                const vulnerability = await apiClient.getVulnerability(av.id);
-                debugCounts.vulnRequests++;
-                vulnerabilityEntity = createVulnerabilityEntity(vulnerability);
-                await vulnerabilitiesCache.put(
-                  vulnerabilityEntity._key,
-                  JSON.stringify(vulnerabilityEntity),
-                );
-              }
-
-              if (!jobState.hasKey(vulnerabilityEntity._key)) {
-                await jobState.addEntity(vulnerabilityEntity);
-                debugCounts.vulnerabilities++;
-              }
-
-              const findingEntity = createAssetVulnerabilityEntity(
-                { id: vulnerabilityEntity.id as string, status: av.status },
-                vulnerabilityEntity,
-                assetEntity.id! as string,
-              );
-              if (jobState.hasKey(findingEntity._key)) {
-                continue;
-              }
-
-              await jobState.addEntity(findingEntity);
-              debugCounts.findings++;
-
-              const assetFindingRelationship = createDirectRelationship({
-                _class: RelationshipClass.HAS,
-                fromType: entities.ASSET._type,
-                fromKey: getAssetKey(Number(assetId)),
-                toType: entities.FINDING._type,
-                toKey: findingEntity._key,
-              });
-              const findingVulnerabilityRelationship = createDirectRelationship(
-                {
-                  _class: RelationshipClass.IS,
-                  fromType: entities.FINDING._type,
-                  fromKey: findingEntity._key,
-                  toType: entities.VULNERABILITY._type,
-                  toKey: vulnerabilityEntity._key,
-                },
-              );
-              await jobState.addRelationships([
-                assetFindingRelationship,
-                findingVulnerabilityRelationship,
-              ]);
-              debugCounts.asset_has_finding++;
-              debugCounts.finding_is_vulnerability++;
-
-              processedVulnerabilities++;
-            }
+  let processedVulnerabilities = 0;
+  await jobState.iterateEntities(
+    { _type: entities.ASSET._type },
+    async (assetEntity) => {
+      debugCounts.processedAssets++;
+      if (debugCounts.processedAssets % 1000 === 0) {
+        logger.info(
+          {
+            diskUsage: await getDiskUsage(),
+            memoryUsage: getMemoryUsage(),
+            debugCounts: debugCounts,
+            processedVulnerabilities,
           },
+          'Memory usage',
         );
-      },
-    );
-  } finally {
-    vulnsStepFinished = true;
-  }
+      }
+
+      const rawData = getRawData<InsightVMAsset>(assetEntity);
+      if (!rawData) {
+        throw new IntegrationMissingKeyError(
+          `Raw Data for ${assetEntity._key} is missing.`,
+        );
+      }
+      if (!shouldProcessAsset(rawData)) {
+        return;
+      }
+
+      await apiClient.iterateAssetVulnerabilityFinding(
+        assetEntity.id! as string,
+        async (assetVulnerabilities) => {
+          const filteredVulnerabilities = stateFilter
+            ? assetVulnerabilities.filter((vulnerability) =>
+                stateFilter.includes(vulnerability.status),
+              )
+            : assetVulnerabilities;
+
+          for (const av of filteredVulnerabilities) {
+            const assetId = assetEntity.id as string;
+            const cachedVuln = vulnerabilitiesCache.get(
+              getVulnerabilityKey(av.id),
+            );
+
+            let vulnerabilityEntity: Entity | undefined;
+            if (cachedVuln) {
+              vulnerabilityEntity = JSON.parse(cachedVuln) as Entity;
+            } else {
+              // Vulnerability not found in cache, it doesn't exists or we filtered it out by severity.
+              continue;
+            }
+
+            if (!jobState.hasKey(vulnerabilityEntity._key)) {
+              await jobState.addEntity(vulnerabilityEntity);
+              debugCounts.vulnerabilities++;
+            }
+
+            const findingEntity = createAssetVulnerabilityEntity(
+              { id: vulnerabilityEntity.id as string, status: av.status },
+              vulnerabilityEntity,
+              assetEntity.id! as string,
+            );
+            if (jobState.hasKey(findingEntity._key)) {
+              continue;
+            }
+
+            await jobState.addEntity(findingEntity);
+            debugCounts.findings++;
+
+            const assetFindingRelationship = createDirectRelationship({
+              _class: RelationshipClass.HAS,
+              fromType: entities.ASSET._type,
+              fromKey: getAssetKey(Number(assetId)),
+              toType: entities.FINDING._type,
+              toKey: findingEntity._key,
+            });
+            const findingVulnerabilityRelationship = createDirectRelationship({
+              _class: RelationshipClass.IS,
+              fromType: entities.FINDING._type,
+              fromKey: findingEntity._key,
+              toType: entities.VULNERABILITY._type,
+              toKey: vulnerabilityEntity._key,
+            });
+            await jobState.addRelationships([
+              assetFindingRelationship,
+              findingVulnerabilityRelationship,
+            ]);
+            debugCounts.asset_has_finding++;
+            debugCounts.finding_is_vulnerability++;
+
+            processedVulnerabilities++;
+          }
+        },
+      );
+    },
+  );
 }
 
 export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
@@ -254,7 +233,7 @@ export const vulnerabilitiesSteps: IntegrationStep<IntegrationConfig>[] = [
       relationships.ASSET_HAS_FINDING,
       relationships.FINDING_IS_VULNERABILITY,
     ],
-    dependsOn: [steps.FETCH_ASSETS],
+    dependsOn: [steps.PREFETCH_VULNS, steps.FETCH_ASSETS],
     executionHandler: fetchAssetVulnerabilityFindings,
   },
 ];
