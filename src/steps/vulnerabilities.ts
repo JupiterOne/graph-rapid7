@@ -3,7 +3,6 @@ import {
   createIntegrationEntity,
   Entity,
   IntegrationError,
-  IntegrationInfoEventName,
   IntegrationStep,
   IntegrationStepExecutionContext,
   RelationshipClass,
@@ -91,12 +90,6 @@ export async function fetchAssetVulnerabilityFindings(
   context: IntegrationStepExecutionContext<IntegrationConfig>,
 ) {
   const { logger, instance, jobState } = context;
-  if (process.env.USE_ON_DISK_DKT) {
-    logger.publishInfoEvent({
-      name: IntegrationInfoEventName.Info,
-      description: 'Using on-disk DKT',
-    });
-  }
   const apiClient = createAPIClient(instance.config, logger);
 
   const assetVulnCountMap =
