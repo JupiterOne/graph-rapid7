@@ -23,22 +23,7 @@ import {
 } from '../types';
 import { getAssetKey } from './assets';
 import { open } from 'lmdb';
-
-function formatMemoryUsage(data: number) {
-  return `${Math.round((data / 1024 / 1024) * 100) / 100} MB`;
-}
-
-function getMemoryUsage() {
-  const memoryData = process.memoryUsage();
-
-  const memoryUsage = {
-    rss: formatMemoryUsage(memoryData.rss), // Resident Set Size - total memory allocated for the process execution
-    heapTotal: formatMemoryUsage(memoryData.heapTotal), // total size of the allocated heap
-    heapUsed: formatMemoryUsage(memoryData.heapUsed), // actual memory used during the execution
-    external: formatMemoryUsage(memoryData.external), // V8 external memory
-  };
-  return memoryUsage;
-}
+import { getMemoryUsage } from '../utils';
 
 function getAssetVulnerabilityKey(
   assetId: string,
@@ -127,7 +112,6 @@ export async function fetchAssetVulnerabilityFindings(
     vulnerabilities: 0,
     finding_is_vulnerability: 0,
     asset_has_finding: 0,
-    vulnRequests: 0,
   };
 
   const vulnAssetsMap = open<string>('vuln-assets-map', {
@@ -223,7 +207,7 @@ export async function fetchAssetVulnerabilityFindings(
           assetId,
         );
         if (jobState.hasKey(findingEntity._key)) {
-          return;
+          continue;
         }
         await jobState.addEntity(findingEntity);
         debugCounts.findings++;
@@ -252,8 +236,8 @@ export async function fetchAssetVulnerabilityFindings(
       if (processedVulns % 500 === 0) {
         logger.info(
           {
-            memoryUsage: JSON.stringify(getMemoryUsage()),
-            debugCounts: JSON.stringify(debugCounts),
+            memoryUsage: getMemoryUsage(),
+            debugCounts: debugCounts,
             processedVulns,
           },
           'Memory usage',

@@ -1,5 +1,6 @@
 import {
   IntegrationExecutionContext,
+  IntegrationInfoEventName,
   IntegrationInstanceConfig,
   IntegrationInstanceConfigFieldMap,
   IntegrationValidationError,
@@ -114,6 +115,12 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
 export async function validateInvocation(
   context: IntegrationExecutionContext<IntegrationConfig>,
 ) {
+  if (process.env.USE_ON_DISK_DKT) {
+    context.logger.publishInfoEvent({
+      name: IntegrationInfoEventName.Info,
+      description: 'Using on-disk DKT',
+    });
+  }
   const { config } = context.instance;
 
   if (
