@@ -16,17 +16,32 @@ import {
 import { createAPIClient } from '../client';
 import { IntegrationConfig } from '../config';
 import { entities, relationships, steps } from '../constants';
-import { InsightVMAsset } from '../types';
+import { InsightVMAsset, Vulnerability } from '../types';
 import { getAssetKey } from './assets';
 import { open } from 'lmdb';
 import { getMemoryUsage } from '../utils';
 
 const vulnerabilitiesCache = open<string>('vuln-assets-map', {
-  dupSort: true,
-  encoding: 'ordered-binary',
+  encoding: 'string',
 });
 
 let vulnsStepFinished = false;
+
+function vulnerabilityProcessor() {
+  let buffer: Entity[] = [];
+  return async (vuln: Vulnerability | undefined, forceFlush: boolean) => {
+    if (vuln) {
+      buffer.push(createVulnerabilityEntity(vuln));
+    }
+
+    if (buffer.length === 1_000 || forceFlush) {
+      await Promise.all(
+        buffer.map((e) => vulnerabilitiesCache.put(e._key, JSON.stringify(e))),
+      );
+      buffer = [];
+    }
+  };
+}
 
 export async function prefetchVulnerabilities(
   context: IntegrationStepExecutionContext<IntegrationConfig>,
@@ -40,35 +55,51 @@ export async function prefetchVulnerabilities(
     minimumIncludedSeverity = 'Severe';
   }
 
-  let buffer: Entity[] = [];
+  const processor = vulnerabilityProcessor();
   await apiClient.iterateVulnerabilities(
     async (vuln) => {
-      if (vulnsStepFinished) {
-        // this lets the client know to short circuit since
-        // the vulns step has finished and we don't need to do any more
-        // work
-        return false;
-
-      }
-      buffer.push(createVulnerabilityEntity(vuln));
-      if (buffer.length === 1_000) {
-        await Promise.all(
-          buffer.map((e) =>
-            vulnerabilitiesCache.put(e._key, JSON.stringify(e)),
-          ),
-        );
-        buffer = [];
-      }
+      // this lets the client know to short circuit since
+      // the vulns step has finished and we don't need to do any more
+      // work
+      if (vulnsStepFinished) return false;
+      await processor(vuln, false);
       return true;
     },
     {
       minimumIncludedSeverity,
     },
   );
-  await Promise.all(
-    buffer.map((e) => vulnerabilitiesCache.put(e._key, JSON.stringify(e))),
-  );
+  await processor(undefined, true);
   await vulnerabilitiesCache.flushed;
+}
+
+function createShouldProcessAssetFunction(vulnerabilitySeverities?: string) {
+  const severityFilter = vulnerabilitySeverities?.split(',');
+  // severity mask - 0 = all vulnerabilities
+  // severity mask - 1 = critical, severe
+  // severity mask - 2 = critical
+  let severityMask = 0;
+  if (severityFilter?.includes('Moderate')) {
+    severityMask = 0;
+  } else if (severityFilter?.includes('Severe')) {
+    severityMask = 1;
+  } else if (severityFilter?.includes('Critical')) {
+    severityMask = 2;
+  }
+
+  return (asset: InsightVMAsset) => {
+    if (severityMask === 0 && asset.vulnerabilities.total) {
+      return true;
+    } else if (
+      severityMask === 1 &&
+      (asset.vulnerabilities.critical || asset.vulnerabilities.severe)
+    ) {
+      return true;
+    } else if (severityMask === 2 && asset.vulnerabilities.critical) {
+      return true;
+    }
+    return false;
+  };
 }
 
 export async function fetchAssetVulnerabilityFindings(
@@ -77,30 +108,9 @@ export async function fetchAssetVulnerabilityFindings(
   try {
     const { logger, instance, jobState } = context;
     const apiClient = createAPIClient(instance.config, logger);
-
-    const severityFilter = instance.config.vulnerabilitySeverities?.split(',');
-    let severityMask = 0;
-    if (severityFilter?.includes('Moderate')) {
-      severityMask = 0;
-    } else if (severityFilter?.includes('Severe')) {
-      severityMask = 1;
-    } else if (severityFilter?.includes('Critical')) {
-      severityMask = 2;
-    }
-
-    const shouldProcessAsset = (asset: InsightVMAsset) => {
-      if (severityMask === 0 && asset.vulnerabilities.total) {
-        return true;
-      } else if (
-        severityMask === 1 &&
-        (asset.vulnerabilities.critical || asset.vulnerabilities.severe)
-      ) {
-        return true;
-      } else if (severityMask === 2 && asset.vulnerabilities.critical) {
-        return true;
-      }
-      return false;
-    };
+    const shouldProcessAsset = createShouldProcessAssetFunction(
+      instance.config.vulnerabilitySeverities,
+    );
 
     const debugCounts = {
       findings: 0,
@@ -194,7 +204,7 @@ export async function fetchAssetVulnerabilityFindings(
               debugCounts.finding_is_vulnerability++;
 
               processedVulnerabilities++;
-              if (processedVulnerabilities % 10_000 === 0) {
+              if (processedVulnerabilities % 250 === 0) {
                 logger.info(
                   {
                     memoryUsage: getMemoryUsage(),
