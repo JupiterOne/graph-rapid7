@@ -19,22 +19,7 @@ import { entities, relationships, steps } from '../constants';
 import { InsightVMAsset } from '../types';
 import { getAssetKey } from './assets';
 import { open } from 'lmdb';
-
-function formatMemoryUsage(data: number) {
-  return `${Math.round((data / 1024 / 1024) * 100) / 100} MB`;
-}
-
-function getMemoryUsage() {
-  const memoryData = process.memoryUsage();
-
-  const memoryUsage = {
-    rss: formatMemoryUsage(memoryData.rss), // Resident Set Size - total memory allocated for the process execution
-    heapTotal: formatMemoryUsage(memoryData.heapTotal), // total size of the allocated heap
-    heapUsed: formatMemoryUsage(memoryData.heapUsed), // actual memory used during the execution
-    external: formatMemoryUsage(memoryData.external), // V8 external memory
-  };
-  return memoryUsage;
-}
+import { getMemoryUsage } from '../utils';
 
 const vulnerabilitiesCache = open<string>('vuln-assets-map', {
   dupSort: true,
@@ -63,6 +48,7 @@ export async function prefetchVulnerabilities(
         // the vulns step has finished and we don't need to do any more
         // work
         return false;
+
       }
       buffer.push(createVulnerabilityEntity(vuln));
       if (buffer.length === 1_000) {
